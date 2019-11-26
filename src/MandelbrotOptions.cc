@@ -7,13 +7,11 @@
 namespace fractsim {
 
   MandelbrotOptions::MandelbrotOptions(const utils::Sizef& hint,
-                                       sdl::core::SdlWidget* parent,
-                                       const sdl::core::engine::Color& labelBgColor):
-    sdl::core::SdlWidget(std::string("mandelbrot_options"),
-                         hint,
-                         parent),
-
-    m_labelsBgColor(labelBgColor)
+                                       sdl::core::SdlWidget* parent):
+    OptionsPanel(std::string("mandelbrot_options"),
+                 sdl::core::engine::Color::NamedColor::Orange,
+                 hint,
+                 parent)
   {
     build();
   }
@@ -41,7 +39,7 @@ namespace fractsim {
       sdl::graphic::LabelWidget::HorizontalAlignment::Left,
       sdl::graphic::LabelWidget::VerticalAlignment::Center,
       this,
-      m_labelsBgColor
+      getLabelsBGColor()
     );
 
     sdl::graphic::TextBox* powerValue = new sdl::graphic::TextBox(
@@ -60,7 +58,7 @@ namespace fractsim {
       sdl::graphic::LabelWidget::HorizontalAlignment::Left,
       sdl::graphic::LabelWidget::VerticalAlignment::Center,
       this,
-      m_labelsBgColor
+      getLabelsBGColor()
     );
 
     sdl::graphic::TextBox* accuracyValue = new sdl::graphic::TextBox(
@@ -70,6 +68,10 @@ namespace fractsim {
       getValueDefaultFontSize(),
       this
     );
+
+    // Deactivate focus for labels.
+    powerLabel->setFocusPolicy(sdl::core::FocusPolicy());
+    accuracyLabel->setFocusPolicy(sdl::core::FocusPolicy());
 
     // Add each items to the layout.
     layout->addItem(powerLabel,    0, 0, 1, 1);
