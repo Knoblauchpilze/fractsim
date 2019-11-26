@@ -31,53 +31,17 @@ namespace fractsim {
 
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
-    sdl::graphic::LabelWidget* powerLabel = new sdl::graphic::LabelWidget(
-      std::string("power_label"),
-      "Power:",
-      getLabelDefaultFontName(),
-      getLabelDefaultFontSize(),
-      sdl::graphic::LabelWidget::HorizontalAlignment::Left,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      getLabelsBGColor()
-    );
+    sdl::graphic::LabelWidget* powerLabel = createLabel("power_label", "Power:", this);
+    sdl::graphic::TextBox* powerValue = createTextBox("power_value", this);
 
-    sdl::graphic::TextBox* powerValue = new sdl::graphic::TextBox(
-      std::string("power_value"),
-      getValueDefaultFontName(),
-      std::string(),
-      getValueDefaultFontSize(),
-      this
-    );
-
-    sdl::graphic::LabelWidget* accuracyLabel = new sdl::graphic::LabelWidget(
-      std::string("accuracy_label"),
-      "Accuracy:",
-      getLabelDefaultFontName(),
-      getLabelDefaultFontSize(),
-      sdl::graphic::LabelWidget::HorizontalAlignment::Left,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      getLabelsBGColor()
-    );
-
-    sdl::graphic::TextBox* accuracyValue = new sdl::graphic::TextBox(
-      std::string("accuracy_value"),
-      getValueDefaultFontName(),
-      std::string(),
-      getValueDefaultFontSize(),
-      this
-    );
-
-    // Deactivate focus for labels.
-    powerLabel->setFocusPolicy(sdl::core::FocusPolicy());
-    accuracyLabel->setFocusPolicy(sdl::core::FocusPolicy());
+    sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
+    sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
 
     // Add each items to the layout.
-    layout->addItem(powerLabel,    0, 0, 1, 1);
-    layout->addItem(powerValue,    0, 1, 1, 1);
-    layout->addItem(accuracyLabel, 0, 2, 1, 1);
-    layout->addItem(accuracyValue, 0, 3, 1, 1);
+    layout->addItem(accuracyLabel, 0, 0, 1, 1);
+    layout->addItem(accuracyValue, 0, 1, 1, 1);
+    layout->addItem(powerLabel,    0, 2, 1, 1);
+    layout->addItem(powerValue,    0, 3, 1, 1);
   }
 
 }

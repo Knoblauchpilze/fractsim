@@ -32,75 +32,22 @@ namespace fractsim {
 
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
-    sdl::graphic::LabelWidget* realPartLabel = new sdl::graphic::LabelWidget(
-      std::string("real_part_label"),
-      "Real part:",
-      getLabelDefaultFontName(),
-      getLabelDefaultFontSize(),
-      sdl::graphic::LabelWidget::HorizontalAlignment::Left,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      getLabelsBGColor()
-    );
+    sdl::graphic::LabelWidget* realPartLabel = createLabel("real_part_label", "Power:", this);
+    sdl::graphic::TextBox* realPartValue = createTextBox("real_part_value", this);
 
-    sdl::graphic::TextBox* realPartValue = new sdl::graphic::TextBox(
-      std::string("real_part_value"),
-      getValueDefaultFontName(),
-      std::string(),
-      getValueDefaultFontSize(),
-      this
-    );
+    sdl::graphic::LabelWidget* imgPartLabel = createLabel("img_part_label", "Power:", this);
+    sdl::graphic::TextBox* imgPartValue = createTextBox("img_part_value", this);
 
-    sdl::graphic::LabelWidget* imgPartLabel = new sdl::graphic::LabelWidget(
-      std::string("img_part_label"),
-      "Imaginary part:",
-      getLabelDefaultFontName(),
-      getLabelDefaultFontSize(),
-      sdl::graphic::LabelWidget::HorizontalAlignment::Left,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      getLabelsBGColor()
-    );
-
-    sdl::graphic::TextBox* imgPartValue = new sdl::graphic::TextBox(
-      std::string("img_part_value"),
-      getValueDefaultFontName(),
-      std::string(),
-      getValueDefaultFontSize(),
-      this
-    );
-
-    sdl::graphic::LabelWidget* accuracyLabel = new sdl::graphic::LabelWidget(
-      std::string("accuracy_label"),
-      "Accuracy:",
-      getLabelDefaultFontName(),
-      getLabelDefaultFontSize(),
-      sdl::graphic::LabelWidget::HorizontalAlignment::Left,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      getLabelsBGColor()
-    );
-
-    sdl::graphic::TextBox* accuracyValue = new sdl::graphic::TextBox(
-      std::string("accuracy_value"),
-      getValueDefaultFontName(),
-      std::string(),
-      getValueDefaultFontSize(),
-      this
-    );
-
-    // Deactivate focus for labels.
-    realPartLabel->setFocusPolicy(sdl::core::FocusPolicy());
-    imgPartLabel->setFocusPolicy(sdl::core::FocusPolicy());
-    accuracyLabel->setFocusPolicy(sdl::core::FocusPolicy());
+    sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
+    sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
 
     // Add each items to the layout.
-    layout->addItem(realPartLabel, 0, 0, 1, 1);
-    layout->addItem(realPartValue, 0, 1, 1, 1);
-    layout->addItem(imgPartLabel,  0, 2, 1, 1);
-    layout->addItem(imgPartValue,  0, 3, 1, 1);
-    layout->addItem(accuracyLabel, 0, 4, 1, 1);
-    layout->addItem(accuracyValue, 0, 5, 1, 1);
+    layout->addItem(accuracyLabel, 0, 0, 1, 1);
+    layout->addItem(accuracyValue, 0, 1, 1, 1);
+    layout->addItem(realPartLabel, 0, 2, 1, 1);
+    layout->addItem(realPartValue, 0, 3, 1, 1);
+    layout->addItem(imgPartLabel,  0, 4, 1, 1);
+    layout->addItem(imgPartValue,  0, 5, 1, 1);
   }
 
 }
