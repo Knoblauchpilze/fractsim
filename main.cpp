@@ -15,6 +15,7 @@
 # include "FractalRenderer.hh"
 # include "MandelbrotOptions.hh"
 # include "JuliaOptions.hh"
+# include "NewtonOptions.hh"
 
 int main(int argc, char* argv[]) {
   // Create the logger.
@@ -55,6 +56,9 @@ int main(int argc, char* argv[]) {
     
     fractsim::JuliaOptions* juliaOpt = new fractsim::JuliaOptions();
     app->addDockWidget(juliaOpt, sdl::app::DockWidgetArea::RightArea);
+    
+    fractsim::NewtonOptions* newtonOpt = new fractsim::NewtonOptions(5u);
+    app->addDockWidget(newtonOpt, sdl::app::DockWidgetArea::RightArea);
 
     // Run it.
     app->run();

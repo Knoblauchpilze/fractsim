@@ -9,6 +9,7 @@ set (SOURCES
   FractalRenderer.cc
   MandelbrotOptions.cc
   JuliaOptions.cc
+  NewtonOptions.cc
   )
 
 add_library (fractsim_lib SHARED
