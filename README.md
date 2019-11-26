@@ -1,5 +1,5 @@
 # fractsim
-Awesome fractal generation program, which is faster than anything existing at the moment and much more configurable. That being said it does draw fractals of multiple types with some sort of efficiency and a nice coloring.
+Awesome fractals generation program, which is faster than anything existing at the moment and much more configurable. That being said it does draw fractals of multiple types with some sort of efficiency and a nice coloring.
 
 # Installation
 
