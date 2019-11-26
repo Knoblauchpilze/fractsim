@@ -10,6 +10,7 @@ set (SOURCES
   MandelbrotOptions.cc
   JuliaOptions.cc
   NewtonOptions.cc
+  RenderingStatus.cc
   )
 
 add_library (fractsim_lib SHARED
