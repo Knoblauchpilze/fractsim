@@ -2,11 +2,11 @@
 # define   JULIA_OPTIONS_HH
 
 # include <maths_utils/Size.hh>
-# include <sdl_core/SdlWidget.hh>
+# include "OptionsPanel.hh"
 
 namespace fractsim {
 
-  class JuliaOptions: public sdl::core::SdlWidget {
+  class JuliaOptions: public OptionsPanel {
     public:
 
       /**

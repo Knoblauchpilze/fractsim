@@ -4,7 +4,7 @@
 # include "JuliaOptions.hh"
 
 namespace fractsim {
-  
+
 }
 
 #endif    /* JULIA_OPTIONS_HXX */
