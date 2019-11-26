@@ -4,6 +4,8 @@
 # include <maths_utils/Size.hh>
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_engine/Color.hh>
+# include <sdl_graphic/LabelWidget.hh>
+# include <sdl_graphic/TextBox.hh>
 
 namespace fractsim {
 
@@ -35,9 +37,8 @@ namespace fractsim {
        *          widget. Only applies to the size of the text used for labels.
        * @return - an integer representing the default font size for this item.
        */
-      static
-      unsigned
-      getLabelDefaultFontSize() noexcept;
+      virtual unsigned
+      getLabelDefaultFontSize() const noexcept;
 
       /**
        * @brief - Retrieves the default font name to use for labels within this
@@ -45,18 +46,26 @@ namespace fractsim {
        *          name of each option.
        * @return - an integer representing the default font name for labels.
        */
-      static
-      const char*
-      getLabelDefaultFontName() noexcept;
+      virtual const char*
+      getLabelDefaultFontName() const noexcept;
+
+      /**
+       * @brief - Retrieves the maximum height for a label created through the
+       *          `createLabel` method. Allows for inheriting classes to define
+       *          some other value if needed.
+       * @return - a value descirbing the maximum height of a label element in
+       *           this options panel.
+       */
+      virtual float
+      getLabelMaxHeight() const noexcept;
 
       /**
        * @brief - Retrieves the default font size to use for values within this
        *          widget. Only applies to the size of the text used for values.
        * @return - an integer representing the default font size for this item.
        */
-      static
-      unsigned
-      getValueDefaultFontSize() noexcept;
+      virtual unsigned
+      getValueDefaultFontSize() const noexcept;
 
       /**
        * @brief - Retrieves the default font name to use for values within this
@@ -64,9 +73,18 @@ namespace fractsim {
        *          value of each option.
        * @return - an integer representing the default font name for values.
        */
-      static
-      const char*
-      getValueDefaultFontName() noexcept;
+      virtual const char*
+      getValueDefaultFontName() const noexcept;
+
+      /**
+       * @brief - Retrieves the maximum height for a text box created through the
+       *          `createTextBox` method. Allows for inheriting classes to define
+       *          some other value if needed.
+       * @return - a value descirbing the maximum height of a text box element in
+       *           this options panel.
+       */
+      virtual float
+      getValueMaxHeight() const noexcept;
 
       /**
        * @brief - Retrieves the color to use as a background for all labels used
@@ -76,6 +94,38 @@ namespace fractsim {
        */
       sdl::core::engine::Color
       getLabelsBGColor() const noexcept;
+
+      /**
+       * @brief - Used to create a label widget with the specified text and name.
+       *          This allows inheriting classes to easily create labels for their
+       *          own purposes.
+       *          Note that the alignment will be set to default values and that
+       *          the fonts and size will be picked from the interface methods.
+       *          Also the focus policy will be set to none (meaning that the item
+       *          won't be able to receive the focus).
+       * @param name - the name of the label to create.
+       * @param text - the text to set for this label.
+       * @param parent - the parent of the label to create.
+       * @return - the corresponding label widget.
+       */
+      sdl::graphic::LabelWidget*
+      createLabel(const std::string& name,
+                  const std::string& text,
+                  sdl::core::SdlWidget* parent) const noexcept;
+
+      /**
+       * @brief - Used to create a text box widget with the specified name. This
+       *          allows inheriting classes to easily create labels for their own
+       *          purposes.
+       *          Note that the initial text will be left empty and that the fonts
+       *          and size will be picked from the interface methods.
+       * @param name - the name of the text box to create.
+       * @param parent - the parent of the label to create.
+       * @return - the corresponding label widget.
+       */
+      sdl::graphic::TextBox*
+      createTextBox(const std::string& name,
+                    sdl::core::SdlWidget* parent) const noexcept;
 
     private:
 
