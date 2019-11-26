@@ -13,7 +13,7 @@ namespace fractsim {
     public:
 
       ~OptionsPanel() = default;
-    
+
     protected:
 
       /**

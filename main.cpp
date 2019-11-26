@@ -53,10 +53,10 @@ int main(int argc, char* argv[]) {
 
     fractsim::MandelbrotOptions* mandelOpt = new fractsim::MandelbrotOptions();
     app->addDockWidget(mandelOpt, sdl::app::DockWidgetArea::RightArea);
-    
+
     fractsim::JuliaOptions* juliaOpt = new fractsim::JuliaOptions();
     app->addDockWidget(juliaOpt, sdl::app::DockWidgetArea::RightArea);
-    
+
     fractsim::NewtonOptions* newtonOpt = new fractsim::NewtonOptions(5u);
     app->addDockWidget(newtonOpt, sdl::app::DockWidgetArea::RightArea);
 
