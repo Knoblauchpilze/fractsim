@@ -19,6 +19,10 @@ namespace fractsim {
   RenderingStatus::build() {
     // Set a focus policy which do not allow to hover or click on this widget.
     setFocusPolicy(sdl::core::FocusPolicy());
+
+    // The rendering status is composed of a display allowing to display the
+    // current zoom level, the progress bar of the current computation, some
+    // indication of the palette to use and a render button.
   }
 
 }

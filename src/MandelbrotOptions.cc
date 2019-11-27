@@ -37,7 +37,7 @@ namespace fractsim {
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
     sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
 
-    // Add each items to the layout.
+    // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);
     layout->addItem(accuracyValue, 0, 1, 1, 1);
     layout->addItem(powerLabel,    0, 2, 1, 1);
