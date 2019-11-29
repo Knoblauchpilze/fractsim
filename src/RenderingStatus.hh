@@ -29,11 +29,21 @@ namespace fractsim {
        * @brief - Retrieves the maximum height for this component. This is usually
        *          assigned at construction and considered enough to display all the
        *          info needed.
-       * @return - a value descirbing the maximum height of this component.
+       * @return - a value describing the maximum height of this component.
        */
       static
       float
       getStatusMaxHeight() noexcept;
+
+      /**
+       * @brief - Retrieves the maximum size for the render button. As we only want
+       *          the button to be large enough so that the text is fully visible it
+       *          is not needed to grow indefinitely.
+       * @return - a value describing the maximum size for the render button.
+       */
+      static
+      utils::Sizef
+      getRenderButtonMaxSize() noexcept;
 
       /**
        * @brief - Used to build the content of this widget so that it can be  

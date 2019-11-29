@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
       appIcon,
       size,
       true,
-      utils::Sizef(0.4f, 0.7f),
+      utils::Sizef(0.4f, 0.6f),
       50.0f,
       60.0f
     );
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
     app->addDockWidget(newtonOpt, sdl::app::DockWidgetArea::RightArea);
 
     fractsim::RenderingStatus* status = new fractsim::RenderingStatus();
-    app->setStatusBar(status);
+    app->addDockWidget(status, sdl::app::DockWidgetArea::TopArea);
 
     // Run it.
     app->run();

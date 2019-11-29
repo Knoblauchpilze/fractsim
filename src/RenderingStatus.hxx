@@ -8,7 +8,13 @@ namespace fractsim {
   inline
   float
   RenderingStatus::getStatusMaxHeight() noexcept {
-    return 50.0f;
+    return 200.0f;
+  }
+
+  inline
+  utils::Sizef
+  RenderingStatus::getRenderButtonMaxSize() noexcept {
+    return utils::Sizef(200.0f, getStatusMaxHeight());
   }
 
 }
