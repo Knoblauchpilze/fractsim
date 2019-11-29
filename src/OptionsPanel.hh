@@ -53,7 +53,7 @@ namespace fractsim {
        * @brief - Retrieves the maximum height for a label created through the
        *          `createLabel` method. Allows for inheriting classes to define
        *          some other value if needed.
-       * @return - a value descirbing the maximum height of a label element in
+       * @return - a value describing the maximum height of a label element in
        *           this options panel.
        */
       virtual float
@@ -80,7 +80,7 @@ namespace fractsim {
        * @brief - Retrieves the maximum height for a text box created through the
        *          `createTextBox` method. Allows for inheriting classes to define
        *          some other value if needed.
-       * @return - a value descirbing the maximum height of a text box element in
+       * @return - a value describing the maximum height of a text box element in
        *           this options panel.
        */
       virtual float
