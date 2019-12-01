@@ -6,6 +6,12 @@
 namespace fractsim {
 
   inline
+  sdl::graphic::Button&
+  RenderingStatus::getRenderButton() {
+    return *getChildAs<sdl::graphic::Button>(getRenderButtonName());
+  }
+
+  inline
   float
   RenderingStatus::getStatusMaxHeight() noexcept {
     return 200.0f;

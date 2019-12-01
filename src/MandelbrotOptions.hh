@@ -22,6 +22,14 @@ namespace fractsim {
 
       ~MandelbrotOptions() = default;
 
+      /**
+       * @brief - Reimplementation of the base class method to retrieve the options
+       *          needed to perform the rendering of a Mandelbrot fractal.
+       * @param dummy - unused parameter.
+       */
+      void
+      validateOptions(const std::string& dummy) override;
+
     private:
 
       /**

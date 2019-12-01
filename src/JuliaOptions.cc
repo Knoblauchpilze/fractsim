@@ -18,6 +18,12 @@ namespace fractsim {
   }
 
   void
+  JuliaOptions::validateOptions(const std::string& dummy) {
+    // TODO: Implementation.
+    log("Should validate julia options", utils::Level::Warning);
+  }
+
+  void
   JuliaOptions::build() {
     // Assign a linear layout which will allow positionning items and icons.
     sdl::graphic::GridLayoutShPtr layout = std::make_shared<sdl::graphic::GridLayout>(

@@ -21,6 +21,12 @@ namespace fractsim {
   }
 
   void
+  NewtonOptions::validateOptions(const std::string& dummy) {
+    // TODO: Implementation.
+    log("Should validate newton options", utils::Level::Warning);
+  }
+
+  void
   NewtonOptions::build() {
     // Assign a linear layout which will allow positionning items and icons.
     // Note that we need 3 labels for each coefficient of the polynom and 3

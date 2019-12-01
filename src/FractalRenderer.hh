@@ -1,9 +1,11 @@
 #ifndef    FRACTAL_RENDERER_HH
 # define   FRACTAL_RENDERER_HH
 
+# include <mutex>
 # include <maths_utils/Size.hh>
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_graphic/ScrollableWidget.hh>
+# include "FractalOptions.hh"
 
 namespace fractsim {
 
@@ -21,6 +23,21 @@ namespace fractsim {
                       sdl::core::SdlWidget* parent = nullptr);
 
       ~FractalRenderer() = default;
+
+      /**
+       * @brief - Used to request a new rendering with the current settings.
+       *          Will cancel any running rendering and launch a new one.
+       * @param options - the options to use to perform the rendering.
+       */
+      void
+      requestRendering(FractalOptionsShPtr options);
+
+    private:
+
+      /**
+       * @brief - A mutex allowing to protect this widget from concurrent accesses.
+       */
+      mutable std::mutex m_propsLocker;
   };
 
 }

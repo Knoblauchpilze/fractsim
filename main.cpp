@@ -64,6 +64,34 @@ int main(int argc, char* argv[]) {
     fractsim::RenderingStatus* status = new fractsim::RenderingStatus();
     app->addDockWidget(status, sdl::app::DockWidgetArea::TopArea);
 
+    // Connect the options changed signal to the request rendering slot.
+    mandelOpt->onOptionsChanged.connect_member<fractsim::FractalRenderer>(
+      renderer,
+      &fractsim::FractalRenderer::requestRendering
+    );
+    juliaOpt->onOptionsChanged.connect_member<fractsim::FractalRenderer>(
+      renderer,
+      &fractsim::FractalRenderer::requestRendering
+    );
+    newtonOpt->onOptionsChanged.connect_member<fractsim::FractalRenderer>(
+      renderer,
+      &fractsim::FractalRenderer::requestRendering
+    );
+
+    // Connect the render button to the options panel slots.
+    status->getRenderButton().onClick.connect_member<fractsim::MandelbrotOptions>(
+      mandelOpt,
+      &fractsim::MandelbrotOptions::validateOptions
+    );
+    status->getRenderButton().onClick.connect_member<fractsim::JuliaOptions>(
+      juliaOpt,
+      &fractsim::JuliaOptions::validateOptions
+    );
+    status->getRenderButton().onClick.connect_member<fractsim::NewtonOptions>(
+      newtonOpt,
+      &fractsim::NewtonOptions::validateOptions
+    );
+
     // Run it.
     app->run();
   }

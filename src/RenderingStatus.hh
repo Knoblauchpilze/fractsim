@@ -4,6 +4,7 @@
 # include <maths_utils/Size.hh>
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_engine/Color.hh>
+# include <sdl_graphic/Button.hh>
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/ProgressBar.hh>
 
@@ -24,6 +25,17 @@ namespace fractsim {
                       sdl::core::SdlWidget* parent = nullptr);
 
       ~RenderingStatus() = default;
+
+      /**
+       * @brief - Used to retrive the render button associated to this status.
+       *          This method is only meant as a way to connect elements to the
+       *          `onClick` signal of this button, lacking of a better way.
+       *          The method may raise an error in case the render button is
+       *          not defined.
+       * @return - a reference to the render button associated to this status.
+       */
+      sdl::graphic::Button&
+      getRenderButton();
 
     protected:
 

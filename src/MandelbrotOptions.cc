@@ -17,6 +17,12 @@ namespace fractsim {
   }
 
   void
+  MandelbrotOptions::validateOptions(const std::string& dummy) {
+    // TODO: Implementation.
+    log("Should validate mandelbrot options", utils::Level::Warning);
+  }
+
+  void
   MandelbrotOptions::build() {
     // Assign a linear layout which will allow positionning items and icons.
     sdl::graphic::GridLayoutShPtr layout = std::make_shared<sdl::graphic::GridLayout>(

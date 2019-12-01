@@ -6,6 +6,7 @@
 # include <sdl_engine/Color.hh>
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
+# include "FractalOptions.hh"
 
 namespace fractsim {
 
@@ -13,6 +14,18 @@ namespace fractsim {
     public:
 
       ~OptionsPanel() = default;
+
+      /**
+       * @brief - Interface method used when the options registered in this panel
+       *          so that a `onOptionsChanged` signal can be emitted. The goal of
+       *          this method is to be able to verify the content of the options
+       *          defined and build the corresponding fractal settings.
+       *          Inheriting classes must reimplement this method.
+       * @param dummy - a dummy parameter, representing the name of the caller of
+       *                this method. Should not be needed for any process.
+       */
+      virtual void
+      validateOptions(const std::string& dummy) = 0;
 
     protected:
 
@@ -139,6 +152,14 @@ namespace fractsim {
        *          of this options panel.
        */
       sdl::core::engine::Color m_labelsBgColor;
+
+    public:
+
+      /**
+       * @brief - This signal can be used for external objects to register whenever
+       *          the options for this panel are modified.
+       */
+      utils::Signal<FractalOptionsShPtr> onOptionsChanged;
   };
 
 }
