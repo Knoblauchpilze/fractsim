@@ -4,6 +4,8 @@
 # include <maths_utils/Size.hh>
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_engine/Color.hh>
+# include <sdl_graphic/LabelWidget.hh>
+# include <sdl_graphic/ProgressBar.hh>
 
 namespace fractsim {
 
@@ -46,18 +48,104 @@ namespace fractsim {
       getRenderButtonMaxSize() noexcept;
 
       /**
+       * @brief - Defines the maximum size for the label displaying the current zoom
+       *          level. As long as the button is large enough to display the zoom
+       *          it does not need to grow further.
+       * @return - a value describing the size assumed to be sufficient to display
+       *           the zoom level.
+       */
+      static
+      utils::Sizef
+      getZoomLabelMaxSize() noexcept;
+
+      /**
+       * @brief - Defines the font to use for the zoom label.
+       * @return - a name identifying the font to use for the zoom label.
+       */
+      static
+      const char*
+      getZoomLabelFont() noexcept;
+
+      /**
+       * @brief - Used to defnie the margins of the layout applied around the whole
+       *          widget. Usually `0`.
+       * @return - a value representing the global margin for this widget.
+       */
+      static
+      float
+      getGlobalMargins() noexcept;
+
+      /**
+       * @brief - Used to define the margins between the component of this status.
+       * @return - a value representing the margins between each component of the
+       *           widget.
+       */
+      static
+      float
+      getComponentMargins() noexcept;
+
+      /**
+       * @brief - Used to retrieve the default name for the render button.
+       * @return - a string that should be used to provide consistent naming for
+       *           the render button.
+       */
+      static
+      const char*
+      getRenderButtonName() noexcept;
+
+      /**
+       * @brief - Used to retrieve the default name for the zoom label.
+       * @return - a string that should be used to provide consistent naming for
+       *           the zoom label.
+       */
+      static
+      const char*
+      getZoomLabelName() noexcept;
+
+      /**
+       * @brief - Used to retrieve the default name for the progress bar.
+       * @return - a string that should be used to provide consistent naming for
+       *           the progress bar.
+       */
+      static
+      const char*
+      getProgressBarName() noexcept;
+
+      /**
        * @brief - Used to build the content of this widget so that it can be  
        *          readily displayed.
        */
       void
       build();
 
+      /**
+       * @brief - Used to retrieve the label widget holding the zoom. Typically
+       *          used when the zoom value should be changed.
+       *          The return value is guaranteed to be not `null` if the method
+       *          returns. Note that the locker is assumed to already be acquired
+       *          upon calling this function.
+       * @return - the label widget associated to this status.
+       */
+      sdl::graphic::LabelWidget*
+      getZoomLabel();
+
+      /**
+       * @brief - Used to retrieve the progress bar holding the current completion
+       *          percentage of the rendering task monitored by this object.
+       *          The return value is guaranteed to be not `null` if the method
+       *          returns. Note that the locker is assumed to already be acquired
+       *          upon calling this function.
+       * @return - the progress bar associated to this status.
+       */
+      sdl::graphic::ProgressBar*
+      getProgressBar();
+
     private:
 
       /**
        * @brief - A mutex to protect the internal properties of this widget.
        */
-      mutable std::mutex m_locker;
+      mutable std::mutex m_propsLocker;
   };
 
 }

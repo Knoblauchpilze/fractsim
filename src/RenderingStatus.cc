@@ -2,7 +2,6 @@
 # include "RenderingStatus.hh"
 # include <sdl_graphic/LinearLayout.hh>
 # include <sdl_graphic/Button.hh>
-# include <sdl_graphic/LabelWidget.hh>
 
 namespace fractsim {
 
@@ -13,7 +12,7 @@ namespace fractsim {
                          parent,
                          sdl::core::engine::Color::NamedColor::Silver),
 
-    m_locker()
+    m_propsLocker()
   {
     build();
   }
@@ -29,19 +28,23 @@ namespace fractsim {
     sdl::graphic::LinearLayoutShPtr layout = std::make_shared<sdl::graphic::LinearLayout>(
       "rendering_status_layout",
       this,
-      sdl::graphic::LinearLayout::Direction::Horizontal
+      sdl::graphic::LinearLayout::Direction::Horizontal,
+      getGlobalMargins(),
+      getComponentMargins()
     );
 
     // And assign the layout to this widget.
     setLayout(layout);
 
     sdl::graphic::Button* render = new sdl::graphic::Button(
-      "rendering_status_render",
+      getRenderButtonName(),
       "Render",
       "data/img/compute.bmp",
       "data/fonts/Goodtime.ttf",
       15u,
-      this
+      this,
+      utils::Sizef(),
+      sdl::core::engine::Color::fromRGB(0.7031f, 0.7031f, 0.7031f)
     );
     if (render == nullptr) {
       error(
@@ -50,9 +53,37 @@ namespace fractsim {
       );
     }
 
-    render->setMaxSize(getRenderButtonMaxSize());
+    sdl::graphic::LabelWidget* zoom = new sdl::graphic::LabelWidget(
+      getZoomLabelName(),
+      "Zoom: 1",
+      getZoomLabelFont(),
+      15u,
+      sdl::graphic::LabelWidget::HorizontalAlignment::Center,
+      sdl::graphic::LabelWidget::VerticalAlignment::Center,
+      this,
+      sdl::core::engine::Color::fromRGB(1.0f, 0.75, 0.25f)
+    );
+    if (zoom == nullptr) {
+      error(
+        std::string("Could not create rendering status"),
+        std::string("Zoom label not allocated")
+      );
+    }
 
+    sdl::graphic::ProgressBar* progress = new sdl::graphic::ProgressBar(
+      getProgressBarName(),
+      this
+    );
+
+    // Configure each element.
+    render->setMaxSize(getRenderButtonMaxSize());
+    zoom->setMaxSize(getZoomLabelMaxSize());
+    zoom->setFocusPolicy(sdl::core::FocusPolicy());
+
+    // Add each element to the layout.
     layout->addItem(render);
+    layout->addItem(zoom);
+    layout->addItem(progress);
   }
 
 }
