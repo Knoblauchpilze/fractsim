@@ -4,6 +4,7 @@
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
 # include <sdl_core/FocusPolicy.hh>
+# include "NewtonRenderingOptions.hh"
 
 namespace fractsim {
 
@@ -15,20 +16,61 @@ namespace fractsim {
                  hint,
                  parent),
 
+    m_propsLocker(),
     m_maxDegree(maxDegree)
   {
     build();
   }
 
   void
-  NewtonOptions::validateOptions(const std::string& dummy) {
+  NewtonOptions::validateOptions(const std::string& /*dummy*/) {
     // Check whether the options are visible.
     if (!isVisible()) {
       return;
     }
 
-    // TODO: Implementation.
-    log("Should validate newton options", utils::Level::Warning);
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Retrieve the children for each value to retrieve.
+    sdl::graphic::TextBox* accuracyTB = getChildAs<sdl::graphic::TextBox>(getAccuracyValueName());
+
+    // Retrieve and convert the values to build the options.
+    std::string accuracyText = accuracyTB->getValue();
+    bool converted = false;
+    std::vector<NewtonRenderingOptions::Coefficient> coeffs;
+
+    for (unsigned deg = 0u ; deg <= m_maxDegree ; ++deg) {
+      sdl::graphic::TextBox* realTB = getChildAs<sdl::graphic::TextBox>(
+        getCoefficientRealPartValueName(deg)
+      );
+      sdl::graphic::TextBox* imgTB = getChildAs<sdl::graphic::TextBox>(
+        getCoefficientImgPartValueName(deg)
+      );
+
+      std::string realText = realTB->getValue();
+      std::string imgText = imgTB->getValue();
+
+      float realC = convertToFloat(realText, getDefaultRealPartCoefficient(deg), converted);
+      float imgC = convertToFloat(imgText, getDefaultImgPartCoefficient(deg), converted);
+
+      coeffs.push_back(NewtonRenderingOptions::Coefficient{1.0f * deg, utils::Vector2f(realC, imgC)});
+    }
+
+    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
+
+    NewtonRenderingOptionsShPtr opt = std::make_shared<NewtonRenderingOptions>(coeffs);
+    opt->setAccuracy(accuracy);
+    
+
+    utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
+
+    withSafetyNet(
+      [&ref, opt]() {
+        ref.emit(opt);
+      },
+      std::string("onOptionsChanged(") + std::to_string(accuracy) + ", " + std::to_string(m_maxDegree) + ")"
+    );
   }
 
   void

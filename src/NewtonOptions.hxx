@@ -23,6 +23,26 @@ namespace fractsim {
     return "accuracy_value";
   }
 
+  inline
+  unsigned
+  NewtonOptions::getDefaultAccuracy() noexcept {
+    return 128u;
+  }
+
+  inline
+  float
+  NewtonOptions::getDefaultRealPartCoefficient(unsigned /*degree*/) noexcept {
+    // The degree is not used.
+    return 1.0f;
+  }
+
+  inline
+  float
+  NewtonOptions::getDefaultImgPartCoefficient(unsigned /*degree*/) noexcept {
+    // The degree is not used.
+    return 0.0f;
+  }
+
 }
 
 #endif    /* NEWTON_OPTIONS_HXX */

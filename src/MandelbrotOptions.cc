@@ -3,6 +3,7 @@
 # include <sdl_graphic/GridLayout.hh>
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
+# include "MandelbrotRenderingOptions.hh"
 
 namespace fractsim {
 
@@ -11,20 +12,49 @@ namespace fractsim {
     OptionsPanel(std::string("mandelbrot_options"),
                  sdl::core::engine::Color::NamedColor::Orange,
                  hint,
-                 parent)
+                 parent),
+
+    m_propsLocker()
   {
     build();
   }
 
   void
-  MandelbrotOptions::validateOptions(const std::string& dummy) {
+  MandelbrotOptions::validateOptions(const std::string& /*dummy*/) {
     // Check whether the options are visible.
     if (!isVisible()) {
       return;
     }
 
-    // TODO: Implementation.
-    log("Should validate mandelbrot options", utils::Level::Warning);
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Retrieve the children for each value to retrieve.
+    sdl::graphic::TextBox* accuracyTB = getChildAs<sdl::graphic::TextBox>(getAccuracyValueName());
+    sdl::graphic::TextBox* powerTB = getChildAs<sdl::graphic::TextBox>(getPowerValueName());
+
+    // Retrieve and convert the values to build the options.
+    std::string accuracyText = accuracyTB->getValue();
+    std::string powerText = powerTB->getValue();
+    bool converted = false;
+
+    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
+    float power = convertToFloat(powerText, getDefaultPower(), converted);
+
+    MandelbrotRenderingOptionsShPtr opt = std::make_shared<MandelbrotRenderingOptions>();
+    opt->setAccuracy(accuracy);
+    opt->setExponent(power);
+
+    utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
+
+    log("Emitting on option changed for \"" + std::to_string(accuracy) + "\", \"" + std::to_string(power) + "\"");
+
+    withSafetyNet(
+      [&ref, opt]() {
+        ref.emit(opt);
+      },
+      std::string("onOptionsChanged(") + std::to_string(accuracy) + ", " + std::to_string(power) + ")"
+    );
   }
 
   void

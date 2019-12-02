@@ -72,6 +72,8 @@ namespace fractsim {
     palette->setColorAt(0.4f, sdl::core::engine::Color::NamedColor::Blue);
     palette->setColorAt(0.6f, sdl::core::engine::Color::NamedColor::Yellow);
     palette->setColorAt(0.8f, sdl::core::engine::Color::NamedColor::Green);
+
+    return palette;
   }
 
 }

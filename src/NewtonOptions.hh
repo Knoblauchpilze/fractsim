@@ -65,6 +65,35 @@ namespace fractsim {
       getAccuracyValueName() noexcept;
 
       /**
+       * @brief - Returns a default value for the accuracy.
+       * @return - a default value for the accuracy.
+       */
+      static
+      unsigned
+      getDefaultAccuracy() noexcept;
+
+      /**
+       * @brief - Returns a default value for the real component of the coefficient
+       *          associated to the Newton polynomial fractal for the specified
+       *          degree.
+       * @param degree - the degree of the coefficient to retrieve.
+       * @return - a default value for the real part of the coefficent.
+       */
+      static
+      float
+      getDefaultRealPartCoefficient(unsigned degree) noexcept;
+
+      /**
+       * @brief - Returns a default value for the imaginary component of the coefficient
+       *          associated to the Newton polynomial fractal for the specified degree.
+       * @param degree - the degree of the coefficient to retrieve.
+       * @return - a default value for the imaginary part of the coefficent.
+       */
+      static
+      float
+      getDefaultImgPartCoefficient(unsigned degree) noexcept;
+
+      /**
        * @brief - Used to create the layout of this options panel. This method
        *          is called right upon building the widget.
        */
@@ -72,6 +101,11 @@ namespace fractsim {
       build();
 
     private:
+
+      /**
+       * @brief - Protect this object from concurrent accesses.
+       */
+      mutable std::mutex m_propsLocker;
 
       /**
        * @brief - Describes the maximum degree of the polynom that can be configured

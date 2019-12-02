@@ -30,7 +30,7 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     // TODO: Implementation.
-    log("Should perform rendering with accuracy " + options->getAccuracy(), utils::Level::Warning);
+    log("Should perform rendering with accuracy " + std::to_string(options->getAccuracy()), utils::Level::Warning);
   }
 
 }

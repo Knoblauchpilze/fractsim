@@ -13,7 +13,7 @@ namespace fractsim {
   {}
 
   inline
-  const std::vector<Coefficient>&
+  const std::vector<NewtonRenderingOptions::Coefficient>&
   NewtonRenderingOptions::getCoefficients() const noexcept {
     return m_coefficients;
   }

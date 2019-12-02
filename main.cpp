@@ -18,7 +18,7 @@
 # include "NewtonOptions.hh"
 # include "RenderingStatus.hh"
 
-int main(int argc, char* argv[]) {
+int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
   utils::StdLogger logger;
   utils::LoggerLocator::provide(&logger);

@@ -23,6 +23,24 @@ namespace fractsim {
     return "accuracy_value";
   }
 
+  inline
+  unsigned
+  JuliaOptions::getDefaultAccuracy() noexcept {
+    return 128u;
+  }
+
+  inline
+  float
+  JuliaOptions::getDefaultRealPartConstant() noexcept {
+    return 0.3f;
+  }
+
+  inline
+  float
+  JuliaOptions::getDefaultImgPartConstant() noexcept {
+    return 0.5f;
+  }
+
 }
 
 #endif    /* JULIA_OPTIONS_HXX */

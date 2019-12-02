@@ -112,6 +112,28 @@ namespace fractsim {
     return textBox;
   }
 
+  inline
+  unsigned
+  OptionsPanel::convertToUnsigned(const std::string& /*text*/,
+                                  unsigned def,
+                                  bool& converted) const noexcept
+  {
+    // TODO: Perform conversion.
+    converted = false;
+    return def;
+  }
+
+  inline
+  float
+  OptionsPanel::convertToFloat(const std::string& /*text*/,
+                               float def,
+                               bool& converted) const noexcept
+  {
+    // TODO: Perform conversion.
+    converted = false;
+    return def;
+  }
+
 }
 
 #endif    /* OPTIONS_PANEL_HXX */

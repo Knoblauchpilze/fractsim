@@ -1,6 +1,7 @@
 #ifndef    JULIA_RENDERING_OPTIONS_HH
 # define   JULIA_RENDERING_OPTIONS_HH
 
+# include <memory>
 # include "FractalOptions.hh"
 # include <maths_utils/Vector2.hh>
 
@@ -40,6 +41,7 @@ namespace fractsim {
       utils::Vector2f m_constant;
   };
 
+  using JuliaRenderingOptionsShPtr = std::shared_ptr<JuliaRenderingOptions>;
 }
 
 # include "JuliaRenderingOptions.hxx"

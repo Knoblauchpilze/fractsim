@@ -17,6 +17,18 @@ namespace fractsim {
     return "accuracy_value";
   }
 
+  inline
+  unsigned
+  MandelbrotOptions::getDefaultAccuracy() noexcept {
+    return 128u;
+  }
+
+  inline
+  float
+  MandelbrotOptions::getDefaultPower() noexcept {
+    return 2.0f;
+  }
+
 }
 
 #endif    /* MANDELBROT_OPTIONS_HXX */

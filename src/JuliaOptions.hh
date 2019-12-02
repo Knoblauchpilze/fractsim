@@ -59,6 +59,32 @@ namespace fractsim {
       getAccuracyValueName() noexcept;
 
       /**
+       * @brief - Returns a default value for the accuracy.
+       * @return - a default value for the accuracy.
+       */
+      static
+      unsigned
+      getDefaultAccuracy() noexcept;
+
+      /**
+       * @brief - Returns a default value for the real component of the constant
+       *          associated to the Julia set.
+       * @return - a default value for the real part of the constant.
+       */
+      static
+      float
+      getDefaultRealPartConstant() noexcept;
+
+      /**
+       * @brief - Returns a default value for the imaginary component of the constant
+       *          associated to the Julia set.
+       * @return - a default value for the imaginary part of the constant.
+       */
+      static
+      float
+      getDefaultImgPartConstant() noexcept;
+
+      /**
        * @brief - Used to create the layout of this options panel. This method
        *          is called right upon building the widget.
        */
@@ -66,6 +92,11 @@ namespace fractsim {
       build();
 
     private:
+
+      /**
+       * @brief - Protect this object from concurrent accesses.
+       */
+      mutable std::mutex m_propsLocker;
   };
 
 }

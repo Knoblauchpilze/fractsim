@@ -1,6 +1,7 @@
 #ifndef    NEWTON_RENDERING_OPTIONS_HH
 # define   NEWTON_RENDERING_OPTIONS_HH
 
+# include <memory>
 # include <vector>
 # include <maths_utils/Vector2.hh>
 # include "FractalOptions.hh"
@@ -51,6 +52,7 @@ namespace fractsim {
       std::vector<Coefficient> m_coefficients;
   };
 
+  using NewtonRenderingOptionsShPtr = std::shared_ptr<NewtonRenderingOptions>;
 }
 
 # include "NewtonRenderingOptions.hxx"

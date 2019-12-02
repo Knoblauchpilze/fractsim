@@ -4,6 +4,7 @@
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
 # include <sdl_core/FocusPolicy.hh>
+# include "JuliaRenderingOptions.hh"
 
 namespace fractsim {
 
@@ -12,19 +13,51 @@ namespace fractsim {
     OptionsPanel(std::string("julia_options"),
                  sdl::core::engine::Color::NamedColor::Orange,
                  hint,
-                 parent)
+                 parent),
+
+    m_propsLocker()
   {
     build();
   }
 
   void
-  JuliaOptions::validateOptions(const std::string& dummy) {
+  JuliaOptions::validateOptions(const std::string& /*dummy*/) {
     // Check whether the options are visible.
     if (!isVisible()) {
       return;
     }
-    // TODO: Implementation.
-    log("Should validate julia options", utils::Level::Warning);
+
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Retrieve the children for each value to retrieve.
+    sdl::graphic::TextBox* accuracyTB = getChildAs<sdl::graphic::TextBox>(getAccuracyValueName());
+    sdl::graphic::TextBox* realTB = getChildAs<sdl::graphic::TextBox>(getConstantRealPartValueName());
+    sdl::graphic::TextBox* imgTB = getChildAs<sdl::graphic::TextBox>(getConstantImgPartValueName());
+
+    // Retrieve and convert the values to build the options.
+    std::string accuracyText = accuracyTB->getValue();
+    std::string realText = realTB->getValue();
+    std::string imgText = imgTB->getValue();
+    bool converted = false;
+
+    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
+    float realC = convertToFloat(realText, getDefaultRealPartConstant(), converted);
+    float imgC = convertToFloat(imgText, getDefaultImgPartConstant(), converted);
+    utils::Vector2f c(realC, imgC);
+
+    JuliaRenderingOptionsShPtr opt = std::make_shared<JuliaRenderingOptions>();
+    opt->setAccuracy(accuracy);
+    opt->setConstant(c);
+
+    utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
+
+    withSafetyNet(
+      [&ref, opt]() {
+        ref.emit(opt);
+      },
+      std::string("onOptionsChanged(") + std::to_string(accuracy) + ", " + c.toString() + ")"
+    );
   }
 
   void

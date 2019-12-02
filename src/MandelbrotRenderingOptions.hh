@@ -1,6 +1,7 @@
 #ifndef    MANDELBROT_RENDERING_OPTIONS_HH
 # define   MANDELBROT_RENDERING_OPTIONS_HH
 
+# include <memory>
 # include "FractalOptions.hh"
 
 namespace fractsim {
@@ -42,6 +43,7 @@ namespace fractsim {
       float m_exponent;
   };
 
+  using MandelbrotRenderingOptionsShPtr = std::shared_ptr<MandelbrotRenderingOptions>;
 }
 
 # include "MandelbrotRenderingOptions.hxx"

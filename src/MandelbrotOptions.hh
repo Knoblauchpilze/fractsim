@@ -49,6 +49,22 @@ namespace fractsim {
       getAccuracyValueName() noexcept;
 
       /**
+       * @brief - Returns a default value for the accuracy.
+       * @return - a default value for the accuracy.
+       */
+      static
+      unsigned
+      getDefaultAccuracy() noexcept;
+
+      /**
+       * @brief - Returns a default value for the exponent of the mandelbrot set.
+       * @return - a default value for the exponent.
+       */
+      static
+      float
+      getDefaultPower() noexcept;
+
+      /**
        * @brief - Used to create the layout of this options panel. This method
        *          is called right upon building the widget.
        */
@@ -56,6 +72,11 @@ namespace fractsim {
       build();
 
     private:
+
+      /**
+       * @brief - Protect this object from concurrent accesses.
+       */
+      mutable std::mutex m_propsLocker;
   };
 
 }

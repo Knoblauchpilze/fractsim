@@ -7,7 +7,7 @@ namespace fractsim {
 
   inline
   MandelbrotRenderingOptions::MandelbrotRenderingOptions(float exponent):
-    FractalOptions(getDefaultAccuracy(), getDefaultPalette())
+    FractalOptions(getDefaultAccuracy(), getDefaultPalette()),
 
     m_exponent(exponent)
   {}
@@ -25,7 +25,5 @@ namespace fractsim {
   }
 
 }
-
-# include "MandelbrotRenderingOptions.hxx"
 
 #endif    /* MANDELBROT_RENDERING_OPTIONS_HXX */
