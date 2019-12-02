@@ -1,6 +1,7 @@
 #ifndef    NEWTON_OPTIONS_HH
 # define   NEWTON_OPTIONS_HH
 
+# include <string>
 # include <maths_utils/Size.hh>
 # include "OptionsPanel.hh"
 
@@ -36,6 +37,32 @@ namespace fractsim {
       validateOptions(const std::string& dummy) override;
 
     private:
+
+      /**
+       * @brief - Returns a default name for the textbox receiving the real part of
+       *          the coefficient for the input degree.
+       * @return - a name for the real part of the coefficient.
+       */
+      static
+      std::string
+      getCoefficientRealPartValueName(unsigned degree) noexcept;
+
+      /**
+       * @brief - Returns a default name for the textbox receiving the imaginary
+       *          part of the coefficient for the input degree.
+       * @return - a name for the imaginary part of the coefficient.
+       */
+      static
+      std::string
+      getCoefficientImgPartValueName(unsigned degree) noexcept;
+
+      /**
+       * @brief - Returns a default name for the accuracy textbox.
+       * @return - a name for the accuracy value.
+       */
+      static
+      const char*
+      getAccuracyValueName() noexcept;
 
       /**
        * @brief - Used to create the layout of this options panel. This method

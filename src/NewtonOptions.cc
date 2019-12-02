@@ -22,6 +22,11 @@ namespace fractsim {
 
   void
   NewtonOptions::validateOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
+
     // TODO: Implementation.
     log("Should validate newton options", utils::Level::Warning);
   }
@@ -48,8 +53,8 @@ namespace fractsim {
     sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
 
     sdl::graphic::LabelWidget* constantLabel = createLabel("constant_label", "Constant:", this);
-    sdl::graphic::TextBox* realPartConstant = createTextBox("constant_real_part", this);
-    sdl::graphic::TextBox* imgPartConstant = createTextBox("constant_img_part", this);
+    sdl::graphic::TextBox* realPartConstant = createTextBox(getCoefficientRealPartValueName(0u), this);
+    sdl::graphic::TextBox* imgPartConstant = createTextBox(getCoefficientImgPartValueName(0u), this);
 
     for (unsigned deg = 0u ; deg < m_maxDegree ; ++deg) {
       std::string degStr = std::to_string(deg + 1u);
@@ -61,11 +66,11 @@ namespace fractsim {
       );
 
       sdl::graphic::TextBox* realPartDeg = createTextBox(
-        "deg_" + degStr + "_real_part",
+        getCoefficientRealPartValueName(deg + 1u),
         this
       );
       sdl::graphic::TextBox* imgPartDeg = createTextBox(
-        "deg_" + degStr + "_img_part",
+        getCoefficientImgPartValueName(deg + 1u),
         this
       );
 

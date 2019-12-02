@@ -33,6 +33,32 @@ namespace fractsim {
     private:
 
       /**
+       * @brief - Returns a default name for the textbox receiving the real part of
+       *          the constant to use to compute the Julia set.
+       * @return - a name for the real part of the constant.
+       */
+      static
+      const char*
+      getConstantRealPartValueName() noexcept;
+
+      /**
+       * @brief - Returns a default name for the textbox receiving the imaginary
+       *          part of the constant to use to compute the Julia set.
+       * @return - a name for the imaginary part of the constant.
+       */
+      static
+      const char*
+      getConstantImgPartValueName() noexcept;
+
+      /**
+       * @brief - Returns a default name for the accuracy textbox.
+       * @return - a name for the accuracy value.
+       */
+      static
+      const char*
+      getAccuracyValueName() noexcept;
+
+      /**
        * @brief - Used to create the layout of this options panel. This method
        *          is called right upon building the widget.
        */

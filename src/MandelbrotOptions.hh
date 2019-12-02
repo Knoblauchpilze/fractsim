@@ -33,6 +33,22 @@ namespace fractsim {
     private:
 
       /**
+       * @brief - Returns a default name for the power texbox.
+       * @return - a name for the power value.
+       */
+      static
+      const char*
+      getPowerValueName() noexcept;
+
+      /**
+       * @brief - Returns a default name for the accuracy textbox.
+       * @return - a name for the accuracy value.
+       */
+      static
+      const char*
+      getAccuracyValueName() noexcept;
+
+      /**
        * @brief - Used to create the layout of this options panel. This method
        *          is called right upon building the widget.
        */

@@ -19,6 +19,10 @@ namespace fractsim {
 
   void
   JuliaOptions::validateOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
     // TODO: Implementation.
     log("Should validate julia options", utils::Level::Warning);
   }
@@ -39,13 +43,13 @@ namespace fractsim {
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
     sdl::graphic::LabelWidget* realPartLabel = createLabel("real_part_label", "Power:", this);
-    sdl::graphic::TextBox* realPartValue = createTextBox("real_part_value", this);
+    sdl::graphic::TextBox* realPartValue = createTextBox(getConstantRealPartValueName(), this);
 
     sdl::graphic::LabelWidget* imgPartLabel = createLabel("img_part_label", "Power:", this);
-    sdl::graphic::TextBox* imgPartValue = createTextBox("img_part_value", this);
+    sdl::graphic::TextBox* imgPartValue = createTextBox(getConstantImgPartValueName(), this);
 
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
-    sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
+    sdl::graphic::TextBox* accuracyValue = createTextBox(getAccuracyValueName(), this);
 
     // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);

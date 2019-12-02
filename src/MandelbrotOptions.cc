@@ -18,6 +18,11 @@ namespace fractsim {
 
   void
   MandelbrotOptions::validateOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
+
     // TODO: Implementation.
     log("Should validate mandelbrot options", utils::Level::Warning);
   }
@@ -38,10 +43,10 @@ namespace fractsim {
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
     sdl::graphic::LabelWidget* powerLabel = createLabel("power_label", "Power:", this);
-    sdl::graphic::TextBox* powerValue = createTextBox("power_value", this);
+    sdl::graphic::TextBox* powerValue = createTextBox(getPowerValueName(), this);
 
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
-    sdl::graphic::TextBox* accuracyValue = createTextBox("accuracy_value", this);
+    sdl::graphic::TextBox* accuracyValue = createTextBox(getAccuracyValueName(), this);
 
     // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);
