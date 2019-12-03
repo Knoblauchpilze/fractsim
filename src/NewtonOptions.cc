@@ -61,9 +61,10 @@ namespace fractsim {
 
     NewtonRenderingOptionsShPtr opt = std::make_shared<NewtonRenderingOptions>(coeffs);
     opt->setAccuracy(accuracy);
-    
 
     utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
+
+    log("Emitting on option changed for \"" + std::to_string(accuracy) + "\", \"" + std::to_string(m_maxDegree) + "\"");
 
     withSafetyNet(
       [&ref, opt]() {

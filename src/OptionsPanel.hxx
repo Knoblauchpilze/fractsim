@@ -2,6 +2,7 @@
 # define   OPTIONS_PANEL_HXX
 
 # include "OptionsPanel.hh"
+# include <sdl_graphic/Validator_utils.hxx>
 
 namespace fractsim {
 
@@ -114,24 +115,42 @@ namespace fractsim {
 
   inline
   unsigned
-  OptionsPanel::convertToUnsigned(const std::string& /*text*/,
+  OptionsPanel::convertToUnsigned(const std::string& text,
                                   unsigned def,
                                   bool& converted) const noexcept
   {
-    // TODO: Perform conversion.
-    converted = false;
-    return def;
+    // Use the dedicated handler to handle the conversion.
+    bool valid = false;
+
+    int conv = sdl::graphic::convertToInt(text, &valid);
+
+    if (!valid || conv < 0) {
+      converted = false;
+      return def;
+    }
+
+    converted = true;
+    return static_cast<unsigned>(conv);
   }
 
   inline
   float
-  OptionsPanel::convertToFloat(const std::string& /*text*/,
+  OptionsPanel::convertToFloat(const std::string& text,
                                float def,
                                bool& converted) const noexcept
   {
-    // TODO: Perform conversion.
-    converted = false;
-    return def;
+    // Use the dedicated handler to handle the conversion.
+    bool valid = false;
+
+    float conv = sdl::graphic::convertToFloat(text, &valid);
+
+    if (!valid) {
+      converted = false;
+      return def;
+    }
+
+    converted = true;
+    return conv;
   }
 
 }

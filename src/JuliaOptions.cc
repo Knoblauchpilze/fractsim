@@ -52,6 +52,8 @@ namespace fractsim {
 
     utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
 
+    log("Emitting on option changed for \"" + std::to_string(accuracy) + "\", " + c.toString());
+
     withSafetyNet(
       [&ref, opt]() {
         ref.emit(opt);
