@@ -29,19 +29,15 @@ namespace fractsim {
       return;
     }
 
-    // Protect from concurrent accesses to retrieve the options and
-    // to assign the new fractal options.
-    RenderingOptionsShPtr copyOfOpt;
-
+    // Assign the new options.
     {
       Guard guard(m_propsLocker);
 
-      copyOfOpt = m_renderingOpt;
       m_fractalOptions = options;
     }
 
     // Schedule a rendering.
-    scheduleRendering(options, copyOfOpt);
+    scheduleRendering();
   }
 
   bool
@@ -56,9 +52,6 @@ namespace fractsim {
 
     // Protect from concurrent accesses to perform the zoom operation and
     // also schedule the rendering.
-    RenderingOptionsShPtr rdrOpt;
-    FractalOptionsShPtr fractalOpt;
-
     utils::Vector2i motion = e.getScroll();
 
     {
@@ -81,21 +74,27 @@ namespace fractsim {
       utils::Vector2f conv(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
 
       m_renderingOpt->zoom(conv, factor);
-
-      rdrOpt = m_renderingOpt;
-      fractalOpt = m_fractalOptions;
     }
 
     // Schedule the rendering.
-    scheduleRendering(fractalOpt, rdrOpt);
+    scheduleRendering();
 
     return toReturn;
   }
 
   void
-  FractalRenderer::scheduleRendering(FractalOptionsShPtr fractalOpt,
-                                     RenderingOptionsShPtr renderingOpt)
-  {
+  FractalRenderer::scheduleRendering() {
+    // Try to retrieve the rendering options.
+    FractalOptionsShPtr fractalOpt;
+    RenderingOptionsShPtr renderingOpt;
+
+    {
+      Guard guard(m_propsLocker);
+
+      fractalOpt = m_fractalOptions;
+      renderingOpt = m_renderingOpt;
+    }
+
     // Check consistency.
     if (fractalOpt == nullptr) {
       log(

@@ -36,7 +36,17 @@ namespace fractsim {
     protected:
 
       /**
-       * @brief - Reimplementation of the base clqss method to detect when the wheel
+       * @brief - Reimplementation of the base class method to detect whenever the
+       *          reset key is pressed, allowing to set the rendering window to its
+       *          default value and thus regain a nice viewpoint.
+       * @param e - the event to be interpreted.
+       * @return - `true` if the event was recognized and `false` otherwise.
+       */
+      bool
+      keyPressEvent(const sdl::core::engine::KeyEvent& e) override;
+
+      /**
+       * @brief - Reimplementation of the base class method to detect when the wheel
        *          is used: this should trigger the zooming behavior based on the factor
        *          defined for this renderer.
        * @param e - the event to be interpreted.
@@ -64,19 +74,24 @@ namespace fractsim {
       getDefaultZoomOutFactor() noexcept;
 
       /**
+       * @brief - Used to retrieve the default key to use to reset the rendering
+       *          window to its default value.
+       * @return - the key to use to restore the rendering window to its default
+       *           value.
+       */
+      static
+      sdl::core::engine::RawKey
+      getDefaultResetKey() noexcept;
+
+      /**
        * @brief - Used to schedule a rendering with the specified options. This
        *          method issues a request to the threads pool used by this object
        *          to handle the computations.
-       *          Note that this function does not need to acquire the locker on
-       *          the rendering options as its argument are passed by copy. It
-       *          only uses the locker on the threads pool.
-       * @param fractalOpt - the options describing the fractal to render.
-       * @param renderingOpt - the options describing the window of visualization
-       *                       to use to display the fractal.
+       *          Note that this function only needs to acquire the locker on the
+       *          rendering options in order to copy the internal attributes.
        */
       void
-      scheduleRendering(FractalOptionsShPtr fractalOpt,
-                        RenderingOptionsShPtr renderingOpt);
+      scheduleRendering();
 
     private:
 
