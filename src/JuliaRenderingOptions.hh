@@ -24,6 +24,14 @@ namespace fractsim {
        */
       ~JuliaRenderingOptions() = default;
 
+      /**
+       * @brief - Specialization of the base class to provide a nice viewpoint
+       *          for Julia sets.
+       * @return - a suited default rendering area to visualize Julia sets.
+       */
+      utils::Boxf
+      getDefaultRenderingWindow() const noexcept override;
+
       utils::Vector2f
       getConstant() const noexcept;
 

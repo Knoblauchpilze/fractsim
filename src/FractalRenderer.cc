@@ -11,7 +11,7 @@ namespace fractsim {
 
     m_propsLocker(),
 
-    m_renderingOpt(RenderingOptions::createDefaultForMandelbrot()),
+    m_renderingOpt(nullptr),
     m_fractalOptions(nullptr)
   {
     setService(std::string("fractal_renderer"));
@@ -32,6 +32,14 @@ namespace fractsim {
     // Assign the new options.
     {
       Guard guard(m_propsLocker);
+
+      // Create rendering options if needed.
+      if (m_renderingOpt == nullptr) {
+        m_renderingOpt = std::make_shared<RenderingOptions>(
+          options->getDefaultRenderingWindow(),
+          sdl::core::LayoutItem::getRenderingArea().toSize()
+        );
+      }
 
       m_fractalOptions = options;
     }

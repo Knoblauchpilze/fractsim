@@ -15,9 +15,15 @@ namespace fractsim {
        * @brief - Create a new set of options to render a fractal. This object
        *          defines some general options like the window to render or the
        *          zooming factor.
+       *          In order to allow for some discretization, the user should be
+       *          able to provide the size of the canvas onto which the fractal
+       *          will be displayed. This allows to determine how the `window`
+       *          will be split up in individual pixels.
        * @param window - the area to render.
+       * @param canvas - the size of the canvas.
        */
-      RenderingOptions(const utils::Boxf& window);
+      RenderingOptions(const utils::Boxf& window,
+                       const utils::Sizef& canvas);
 
       /**
        * @brief - Desctruction of the object.
@@ -62,33 +68,6 @@ namespace fractsim {
       void
       reset();
 
-      /**
-       * @brief - Creates default rendering options to have a valid area to display the
-       *          Mandelbrot set.
-       * @return - a set of options allowing a good view on the Mandelbrot set.
-       */
-      static
-      std::shared_ptr<RenderingOptions>
-      createDefaultForMandelbrot() noexcept;
-
-      /**
-       * @brief - Creates default rendering options to have a valid area to display a
-       *          Julia set.
-       * @return - a set of options allowing a good view on a Julia set.
-       */
-      static
-      std::shared_ptr<RenderingOptions>
-      createDefaultForJulia() noexcept;
-
-      /**
-       * @brief - Creates default rendering options to have a valid area to display a
-       *          Newton polynomial fractal.
-       * @return - a set of options allowing a good view a Newton polynomial fractal.
-       */
-      static
-      std::shared_ptr<RenderingOptions>
-      createDefaultForNewton() noexcept;
-
     private:
 
       /**
@@ -103,6 +82,13 @@ namespace fractsim {
        *          that can be achieved when the zooming factor is minimal.
        */
       utils::Boxf m_area;
+
+      /**
+       * @brief - The size of the canvas onto which the fractal will be drawn. This allows
+       *          to determine the number of pixels to compute by computing the size of the
+       *          individual pixels through the ratio of the `m_area` and the canvas' size.
+       */
+      utils::Sizef m_canvas;
   };
 
   using RenderingOptionsShPtr = std::shared_ptr<RenderingOptions>;

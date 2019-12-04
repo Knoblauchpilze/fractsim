@@ -13,6 +13,12 @@ namespace fractsim {
   {}
 
   inline
+  utils::Boxf
+  NewtonRenderingOptions::getDefaultRenderingWindow() const noexcept {
+    return utils::Boxf(0.0f, 0.0f, 4.0f, 3.0f);
+  }
+
+  inline
   const std::vector<NewtonRenderingOptions::Coefficient>&
   NewtonRenderingOptions::getCoefficients() const noexcept {
     return m_coefficients;

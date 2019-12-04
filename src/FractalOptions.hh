@@ -50,6 +50,17 @@ namespace fractsim {
       void
       setPalette(sdl::core::engine::GradientShPtr palette);
 
+      /**
+       * @brief - Used to retrieve a default rendering window allowing to visualize
+       *          correctly the data associated to the fractal.
+       *          Should be specialized by inheriting classes to better fit their
+       *          constraints.
+       * @return - a box representing the default rendering area allowing to have a
+       *           nice viewpoint on the fractal.
+       */
+      virtual utils::Boxf
+      getDefaultRenderingWindow() const noexcept = 0;
+
     protected:
 
       /**

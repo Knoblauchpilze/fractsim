@@ -39,24 +39,6 @@ namespace fractsim {
     m_area = m_initial;
   }
 
-  inline
-  RenderingOptionsShPtr
-  RenderingOptions::createDefaultForMandelbrot() noexcept {
-    return std::make_shared<RenderingOptions>(utils::Boxf(-0.7f, 0.0f, 2.6f, 2.0f));
-  }
-
-  inline
-  RenderingOptionsShPtr
-  RenderingOptions::createDefaultForJulia() noexcept {
-    return std::make_shared<RenderingOptions>(utils::Boxf(0.0f, 0.0f, 2.0f, 2.0f));
-  }
-
-  inline
-  RenderingOptionsShPtr
-  RenderingOptions::createDefaultForNewton() noexcept {
-    return std::make_shared<RenderingOptions>(utils::Boxf(0.0f, 0.0f, 4.0f, 3.0f));
-  }
-
 }
 
 #endif    /* RENDERING_OPTIONS_HXX */

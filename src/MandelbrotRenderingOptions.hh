@@ -27,6 +27,14 @@ namespace fractsim {
        */
       ~MandelbrotRenderingOptions() = default;
 
+      /**
+       * @brief - Specialization of the base class to provide a nice viewpoint
+       *          for Mandelbrot set.
+       * @return - a suited default rendering area to visualize Mandelbrot set.
+       */
+      utils::Boxf
+      getDefaultRenderingWindow() const noexcept override;
+
       float
       getExponent() const noexcept;
 

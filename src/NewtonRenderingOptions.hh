@@ -34,6 +34,15 @@ namespace fractsim {
        */
       ~NewtonRenderingOptions() = default;
 
+      /**
+       * @brief - Specialization of the base class to provide a nice viewpoint
+       *          for Newton polynomial fractals.
+       * @return - a suited default rendering area to visualize Newton polynomial
+       *           fractals.
+       */
+      utils::Boxf
+      getDefaultRenderingWindow() const noexcept override;
+
       const std::vector<Coefficient>&
       getCoefficients() const noexcept;
 

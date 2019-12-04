@@ -3,11 +3,14 @@
 
 namespace fractsim {
 
-  RenderingOptions::RenderingOptions(const utils::Boxf& window):
+  RenderingOptions::RenderingOptions(const utils::Boxf& window,
+                                     const utils::Sizef& canvas):
     utils::CoreObject("rendering_options"),
 
     m_initial(window),
-    m_area()
+    m_area(),
+
+    m_canvas(canvas)
   {
     reset();
   }

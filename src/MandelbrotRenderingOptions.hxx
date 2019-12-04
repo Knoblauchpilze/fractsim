@@ -13,6 +13,12 @@ namespace fractsim {
   {}
 
   inline
+  utils::Boxf
+  MandelbrotRenderingOptions::getDefaultRenderingWindow() const noexcept {
+    return utils::Boxf(-0.7f, 0.0f, 2.6f, 2.0f);
+  }
+
+  inline
   float
   MandelbrotRenderingOptions::getExponent() const noexcept {
     return m_exponent;

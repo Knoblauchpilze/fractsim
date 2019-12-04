@@ -13,6 +13,12 @@ namespace fractsim {
   {}
 
   inline
+  utils::Boxf
+  JuliaRenderingOptions::getDefaultRenderingWindow() const noexcept {
+    return utils::Boxf(0.0f, 0.0f, 2.0f, 2.0f);
+  }
+
+  inline
   utils::Vector2f
   JuliaRenderingOptions::getConstant() const noexcept {
     return m_constant;
