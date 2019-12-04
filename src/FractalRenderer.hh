@@ -6,6 +6,7 @@
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_graphic/ScrollableWidget.hh>
 # include "FractalOptions.hh"
+# include "RenderingOptions.hh"
 
 namespace fractsim {
 
@@ -32,14 +33,78 @@ namespace fractsim {
       void
       requestRendering(FractalOptionsShPtr options);
 
+    protected:
+
+      /**
+       * @brief - Reimplementation of the base clqss method to detect when the wheel
+       *          is used: this should trigger the zooming behavior based on the factor
+       *          defined for this renderer.
+       * @param e - the event to be interpreted.
+       * @return - `true` if the event was recognized and `false` otherwise.
+       */
+      bool
+      mouseWheelEvent(const sdl::core::engine::MouseEvent& e) override;
+
+    private:
+
+      /**
+       * @brief - Used to retrieve the default factor to use when zooming in.
+       * @return - a factor suitable for zooming in operations.
+       */
+      static
+      float
+      getDefaultZoomInFactor() noexcept;
+
+      /**
+       * @brief - Used to retrieve the default factor to use when zooming out.
+       * @return - a factor suitable for zooming out operations.
+       */
+      static
+      float
+      getDefaultZoomOutFactor() noexcept;
+
+      /**
+       * @brief - Used to schedule a rendering with the specified options. This
+       *          method issues a request to the threads pool used by this object
+       *          to handle the computations.
+       *          Note that this function does not need to acquire the locker on
+       *          the rendering options as its argument are passed by copy. It
+       *          only uses the locker on the threads pool.
+       * @param fractalOpt - the options describing the fractal to render.
+       * @param renderingOpt - the options describing the window of visualization
+       *                       to use to display the fractal.
+       */
+      void
+      scheduleRendering(FractalOptionsShPtr fractalOpt,
+                        RenderingOptionsShPtr renderingOpt);
+
     private:
 
       /**
        * @brief - A mutex allowing to protect this widget from concurrent accesses.
        */
       mutable std::mutex m_propsLocker;
+
+      /**
+       * @brief - Holds all the needed options to define the rendering window when
+       *          computing the fractal.
+       */
+      RenderingOptionsShPtr m_renderingOpt;
+
+      /**
+       * @brief - Describes the options to use to render the fractal. While rendering
+       *          options are more general and usually refer to settings applicable no
+       *          matter the fractal type, this attribute contains values specific on
+       *          the type of fractal to render. It contains the current options to
+       *          use to perform a rendering.
+       *          This value is supposed to be null in case no fractal has already been
+       *          renderer.
+       */ 
+      FractalOptionsShPtr m_fractalOptions;
   };
 
 }
+
+# include "FractalRenderer.hxx"
 
 #endif    /* FRACTAL_RENDERER_HH */

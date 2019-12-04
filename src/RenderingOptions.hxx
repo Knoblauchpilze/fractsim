@@ -40,21 +40,21 @@ namespace fractsim {
   }
 
   inline
-  RenderingOptions
+  RenderingOptionsShPtr
   RenderingOptions::createDefaultForMandelbrot() noexcept {
-    return RenderingOptions(utils::Boxf(-0.7f, 0.0f, 2.6f, 2.0f));
+    return std::make_shared<RenderingOptions>(utils::Boxf(-0.7f, 0.0f, 2.6f, 2.0f));
   }
 
   inline
-  RenderingOptions
+  RenderingOptionsShPtr
   RenderingOptions::createDefaultForJulia() noexcept {
-    return RenderingOptions(utils::Boxf(0.0f, 0.0f, 2.0f, 2.0f));
+    return std::make_shared<RenderingOptions>(utils::Boxf(0.0f, 0.0f, 2.0f, 2.0f));
   }
 
   inline
-  RenderingOptions
+  RenderingOptionsShPtr
   RenderingOptions::createDefaultForNewton() noexcept {
-    return RenderingOptions(utils::Boxf(0.0f, 0.0f, 4.0f, 3.0f));
+    return std::make_shared<RenderingOptions>(utils::Boxf(0.0f, 0.0f, 4.0f, 3.0f));
   }
 
 }

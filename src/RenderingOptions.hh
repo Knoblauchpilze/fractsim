@@ -68,7 +68,7 @@ namespace fractsim {
        * @return - a set of options allowing a good view on the Mandelbrot set.
        */
       static
-      RenderingOptions
+      std::shared_ptr<RenderingOptions>
       createDefaultForMandelbrot() noexcept;
 
       /**
@@ -77,7 +77,7 @@ namespace fractsim {
        * @return - a set of options allowing a good view on a Julia set.
        */
       static
-      RenderingOptions
+      std::shared_ptr<RenderingOptions>
       createDefaultForJulia() noexcept;
 
       /**
@@ -86,7 +86,7 @@ namespace fractsim {
        * @return - a set of options allowing a good view a Newton polynomial fractal.
        */
       static
-      RenderingOptions
+      std::shared_ptr<RenderingOptions>
       createDefaultForNewton() noexcept;
 
     private:
