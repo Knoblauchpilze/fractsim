@@ -11,6 +11,7 @@ set (SOURCES
   JuliaOptions.cc
   NewtonOptions.cc
   RenderingStatus.cc
+  RenderingOptions.cc
   )
 
 add_library (fractsim_lib SHARED
