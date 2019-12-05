@@ -30,19 +30,17 @@ namespace fractsim {
     }
 
     // Assign the new options.
-    {
-      Guard guard(m_propsLocker);
+    Guard guard(m_propsLocker);
 
-      // Create rendering options if needed.
-      if (m_renderingOpt == nullptr) {
-        m_renderingOpt = std::make_shared<RenderingOptions>(
-          options->getDefaultRenderingWindow(),
-          sdl::core::LayoutItem::getRenderingArea().toSize()
-        );
-      }
-
-      m_fractalOptions = options;
+    // Create rendering options if needed.
+    if (m_renderingOpt == nullptr) {
+      m_renderingOpt = std::make_shared<RenderingOptions>(
+        options->getDefaultRenderingWindow(),
+        sdl::core::LayoutItem::getRenderingArea().toSize()
+      );
     }
+
+    m_fractalOptions = options;
 
     // Schedule a rendering.
     scheduleRendering();
@@ -62,27 +60,25 @@ namespace fractsim {
     // also schedule the rendering.
     utils::Vector2i motion = e.getScroll();
 
-    {
-      Guard guard(m_propsLocker);
+    Guard guard(m_propsLocker);
 
-      // Perform the zoom in operation if needed.
-      if (m_renderingOpt == nullptr) {
-        log(
-          std::string("Discarding zoom ") + (motion.y() > 0 ? "in" : "out") + " event, no rendering window defined",
-          utils::Level::Warning
-        );
+    // Perform the zoom in operation if needed.
+    if (m_renderingOpt == nullptr) {
+      log(
+        std::string("Discarding zoom ") + (motion.y() > 0 ? "in" : "out") + " event, no rendering window defined",
+        utils::Level::Warning
+      );
 
-        return toReturn;
-      }
-
-      float factor = motion.y() > 0 ? getDefaultZoomInFactor() : getDefaultZoomOutFactor();
-
-      utils::Sizef thisArea = sdl::core::LayoutItem::getRenderingArea().toSize();
-      utils::Vector2f mousePos = e.getMousePosition();
-      utils::Vector2f conv(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
-
-      m_renderingOpt->zoom(conv, factor);
+      return toReturn;
     }
+
+    float factor = motion.y() > 0 ? getDefaultZoomInFactor() : getDefaultZoomOutFactor();
+
+    utils::Sizef thisArea = sdl::core::LayoutItem::getRenderingArea().toSize();
+    utils::Vector2f mousePos = e.getMousePosition();
+    utils::Vector2f conv(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
+
+    m_renderingOpt->zoom(conv, factor);
 
     // Schedule the rendering.
     scheduleRendering();
@@ -92,19 +88,8 @@ namespace fractsim {
 
   void
   FractalRenderer::scheduleRendering() {
-    // Try to retrieve the rendering options.
-    FractalOptionsShPtr fractalOpt;
-    RenderingOptionsShPtr renderingOpt;
-
-    {
-      Guard guard(m_propsLocker);
-
-      fractalOpt = m_fractalOptions;
-      renderingOpt = m_renderingOpt;
-    }
-
     // Check consistency.
-    if (fractalOpt == nullptr) {
+    if (m_fractalOptions == nullptr) {
       log(
         std::string("Could not schedule rendering for fractal (cause: \"Invalid null fractal options\")"),
         utils::Level::Error
@@ -112,7 +97,7 @@ namespace fractsim {
 
       return;
     }
-    if (renderingOpt == nullptr) {
+    if (m_renderingOpt == nullptr) {
       log(
         std::string("Could not schedule rendering for fractal (cause: \"Invalid null rendering options\")"),
         utils::Level::Error
@@ -122,7 +107,7 @@ namespace fractsim {
     }
 
     // TODO: Implementation.
-    log("Should perform rendering with accuracy " + std::to_string(fractalOpt->getAccuracy()), utils::Level::Warning);
+    log("Should perform rendering with accuracy " + std::to_string(m_fractalOptions->getAccuracy()), utils::Level::Warning);
   }
 
 }

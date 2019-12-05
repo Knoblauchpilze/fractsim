@@ -36,6 +36,14 @@ namespace fractsim {
     protected:
 
       /**
+       * @brief - Reimplementation of the base class method to provide update of the
+       *          rendering window when a resize is requested.
+       * @param window - the available size to perform the update.
+       */
+      void
+      updatePrivate(const utils::Boxf& window) override;
+
+      /**
        * @brief - Reimplementation of the base class method to detect whenever the
        *          reset key is pressed, allowing to set the rendering window to its
        *          default value and thus regain a nice viewpoint.
@@ -87,8 +95,8 @@ namespace fractsim {
        * @brief - Used to schedule a rendering with the specified options. This
        *          method issues a request to the threads pool used by this object
        *          to handle the computations.
-       *          Note that this function only needs to acquire the locker on the
-       *          rendering options in order to copy the internal attributes.
+       *          Note that this function assumes that the locker on the options
+       *          is already acquired before calling the method.
        */
       void
       scheduleRendering();

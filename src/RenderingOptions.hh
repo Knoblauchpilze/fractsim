@@ -68,6 +68,16 @@ namespace fractsim {
       void
       reset();
 
+      utils::Sizef
+      getCanvasSize() const noexcept;
+
+      /**
+       * @brief - Assign a new canvas size for this set of options. If the input size is
+       *          not valid an error is raised.
+       */
+      void
+      setCanvasSize(const utils::Sizef& canvas);
+
     private:
 
       /**

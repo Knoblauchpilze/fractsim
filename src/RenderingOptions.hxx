@@ -39,6 +39,26 @@ namespace fractsim {
     m_area = m_initial;
   }
 
+  inline
+  utils::Sizef
+  RenderingOptions::getCanvasSize() const noexcept {
+    return m_canvas;
+  }
+
+  inline
+  void
+  RenderingOptions::setCanvasSize(const utils::Sizef& canvas) {
+    // Check consistency.
+    if (!canvas.valid()) {
+      error(
+        std::string("Could not set canvas size for options"),
+        std::string("Invalid size ") + canvas.toString()
+      );
+    }
+
+    m_canvas = canvas;
+  }
+
 }
 
 #endif    /* RENDERING_OPTIONS_HXX */
