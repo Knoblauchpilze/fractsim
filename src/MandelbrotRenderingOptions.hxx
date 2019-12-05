@@ -19,6 +19,13 @@ namespace fractsim {
   }
 
   inline
+  unsigned
+  MandelbrotRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
+    // TODO: Implementation.
+    return p.length() < 2.0f ? 0u : getAccuracy();
+  }
+
+  inline
   float
   MandelbrotRenderingOptions::getExponent() const noexcept {
     return m_exponent;

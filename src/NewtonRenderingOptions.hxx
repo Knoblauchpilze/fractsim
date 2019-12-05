@@ -19,6 +19,13 @@ namespace fractsim {
   }
 
   inline
+  unsigned
+  NewtonRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
+    // TODO: Implementation.
+    return p.length() < 3.0f ? 0u : getAccuracy();
+  }
+
+  inline
   const std::vector<NewtonRenderingOptions::Coefficient>&
   NewtonRenderingOptions::getCoefficients() const noexcept {
     return m_coefficients;

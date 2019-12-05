@@ -61,6 +61,18 @@ namespace fractsim {
       virtual utils::Boxf
       getDefaultRenderingWindow() const noexcept = 0;
 
+      /**
+       * @brief - Interface method allowing each inheriting class to define its own
+       *          computation semantic. Basically utilizes the options defined by
+       *          this object and the additional ones provided by the class to check
+       *          whether the input point belongs to the fractal or not.
+       * @param p - the point to determine whether it belongs to the fractal.
+       * @return - a value smaller than the `getAccuracy()` if the point does *not*
+       *           belong to the fractal, at least `getAccuracy()` otherwise.
+       */
+      virtual unsigned
+      compute(const utils::Vector2f& p) const noexcept = 0;
+
     protected:
 
       /**

@@ -19,6 +19,13 @@ namespace fractsim {
   }
 
   inline
+  unsigned
+  JuliaRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
+    // TODO: Implementation.
+    return p.length() < 1.0f ? 0u : getAccuracy();
+  }
+
+  inline
   utils::Vector2f
   JuliaRenderingOptions::getConstant() const noexcept {
     return m_constant;
