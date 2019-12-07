@@ -5,6 +5,7 @@
 # include <thread>
 # include <vector>
 # include <memory>
+# include <condition_variable>
 # include <core_utils/CoreObject.hh>
 # include "RenderingTile.hh"
 
@@ -96,40 +97,35 @@ namespace fractsim {
     private:
 
       /**
-       * @brief - Protect concurrent accesses to the status allowing to notify that
-       *          some computing tasks are available.
+       * @brief- Convenience define to refer to the type of locker to protect the pool
+       *         running statis from concurrent accesses.
        */
-      std::mutex m_statusLocker;
+      using Mutex = std::mutex;
 
       /**
-       * @brief - Indicates whether there are some jobs to process. A `ŧrue` value
-       *          tells that the internal queue for computing jobs has at least one
-       *          value.
+       * @brief - Convenience define to refer to a unique lock on the mutex used to
+       *          protect the pool's running status.
        */
-      bool m_jobsAvailable;
-
-      /**
-       * @brief - This value indicates how many jobs are left to be terminated based
-       *          on the initial count and the number of jobs that already reported
-       *          completion.
-       */
-      unsigned m_remaining;
-
-      /**
-       * @brief - Protect concurrent accesses to the jobs queue.
-       */
-      std::mutex m_jobsLocker;
-
-      /**
-       * @brief - The list of jobs currently available for processing.
-       */
-      std::vector<RenderingTileShPtr> m_jobs;
+      using Locker = std::unique_lock<Mutex>;
 
       /**
        * @brief - A mutex protecting concurrent accesses to the thread composing the
        *          pool. Typically used to start or stop the thread pool.
        */
-      std::mutex m_poolLocker;
+      Mutex m_poolLocker;
+
+      /**
+       * @brief - Condition variable used to put threads of the pool to sleep as long
+       *          as no jobs are provided and the pool does not need to be terminated.
+       */
+      std::condition_variable m_waiter;
+
+      /**
+       * @brief - Unique lock needed by the condition variable to be able to correctly
+       *          notify worker threads when either the pool needs to be terminated or
+       *          when some jobs should be processed.
+       */
+      Locker m_poolWaiter;
 
       /**
        * @brief - Keep track of whether the pool is running. As long as this value is
@@ -139,9 +135,19 @@ namespace fractsim {
       bool m_poolRunning;
 
       /**
+       * @brief - Indicates whether there are some jobs to process. A `ŧrue` value
+       *          tells that the internal queue for computing jobs has at least one
+       *          value. We protect this boolean behind the same locker (i.e. the
+       *          `m_poolLocker` one) as the `m_poolRunning` boolean because we want
+       *          threads to be notified either when the pool needs to be terminated
+       *          or when some new jobs are available.
+       */
+      bool m_jobsAvailable;
+
+      /**
        * @brief - Protect concurrent accesses to the array of threads.
        */
-      std::mutex m_threadsLocker;
+      Mutex m_threadsLocker;
 
       /**
        * @brief - The threads used by the pool. When the pool is up and running there
@@ -150,6 +156,23 @@ namespace fractsim {
        *          not be accessed directly.
        */
       std::vector<std::thread> m_threads;
+
+      /**
+       * @brief - Protect concurrent accesses to the jobs queue and related properties.
+       */
+      Mutex m_jobsLocker;
+
+      /**
+       * @brief - The list of jobs currently available for processing.
+       */
+      std::vector<RenderingTileShPtr> m_jobs;
+
+      /**
+       * @brief - An index identifying the current batch of jobs being fed to the
+       *          threads. Any completion related to another batch will be discarded
+       *          as it's probably irrelevant anymore.
+       */
+      unsigned m_batchIndex;
   };
 
   using RenderingSchedulerShPtr = std::shared_ptr<RenderingScheduler>;
