@@ -54,6 +54,17 @@ namespace fractsim {
     private:
 
       /**
+       * @brief - Used to retrieve the threshold above which a terms is known to
+       *          be diverging. This allows to speed up the computations.
+       * @return - a value above which the series for any point has to diverge.
+       */
+      static
+      float
+      getDivergenceThreshold() noexcept;
+
+    private:
+
+      /**
        * @brief - The exponent represents the degree to which each term of the series used
        *          to compute the set is raised at each iteration. Higher degree usually leads
        *          to more bulbs.

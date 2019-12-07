@@ -7,6 +7,7 @@
 # include <sdl_graphic/ScrollableWidget.hh>
 # include "FractalOptions.hh"
 # include "RenderingOptions.hh"
+# include "RenderingScheduler.hh"
 
 namespace fractsim {
 
@@ -82,6 +83,24 @@ namespace fractsim {
       getDefaultZoomOutFactor() noexcept;
 
       /**
+       * @brief - Provide a value describing how many tiles should be used to
+       *          divide the workload along the horizontal axis. This allows
+       *          to perform some sort of parallelization.
+       * @return - the number of tiles to create horizontally.
+       */
+      static
+      unsigned
+      getHorizontalTileCount() noexcept;
+
+      /**
+       * @brief - Similar to `getHorizontalTileCount` but for the vertical axis.
+       * @return - the number of tiles to create vertically.
+       */
+      static
+      unsigned
+      getVerticalTileCount() noexcept;
+
+      /**
        * @brief - Used to retrieve the default key to use to reset the rendering
        *          window to its default value.
        * @return - the key to use to restore the rendering window to its default
@@ -124,6 +143,11 @@ namespace fractsim {
        *          renderer.
        */ 
       FractalOptionsShPtr m_fractalOptions;
+
+      /**
+       * @brief - Convenience object allowing to schedule the rendering.
+       */
+      RenderingSchedulerShPtr m_scheduler;
   };
 
 }

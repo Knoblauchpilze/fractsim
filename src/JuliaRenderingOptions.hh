@@ -51,6 +51,17 @@ namespace fractsim {
     private:
 
       /**
+       * @brief - Used to retrieve the threshold above which a terms is known to
+       *          be diverging. This allows to speed up the computations.
+       * @return - a value above which the series for any point has to diverge.
+       */
+      static
+      float
+      getDivergenceThreshold() noexcept;
+
+    private:
+
+      /**
        * @brief - The constant represents an additional term that is added to the result
        *          of the exponentiation at each term of the series. This constant allows
        *          to provude a great variety of Julia set and is the characteristic of

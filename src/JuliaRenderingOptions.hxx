@@ -21,8 +21,27 @@ namespace fractsim {
   inline
   unsigned
   JuliaRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
-    // TODO: Implementation.
-    return p.length() < 1.0f ? 0u : getAccuracy();
+    // Compute terms of the series until it diverges.
+    unsigned acc = getAccuracy();
+    float thresh = getDivergenceThreshold();
+    float len = 0.0f, tmp = 0.0f;
+    unsigned terms = 0u;
+    utils::Vector2f cur = p;
+    utils::Vector2f c = getConstant();
+
+    while (len < thresh && terms < acc) {
+      tmp = cur.x() * cur.x() - cur.y() * cur.y() + c.x();
+      cur.y() = 2.0f * cur.x() * cur.y() + c.y();
+      cur.x() = tmp;
+
+      len = cur.lengthSquared();
+
+      if (len < thresh) {
+        ++terms;
+      }
+    }
+
+    return terms;
   }
 
   inline
@@ -35,6 +54,12 @@ namespace fractsim {
   void
   JuliaRenderingOptions::setConstant(const utils::Vector2f& constant) noexcept {
     m_constant = constant;
+  }
+
+  inline
+  float
+  JuliaRenderingOptions::getDivergenceThreshold() noexcept {
+    return 4.0f;
   }
 
 }

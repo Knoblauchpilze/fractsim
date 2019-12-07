@@ -56,6 +56,18 @@ namespace fractsim {
   }
 
   inline
+  unsigned
+  FractalRenderer::getHorizontalTileCount() noexcept {
+    return 5u;
+  }
+
+  inline
+  unsigned
+  FractalRenderer::getVerticalTileCount() noexcept {
+    return 3u;
+  }
+
+  inline
   sdl::core::engine::RawKey
   FractalRenderer::getDefaultResetKey() noexcept {
     return sdl::core::engine::RawKey::R;

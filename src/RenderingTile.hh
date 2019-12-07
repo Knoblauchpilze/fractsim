@@ -1,6 +1,7 @@
 #ifndef    RENDERING_TILE_HH
 # define   RENDERING_TILE_HH
 
+# include <memory>
 # include <maths_utils/Box.hh>
 # include <maths_utils/Vector2.hh>
 # include <core_utils/CoreObject.hh>
@@ -51,6 +52,7 @@ namespace fractsim {
       FractalOptionsShPtr m_computing;
   };
 
+  using RenderingTileShPtr = std::shared_ptr<RenderingTile>;
 }
 
 # include "RenderingTile.hxx"

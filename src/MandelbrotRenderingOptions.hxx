@@ -21,8 +21,26 @@ namespace fractsim {
   inline
   unsigned
   MandelbrotRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
-    // TODO: Implementation.
-    return p.length() < 2.0f ? 0u : getAccuracy();
+    // Compute terms of the series until it diverges.
+    unsigned acc = getAccuracy();
+    float thresh = getDivergenceThreshold();
+    float len = 0.0f, tmp = 0.0f;
+    unsigned terms = 0u;
+    utils::Vector2f cur;
+
+    while (len < thresh && terms < acc) {
+      tmp = cur.x() * cur.x() - cur.y() * cur.y() + p.x();
+      cur.y() = 2.0f * cur.x() * cur.y() + p.y();
+      cur.x() = tmp;
+
+      len = cur.lengthSquared();
+
+      if (len < thresh) {
+        ++terms;
+      }
+    }
+
+    return terms;
   }
 
   inline
@@ -35,6 +53,12 @@ namespace fractsim {
   void
   MandelbrotRenderingOptions::setExponent(float exponent) noexcept {
     m_exponent = exponent;
+  }
+
+  inline
+  float
+  MandelbrotRenderingOptions::getDivergenceThreshold() noexcept {
+    return 4.0f;
   }
 
 }

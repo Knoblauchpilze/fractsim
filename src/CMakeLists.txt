@@ -12,6 +12,7 @@ set (SOURCES
   NewtonOptions.cc
   RenderingStatus.cc
   RenderingOptions.cc
+  RenderingScheduler.cc
   )
 
 add_library (fractsim_lib SHARED

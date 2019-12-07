@@ -12,7 +12,9 @@ namespace fractsim {
     m_propsLocker(),
 
     m_renderingOpt(nullptr),
-    m_fractalOptions(nullptr)
+    m_fractalOptions(nullptr),
+
+    m_scheduler(std::make_shared<RenderingScheduler>())
   {
     setService(std::string("fractal_renderer"));
   }
@@ -106,8 +108,40 @@ namespace fractsim {
       return;
     }
 
-    // TODO: Implementation.
-    log("Should perform rendering with accuracy " + std::to_string(m_fractalOptions->getAccuracy()), utils::Level::Warning);
+    // Cancel existing rendering operations.
+    m_scheduler->cancelJobs();
+
+    // Divide the input window into several tiles and enqueue each job into
+    // the scheduler.
+    utils::Boxf area = m_renderingOpt->getRenderingArea();
+    utils::Sizef canvas = m_renderingOpt->getCanvasSize();
+
+    utils::Sizef tileDims(area.w() / getHorizontalTileCount(), area.h() / getVerticalTileCount());
+
+    utils::Sizef fTilePix(canvas.w() / getHorizontalTileCount(), canvas.h() / getVerticalTileCount());
+    utils::Vector2i tilePix(static_cast<int>(std::ceil(fTilePix.w())), static_cast<int>(std::ceil(fTilePix.h())));
+
+    std::vector<RenderingTileShPtr> tiles;
+    for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
+      for (unsigned x = 0u ; x < getHorizontalTileCount() ; ++x) {
+        tiles.push_back(
+          std::make_shared<RenderingTile>(
+            utils::Boxf(
+              area.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
+              area.getTopBound() - 1.0f * y * tileDims.h() - tileDims.h() / 2.0f,
+              tileDims
+            ),
+            tilePix,
+            m_fractalOptions
+          )
+        );
+      }
+    }
+
+    m_scheduler->enqueueJobs(tiles);
+
+    // Start the computing.
+    m_scheduler->notifyRenderingJobs();
   }
 
 }
