@@ -16,7 +16,14 @@ namespace fractsim {
 
     m_jobsLocker(),
     m_jobs(),
-    m_batchIndex(0u)
+    m_batchIndex(0u),
+
+    m_resultsLocker(),
+    m_resultsHandling(false),
+    m_results(),
+    m_resWaiter(),
+    m_resultsThreadLocker(),
+    m_resultsHandlingThread()
   {
     setService("scheduler");
     // Create the threads associated to this object.
@@ -83,8 +90,21 @@ namespace fractsim {
 
   void
   RenderingScheduler::createThreadPool() {
+    // Create the results handling thread.
+    {
+      Guard guard(m_resultsLocker);
+      m_resultsHandling = true;
+    }
+    {
+      Guard guard(m_resultsThreadLocker);
+      m_resultsHandlingThread = std::thread(
+        &RenderingScheduler::resultsHandlingLoop,
+        this
+      );
+    }
+
     // Protect from concurrent creation of the pool.
-    Guard guard(m_threadsLocker);
+    Guard guard2(m_threadsLocker);
 
     m_threads.resize(getThreadPoolSize());
     for (unsigned id = 0u ; id < m_threads.size() ; ++id) {
@@ -96,7 +116,7 @@ namespace fractsim {
     }
 
     // Start the pool.
-    UniqueGuard guard2(m_poolLocker);
+    UniqueGuard guard3(m_poolLocker);
     m_poolRunning = true;
   }
 
@@ -122,6 +142,26 @@ namespace fractsim {
     }
 
     m_threads.clear();
+
+    // Now terminate the results handling thread.
+    {
+      m_resultsLocker.lock();
+
+      // If the results thread is not started we don't have
+      // to do anything.
+      if (!m_resultsHandling) {
+        m_resultsLocker.unlock();
+        return;
+      }
+
+      // Stop the thread and wait for its termination.
+      m_resultsHandling = false;
+      m_resWaiter.notify_all();
+      m_resultsLocker.unlock();
+
+      Guard guard3(m_resultsThreadLocker);
+      m_resultsHandlingThread.join();
+    }
   }
 
   void
@@ -135,7 +175,6 @@ namespace fractsim {
       // Wait until either we are requested to stop or there are some
       // new jobs to process. Checking both conditions prevents us from
       // being falsely waked up (see spurious wakeups).
-
       m_waiter.wait(
         tLock,
         [&]() {
@@ -174,14 +213,19 @@ namespace fractsim {
 
       // If we could fetch something process it.
       if (tile != nullptr) {
-        // TODO: Actually do some processing.
         log(
-          "Should process tile " + tile->getName() + " belonging to batch " + std::to_string(batch) +
-          " in thread " + std::to_string(threadID) + " (remaining: " + std::to_string(remaining) + ")",
-          utils::Level::Warning
+          "Processing job for batch " + std::to_string(batch) + " in thread " + std::to_string(threadID) + " (remaining: " + std::to_string(remaining) + ")",
+          utils::Level::Info
         );
 
+        tile->render();
+
         // TODO: Handle the notification of the main thread that a job is finished.
+        // Notify the main thread about the result.
+        UniqueGuard guard(m_resultsLocker);
+        m_results.push_back(tile);
+
+        m_resWaiter.notify_one();
       }
 
       // Once the job is done, reacquire the mutex in order to re-wait on
@@ -190,6 +234,41 @@ namespace fractsim {
     }
 
     log("Terminating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Notice);
+  }
+
+  void
+  RenderingScheduler::resultsHandlingLoop() {
+    log("Creating results thread for scheduler pool", utils::Level::Notice);
+
+    // Create the locker to use to wait for results to be processed.
+    UniqueGuard rLock(m_resultsLocker);
+
+    while (m_resultsHandling) {
+      // Wait until either we are requested to stop or there are some
+      // new results to analyze. Checking both conditions prevents us
+      // from being falsely waked up (see spurious wakeups).
+      m_resWaiter.wait(
+        rLock,
+        [&]() {
+          return !m_resultsHandling || !m_results.empty();
+        }
+      );
+
+      // Check whether we need to process some jobs or exit the process.
+      if (!m_resultsHandling) {
+        break;
+      }
+
+      log("Should process " + std::to_string(m_results.size()) + " result(s)", utils::Level::Warning);
+      m_results.clear();
+
+      // TODO: Post a repaint event with the area that just finished and
+      // protect from concurrent accesses to `postEvent` as we are not in
+      // the main events processing thread.
+      // TODO: How to retrieve the information about the finished job ??
+    }
+
+    log("Terminating results thread for scheduler pool", utils::Level::Notice);
   }
 
 }

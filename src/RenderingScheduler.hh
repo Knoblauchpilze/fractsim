@@ -94,6 +94,15 @@ namespace fractsim {
       void
       jobFetchingLoop(unsigned threadID);
 
+      /**
+       * @brief - Used as a thread loop method when creating the pool to handle the results produced
+       *          by the threads and notify it somehow to external listeners.
+       *          The results are analyzed to determine whether they belongs to the batch currently
+       *          being processed: in any other case they are discarded.
+       */
+      void
+      resultsHandlingLoop();
+
     private:
 
       /**
@@ -166,6 +175,40 @@ namespace fractsim {
        *          as it's probably irrelevant anymore.
        */
       unsigned m_batchIndex;
+
+      /**
+       * @brief - Protects the access to the results properties (thread and waiting
+       *          condition).
+       */
+      Mutex m_resultsLocker;
+
+      /**
+       * @brief - Indicates whether the results handling process should still be occuring.
+       *          This allows to terminate gracefully the results thread.
+       */
+      bool m_resultsHandling;
+
+      /**
+       * @brief - The list of tiles already computed, available for analysis.
+       */
+      std::vector<RenderingTileShPtr> m_results;
+
+      /**
+       * @brief - Waiting condition to communicate results to the dedicated thread.
+       */
+      std::condition_variable m_resWaiter;
+
+      /**
+       * @brief - A mutex protecting the results handling thread.
+       */
+      Mutex m_resultsThreadLocker;
+
+      /**
+       * @brief - A thread used to handle the results communicated by other threads of the
+       *          pool. This one should be terminated after all the other threads otherwise
+       *          we could hang the program.
+       */
+      std::thread m_resultsHandlingThread;
   };
 
   using RenderingSchedulerShPtr = std::shared_ptr<RenderingScheduler>;
