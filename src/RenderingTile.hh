@@ -29,6 +29,13 @@ namespace fractsim {
 
       ~RenderingTile() = default;
 
+      /**
+       * @brief - Performs the computation needed to render this tile using the provided
+       *          data.
+       */
+      void
+      render();
+
     private:
 
       /**

@@ -13,6 +13,7 @@ set (SOURCES
   RenderingStatus.cc
   RenderingOptions.cc
   RenderingScheduler.cc
+  RenderingTile.cc
   )
 
 add_library (fractsim_lib SHARED
