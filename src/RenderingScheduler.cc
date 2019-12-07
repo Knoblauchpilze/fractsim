@@ -8,7 +8,6 @@ namespace fractsim {
 
     m_poolLocker(),
     m_waiter(),
-    m_poolWaiter(m_poolLocker, std::defer_lock),
     m_poolRunning(false),
     m_jobsAvailable(false),
 
@@ -27,8 +26,8 @@ namespace fractsim {
   void
   RenderingScheduler::notifyRenderingJobs() {
     // Protect from concurrent accesses.
-    m_poolWaiter.lock();
-    Guard guard(m_jobsLocker);
+    UniqueGuard guard(m_poolLocker);
+    Guard guard2(m_jobsLocker);
 
     // Determine whether some jobs have to be processed.
     if (m_jobs.empty()) {
@@ -66,7 +65,9 @@ namespace fractsim {
   void
   RenderingScheduler::cancelJobs() {
     // Protect from concurrent accesses.
-    m_poolWaiter.lock();
+    log("Waiting for pool locker");
+    UniqueGuard guard(m_poolLocker);
+    log("Waiting for jobs locker");
     Guard guard2(m_jobsLocker);
 
     // Clear the internal queue so that no more jobs can be fetched.
@@ -95,36 +96,30 @@ namespace fractsim {
     }
 
     // Start the pool.
-    m_poolWaiter.lock();
+    UniqueGuard guard2(m_poolLocker);
     m_poolRunning = true;
   }
 
   void
   RenderingScheduler::terminateThreads() {
-    log("Waiting for locker to terminate pool");
-    m_poolWaiter.lock();
+    m_poolLocker.lock();
 
     // If no threads are created, nothing to do.
     if (!m_poolRunning) {
-      log("Pool is not running, nothing to do");
-      m_poolWaiter.unlock();
+      m_poolLocker.unlock();
       return;
     }
 
     // Ask the threads to stop.
-    log("Asked pool to stop running");
     m_poolRunning = false;
-    m_poolWaiter.unlock();
+    m_poolLocker.unlock();
     m_waiter.notify_all();
 
     // Wait for all threads to finish.
     Guard guard(m_threadsLocker);
     for (unsigned id = 0u ; id < m_threads.size() ; ++id) {
-      log("Waiting for thread " + std::to_string(id) + " to terminate");
       m_threads[id].join();
     }
-
-    log("Pool has shutdown");
 
     m_threads.clear();
   }
@@ -134,13 +129,19 @@ namespace fractsim {
     log("Creating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Notice);
 
     // Create the locker to use to wait for job to do.
-    Locker tLock(m_poolLocker);
+    UniqueGuard tLock(m_poolLocker);
 
     while (m_poolRunning) {
-      // Loop to avoid spurious wakeups.
-      while (m_poolRunning && !m_jobsAvailable) {
-        m_waiter.wait(tLock);
-      }
+      // Wait until either we are requested to stop or there are some
+      // new jobs to process. Checking both conditions prevents us from
+      // being falsely waked up (see spurious wakeups).
+
+      m_waiter.wait(
+        tLock,
+        [&]() {
+          return !m_poolRunning || m_jobsAvailable;
+        }
+      );
 
       // Check whether we need to process some jobs or exit the process.
       if (!m_poolRunning) {
@@ -150,6 +151,8 @@ namespace fractsim {
       // Attempt to retrieve a job to process.
       RenderingTileShPtr tile = nullptr;
       unsigned batch = 0u;
+      unsigned remaining = 0u;
+
       {
         Guard guard(m_jobsLocker);
 
@@ -158,16 +161,32 @@ namespace fractsim {
           m_jobs.pop_back();
         }
 
+        m_jobsAvailable = !m_jobs.empty();
         batch = m_batchIndex;
+
+        remaining = m_jobs.size();
       }
+
+      // Unlock the pool mutex so that we don't block other threads while
+      // processing our chunk of job. This is what effectively allows for
+      // concurrency.
+      tLock.unlock();
 
       // If we could fetch something process it.
       if (tile != nullptr) {
         // TODO: Actually do some processing.
-        log("Should process tile " + tile->getName() + " belonging to batch " + std::to_string(batch), utils::Level::Warning);
+        log(
+          "Should process tile " + tile->getName() + " belonging to batch " + std::to_string(batch) +
+          " in thread " + std::to_string(threadID) + " (remaining: " + std::to_string(remaining) + ")",
+          utils::Level::Warning
+        );
 
         // TODO: Handle the notification of the main thread that a job is finished.
       }
+
+      // Once the job is done, reacquire the mutex in order to re-wait on
+      // the condition variable.
+      tLock.lock();
     }
 
     log("Terminating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Notice);

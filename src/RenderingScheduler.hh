@@ -106,7 +106,7 @@ namespace fractsim {
        * @brief - Convenience define to refer to a unique lock on the mutex used to
        *          protect the pool's running status.
        */
-      using Locker = std::unique_lock<Mutex>;
+      using UniqueGuard = std::unique_lock<Mutex>;
 
       /**
        * @brief - A mutex protecting concurrent accesses to the thread composing the
@@ -119,13 +119,6 @@ namespace fractsim {
        *          as no jobs are provided and the pool does not need to be terminated.
        */
       std::condition_variable m_waiter;
-
-      /**
-       * @brief - Unique lock needed by the condition variable to be able to correctly
-       *          notify worker threads when either the pool needs to be terminated or
-       *          when some jobs should be processed.
-       */
-      Locker m_poolWaiter;
 
       /**
        * @brief - Keep track of whether the pool is running. As long as this value is
