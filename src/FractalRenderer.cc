@@ -97,6 +97,13 @@ namespace fractsim {
   }
 
   void
+  FractalRenderer::drawContentPrivate(const utils::Uuid& /*uuid*/,
+                                      const utils::Boxf& /*area*/)
+  {
+    // TODO: Implementation.
+  }
+
+  void
   FractalRenderer::build() {
     // Connect the results provider signal of the thread pool to the local slot.
     m_scheduler->onTilesRendered.connect_member<FractalRenderer>(

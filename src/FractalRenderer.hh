@@ -64,6 +64,14 @@ namespace fractsim {
       bool
       mouseWheelEvent(const sdl::core::engine::MouseEvent& e) override;
 
+      /**
+       * @brief - Reimplementation of the base class method to handle the repaint of the
+       *          texture representing the fractal and its display.
+       */
+      void
+      drawContentPrivate(const utils::Uuid& uuid,
+                         const utils::Boxf& area) override;
+
     private:
 
       /**
