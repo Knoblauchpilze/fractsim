@@ -23,7 +23,9 @@ namespace fractsim {
     m_results(),
     m_resWaiter(),
     m_resultsThreadLocker(),
-    m_resultsHandlingThread()
+    m_resultsHandlingThread(),
+
+    onTilesRendered()
   {
     setService("scheduler");
     // Create the threads associated to this object.
@@ -259,13 +261,22 @@ namespace fractsim {
         break;
       }
 
-      log("Should process " + std::to_string(m_results.size()) + " result(s)", utils::Level::Warning);
-      m_results.clear();
+      // We want to notify listeners of the new results: to do that we
+      // will copy the existing results to an internal handler, unlock
+      // the mutex to allow for other results to be accumulated and
+      // for longer interpretation processes to occur without ruining
+      // the concurrency brought by the thread pool.
+      std::vector<RenderingTileShPtr> local;
+      local.swap(m_results);
 
-      // TODO: Post a repaint event with the area that just finished and
-      // protect from concurrent accesses to `postEvent` as we are not in
-      // the main events processing thread.
-      // TODO: How to retrieve the information about the finished job ??
+      // TODO: How to retrieve the information about the finished job ?? We should
+      // be able to correlate this with a batch index which would allow to discard
+      // tiles that correspond to previous batches.
+
+      // Notify listeners.
+      rLock.unlock();
+      onTilesRendered.emit(local);
+      rLock.lock();
     }
 
     log("Terminating results thread for scheduler pool", utils::Level::Notice);

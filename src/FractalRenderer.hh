@@ -111,6 +111,12 @@ namespace fractsim {
       getDefaultResetKey() noexcept;
 
       /**
+       * @brief - Connect signals and build the renderer in a more general way.
+       */
+      void
+      build();
+
+      /**
        * @brief - Used to schedule a rendering with the specified options. This
        *          method issues a request to the threads pool used by this object
        *          to handle the computations.
@@ -119,6 +125,15 @@ namespace fractsim {
        */
       void
       scheduleRendering();
+
+      /**
+       * @brief - Internal slot used to handle the tiles computed by the thread
+       *          pool. The goal is to trigger the creation of the needed repaint
+       *          events to display the results of the computation.
+       * @param tiles - a list of tiles that just finished rendering.
+       */
+      void
+      handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles);
 
     private:
 

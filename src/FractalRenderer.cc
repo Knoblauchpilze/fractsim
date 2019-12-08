@@ -18,6 +18,8 @@ namespace fractsim {
     m_scheduler(std::make_shared<RenderingScheduler>())
   {
     setService(std::string("fractal_renderer"));
+
+    build();
   }
 
   void
@@ -95,6 +97,15 @@ namespace fractsim {
   }
 
   void
+  FractalRenderer::build() {
+    // Connect the results provider signal of the thread pool to the local slot.
+    m_scheduler->onTilesRendered.connect_member<FractalRenderer>(
+      this,
+      &FractalRenderer::handleTilesComputed
+    );
+  }
+
+  void
   FractalRenderer::scheduleRendering() {
     // Check consistency.
     if (m_fractalOptions == nullptr) {
@@ -149,6 +160,14 @@ namespace fractsim {
 
     // Start the computing.
     m_scheduler->notifyRenderingJobs();
+  }
+
+  void
+  FractalRenderer::handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles) {
+    // TODO: Post a repaint event with the area that just finished and
+    // protect from concurrent accesses to `postEvent` as we are not in
+    // the main events processing thread.
+    log("Should produce repaint events for " + std::to_string(tiles.size()) + " tile(s)");
   }
 
 }

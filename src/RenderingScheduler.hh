@@ -8,6 +8,7 @@
 # include <condition_variable>
 # include <core_utils/CoreObject.hh>
 # include "RenderingTile.hh"
+# include <core_utils/Signal.hh>
 
 namespace fractsim {
 
@@ -209,6 +210,16 @@ namespace fractsim {
        *          we could hang the program.
        */
       std::thread m_resultsHandlingThread;
+
+    public:
+
+      /**
+       * @brief - This signal is emitted by the scheduler as soon as some tiles have been
+       *          successfully rendered by the thread pool.
+       *          Any listener whishing to update itself with the results of the process
+       *          can register on this signal and be notified when that happens.
+       */
+      utils::Signal<const std::vector<RenderingTileShPtr>&> onTilesRendered;
   };
 
   using RenderingSchedulerShPtr = std::shared_ptr<RenderingScheduler>;
