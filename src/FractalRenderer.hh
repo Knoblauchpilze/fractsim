@@ -145,6 +145,14 @@ namespace fractsim {
       FractalOptionsShPtr m_fractalOptions;
 
       /**
+       * @brief - Holds the data representing the fractal displayed by this renderer.
+       *          The data is composed of raw data that need to be interpreted with the
+       *          rendering options (like the palette) defined in the `m_fractalOptions`.
+       *          When a repaint event is issued the data is built from this object.
+       */
+      FractalShPtr m_fractalData;
+
+      /**
        * @brief - Convenience object allowing to schedule the rendering.
        */
       RenderingSchedulerShPtr m_scheduler;

@@ -6,6 +6,7 @@
 # include <maths_utils/Vector2.hh>
 # include <core_utils/CoreObject.hh>
 # include "FractalOptions.hh"
+# include "Fractal.hh"
 
 namespace fractsim {
 
@@ -17,15 +18,20 @@ namespace fractsim {
        *          The tile also needs some options to be provided in order to be
        *          able to perform the computations.
        *          In case the area or the options are not valid an error is raised.
+       *          The tile also has to be aware of the fractal proxy which allows
+       *          to save the result of the computations.
        * @param area - the rendering area for which the computations should be done.
        * @param step - indicates the number of individual pixels that should be used
        *               to represent the input area.
        * @param options - the options to use to compute the fractal (accuracy, actual
        *                  formula, etc.).
+       * @param proxy - the fractal proxy used to save the result of the computations
+       *                performed by the tile.
        */
       RenderingTile(const utils::Boxf& area,
                     const utils::Vector2i& step,
-                    FractalOptionsShPtr options);
+                    FractalOptionsShPtr options,
+                    FractalShPtr proxy);
 
       ~RenderingTile() = default;
 
@@ -57,6 +63,11 @@ namespace fractsim {
        *          of fractal.
        */ 
       FractalOptionsShPtr m_computing;
+
+      /**
+       * @brief - An object allowing to save the result of the computations.
+       */
+      FractalShPtr m_proxy;
   };
 
   using RenderingTileShPtr = std::shared_ptr<RenderingTile>;

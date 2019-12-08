@@ -13,6 +13,7 @@ namespace fractsim {
 
     m_renderingOpt(nullptr),
     m_fractalOptions(nullptr),
+    m_fractalData(nullptr),
 
     m_scheduler(std::make_shared<RenderingScheduler>())
   {
@@ -40,6 +41,11 @@ namespace fractsim {
         options->getDefaultRenderingWindow(),
         sdl::core::LayoutItem::getRenderingArea().toSize()
       );
+    }
+
+    // Create fractal data if needed.
+    if (m_fractalData == nullptr) {
+      m_fractalData = std::make_shared<Fractal>();
     }
 
     m_fractalOptions = options;
@@ -132,7 +138,8 @@ namespace fractsim {
               tileDims
             ),
             tilePix,
-            m_fractalOptions
+            m_fractalOptions,
+            m_fractalData
           )
         );
       }
