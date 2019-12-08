@@ -17,7 +17,6 @@ namespace fractsim {
       log("Should set " + p.toString() + " with confidence " + std::to_string(clamped), utils::Level::Warning);
     }
 
-    // TODO: Check computation, we appear to never reach a value different from 0.
     // TODO: Handle saving.
   }
 
