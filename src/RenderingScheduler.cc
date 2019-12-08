@@ -56,7 +56,7 @@ namespace fractsim {
   }
 
   void
-  RenderingScheduler::enqueueJobs(std::vector<RenderingTileShPtr>& jobs) {
+  RenderingScheduler::enqueueJobs(const std::vector<RenderingTileShPtr>& jobs) {
     // Protect from concurrent accesses.
     Guard guard(m_jobsLocker);
 
@@ -68,7 +68,16 @@ namespace fractsim {
     }
 
     m_jobs.clear();
-    m_jobs.swap(jobs);
+
+    // Build the job by providing the batch index for these jobs.
+    for (unsigned id = 0u ; id < jobs.size() ; ++id) {
+      m_jobs.push_back(
+        Job{
+          jobs[id],
+          m_batchIndex
+        }
+      );
+    }
   }
 
   void
@@ -190,7 +199,7 @@ namespace fractsim {
       }
 
       // Attempt to retrieve a job to process.
-      RenderingTileShPtr tile = nullptr;
+      Job job = Job{nullptr, 0u};
       unsigned batch = 0u;
       unsigned remaining = 0u;
 
@@ -198,7 +207,7 @@ namespace fractsim {
         Guard guard(m_jobsLocker);
 
         if (!m_jobs.empty()) {
-          tile = m_jobs.back();
+          job = m_jobs.back();
           m_jobs.pop_back();
         }
 
@@ -214,18 +223,17 @@ namespace fractsim {
       tLock.unlock();
 
       // If we could fetch something process it.
-      if (tile != nullptr) {
+      if (job.tile != nullptr) {
         log(
           "Processing job for batch " + std::to_string(batch) + " in thread " + std::to_string(threadID) + " (remaining: " + std::to_string(remaining) + ")",
           utils::Level::Info
         );
 
-        tile->render();
+        job.tile->render();
 
-        // TODO: Handle the notification of the main thread that a job is finished.
         // Notify the main thread about the result.
         UniqueGuard guard(m_resultsLocker);
-        m_results.push_back(tile);
+        m_results.push_back(job);
 
         m_resWaiter.notify_one();
       }
@@ -266,16 +274,24 @@ namespace fractsim {
       // the mutex to allow for other results to be accumulated and
       // for longer interpretation processes to occur without ruining
       // the concurrency brought by the thread pool.
-      std::vector<RenderingTileShPtr> local;
+      std::vector<Job> local;
       local.swap(m_results);
 
-      // TODO: How to retrieve the information about the finished job ?? We should
-      // be able to correlate this with a batch index which would allow to discard
-      // tiles that correspond to previous batches.
+      // Strip the batch index and keep only the jobs consistent with the
+      // current one.
+      std::vector<RenderingTileShPtr> res;
+      for (unsigned id = 0u ; id < local.size() ; ++id) {
+        if (local[id].batch != m_batchIndex) {
+          log(std::string("Discarding job for old batch ") + std::to_string(local[id].batch) + " (current is " + std::to_string(m_batchIndex) + ")");
+          continue;
+        }
+
+        res.push_back(local[id].tile);
+      }
 
       // Notify listeners.
       rLock.unlock();
-      onTilesRendered.emit(local);
+      onTilesRendered.emit(res);
       rLock.lock();
     }
 

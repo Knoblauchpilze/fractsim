@@ -18,6 +18,10 @@
 # include "NewtonOptions.hh"
 # include "RenderingStatus.hh"
 
+// TODO: A warning appear about the `rendering_status_progress` widget
+// that seem to have no queue and tries to post a resize event. Is this
+// normal ?
+
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
   utils::StdLogger logger;

@@ -41,12 +41,10 @@ namespace fractsim {
        *          batch of jobs).
        *          The user should call the `notifyRenderingJobs` method to actually
        *          start the processing.
-       * @param jobs - the list of jobs to enqueue. Note that the input vector is left
-       *               in an undefined state after this function if it returns and thus
-       *               should not be used afterwards.
+       * @param jobs - the list of jobs to enqueue.
        */
       void
-      enqueueJobs(std::vector<RenderingTileShPtr>& jobs);
+      enqueueJobs(const std::vector<RenderingTileShPtr>& jobs);
 
       /**
        * @brief - Used to cancel any existing jobs being processed for this scheduler.
@@ -119,6 +117,16 @@ namespace fractsim {
       using UniqueGuard = std::unique_lock<Mutex>;
 
       /**
+       * @brief - Convenience structure representing a tile and the corresponding batch
+       *          index. This allows to identify whether a result is linked to the current
+       *          batch or to an old one.
+       */
+      struct Job {
+        RenderingTileShPtr tile;
+        unsigned batch;
+      };
+
+      /**
        * @brief - A mutex protecting concurrent accesses to the thread composing the
        *          pool. Typically used to start or stop the thread pool.
        */
@@ -168,7 +176,7 @@ namespace fractsim {
       /**
        * @brief - The list of jobs currently available for processing.
        */
-      std::vector<RenderingTileShPtr> m_jobs;
+      std::vector<Job> m_jobs;
 
       /**
        * @brief - An index identifying the current batch of jobs being fed to the
@@ -192,7 +200,7 @@ namespace fractsim {
       /**
        * @brief - The list of tiles already computed, available for analysis.
        */
-      std::vector<RenderingTileShPtr> m_results;
+      std::vector<Job> m_results;
 
       /**
        * @brief - Waiting condition to communicate results to the dedicated thread.
