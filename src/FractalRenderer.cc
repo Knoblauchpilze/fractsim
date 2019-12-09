@@ -1,5 +1,6 @@
 
 # include "FractalRenderer.hh"
+# include <sdl_engine/PaintEvent.hh>
 
 namespace fractsim {
 
@@ -69,8 +70,6 @@ namespace fractsim {
     // Protect from concurrent accesses to perform the zoom operation and
     // also schedule the rendering.
     utils::Vector2i motion = e.getScroll();
-
-    Guard guard(m_propsLocker);
 
     // Perform the zoom in operation if needed.
     if (m_renderingOpt == nullptr) {
@@ -171,10 +170,18 @@ namespace fractsim {
 
   void
   FractalRenderer::handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles) {
-    // TODO: Post a repaint event with the area that just finished and
-    // protect from concurrent accesses to `postEvent` as we are not in
-    // the main events processing thread.
-    log("Should produce repaint events for " + std::to_string(tiles.size()) + " tile(s)");
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Post a repaint event for each area that has been rendered.
+    sdl::core::engine::PaintEventShPtr e = std::make_shared<sdl::core::engine::PaintEvent>();
+
+    for (unsigned id = 0u ; id < tiles.size() ; ++id) {
+      utils::Boxf local = convertFractalAreaToLocal(tiles[id]->getArea());
+      e->addUpdateRegion(mapToGlobal(local));
+    }
+
+    postEvent(e);
   }
 
 }

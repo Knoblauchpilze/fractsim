@@ -45,6 +45,21 @@ namespace fractsim {
       updatePrivate(const utils::Boxf& window) override;
 
       /**
+       * @brief - Reimplementation of the base class method to be able to provide a
+       *          locking behavior whenever this method is called. This allows to
+       *          ensure thread safety when processing events as the rendering of the
+       *          thread pool might issue posting repaint events anytime.
+       *          It also means that most of the methods requiring a lock on this
+       *          object's properties do not need to care about acquiring the lock as
+       *          it is most probably already acquired (given that most behaviors are
+       *          tied to some event being processed).
+       * @param e - the event to handle.
+       * @return - `true` if the event was recognized, false otherwise.
+       */
+      bool
+      handleEvent(sdl::core::engine::EventShPtr e) override;
+
+      /**
        * @brief - Reimplementation of the base class method to detect whenever the
        *          reset key is pressed, allowing to set the rendering window to its
        *          default value and thus regain a nice viewpoint.
@@ -142,6 +157,18 @@ namespace fractsim {
        */
       void
       handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles);
+
+      /**
+       * @brief - Used to convert the input area expressed in the fractal's coordinate
+       *          frame into an area expressed in local coordinate frame. This is used
+       *          to make the association between the tiles and the corresponding area
+       *          displayed.
+       * @param area - an area assumed to be expressed in fractal's coordinate frame.
+       * @return - a box representing the area in local coordinate frame where the input
+       *           area is displayed.
+       */
+      utils::Boxf
+      convertFractalAreaToLocal(const utils::Boxf& area) const;
 
     private:
 

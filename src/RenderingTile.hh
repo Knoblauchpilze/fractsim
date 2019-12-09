@@ -42,6 +42,13 @@ namespace fractsim {
       void
       render();
 
+      /**
+       * @brief - Returns the area associated to this tile in the fractal's coordinate frame.
+       * @¶eturn - a box representing the area associated to this tile.
+       */
+      utils::Boxf
+      getArea() const noexcept;
+
     private:
 
       /**
