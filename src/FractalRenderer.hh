@@ -45,21 +45,6 @@ namespace fractsim {
       updatePrivate(const utils::Boxf& window) override;
 
       /**
-       * @brief - Reimplementation of the base class method to be able to provide a
-       *          locking behavior whenever this method is called. This allows to
-       *          ensure thread safety when processing events as the rendering of the
-       *          thread pool might issue posting repaint events anytime.
-       *          It also means that most of the methods requiring a lock on this
-       *          object's properties do not need to care about acquiring the lock as
-       *          it is most probably already acquired (given that most behaviors are
-       *          tied to some event being processed).
-       * @param e - the event to handle.
-       * @return - `true` if the event was recognized, false otherwise.
-       */
-      bool
-      handleEvent(sdl::core::engine::EventShPtr e) override;
-
-      /**
        * @brief - Reimplementation of the base class method to detect whenever the
        *          reset key is pressed, allowing to set the rendering window to its
        *          default value and thus regain a nice viewpoint.

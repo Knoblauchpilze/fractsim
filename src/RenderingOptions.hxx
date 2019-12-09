@@ -34,9 +34,11 @@ namespace fractsim {
   }
 
   inline
-  void
+  utils::Boxf
   RenderingOptions::reset() {
     m_area = m_initial;
+
+    return m_area;
   }
 
   inline

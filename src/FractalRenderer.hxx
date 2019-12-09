@@ -6,17 +6,6 @@
 namespace fractsim {
 
   inline
-  bool
-  FractalRenderer::handleEvent(sdl::core::engine::EventShPtr e) {
-    // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
-
-    // Use the base class handler.
-    // TODO: Maybe we should reimplement `processEvents`.
-    return sdl::core::SdlWidget::handleEvent(e);
-  }
-
-  inline
   void
   FractalRenderer::updatePrivate(const utils::Boxf& window) {
     // Use the base handler.
@@ -25,6 +14,7 @@ namespace fractsim {
     // Update the rendering options if needed.
     if (m_renderingOpt != nullptr) {
       m_renderingOpt->setCanvasSize(window.toSize());
+      m_fractalData->resize(window.toSize());
 
       scheduleRendering();
     }
@@ -37,7 +27,8 @@ namespace fractsim {
     if (e.getRawKey() == sdl::core::engine::RawKey::R) {
       // Reset the options to the initial viewing window.
       if (m_renderingOpt != nullptr) {
-        m_renderingOpt->reset();
+        utils::Boxf area = m_renderingOpt->reset();
+        m_fractalData->setRenderingArea(area);
 
         // Schedule a rendering.
         scheduleRendering();

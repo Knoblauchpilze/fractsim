@@ -48,7 +48,10 @@ namespace fractsim {
 
     // Create fractal data if needed.
     if (m_fractalData == nullptr) {
-      m_fractalData = std::make_shared<Fractal>();
+      m_fractalData = std::make_shared<Fractal>(
+        m_renderingOpt->getCanvasSize(),
+        m_renderingOpt->getRenderingArea()
+      );
     }
 
     m_fractalOptions = options;
@@ -87,7 +90,8 @@ namespace fractsim {
     utils::Vector2f mousePos = e.getMousePosition();
     utils::Vector2f conv(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
 
-    m_renderingOpt->zoom(conv, factor);
+    utils::Boxf newArea = m_renderingOpt->zoom(conv, factor);
+    m_fractalData->setRenderingArea(newArea);
 
     // Schedule the rendering.
     scheduleRendering();

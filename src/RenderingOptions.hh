@@ -57,15 +57,17 @@ namespace fractsim {
        * @param center - the point to fix when performing the zoom.
        * @param factor - a measure of the ratio between the new size and the current size
        *                 of the rendering area.
+       * @return - the new rendering area.
        */
-      void
+      utils::Boxf
       zoom(const utils::Vector2f& center,
            float factor = 2.0f);
 
       /**
        * @brief - Resets the current rendering area to its initial value.
+       * @return - the new rendering area.
        */
-      void
+      utils::Boxf
       reset();
 
       utils::Sizef

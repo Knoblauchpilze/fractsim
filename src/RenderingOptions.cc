@@ -15,7 +15,7 @@ namespace fractsim {
     reset();
   }
 
-  void
+  utils::Boxf
   RenderingOptions::zoom(const utils::Vector2f& center,
                          float factor)
   {
@@ -53,6 +53,8 @@ namespace fractsim {
 
     // Assign it to the internal area.
     m_area = newArea;
+
+    return m_area;
   }
 
 }
