@@ -18,6 +18,13 @@
 # include "NewtonOptions.hh"
 # include "RenderingStatus.hh"
 
+// TODO: `R` key seems to fail sometime.
+// TODO: Improve default values to be correct (so set text in `TextBox`es).
+// TODO: Check offset of 1 pixel when repainting tiles.
+// TODO: Handle scrolling.
+// TODO: Allow customization of Palette (probably through the menu bar).
+// TODO: Add button to reset to default settings for the specified fractal type.
+
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
   utils::StdLogger logger;
