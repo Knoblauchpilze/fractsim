@@ -2,6 +2,7 @@
 # define   MANDELBROT_RENDERING_OPTIONS_HXX
 
 # include "MandelbrotRenderingOptions.hh"
+# include <complex>
 
 namespace fractsim {
 
@@ -23,18 +24,17 @@ namespace fractsim {
   MandelbrotRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
     // Compute terms of the series until it diverges.
     unsigned acc = getAccuracy();
+    float n = getExponent();
     float thresh = getDivergenceThreshold();
-    float len = 0.0f, tmp = 0.0f;
+    float len = 0.0f;
     unsigned terms = 0u;
-    utils::Vector2f cur;
+    std::complex<float> cur(0.0f, 0.0f);
+    std::complex<float> c(p.x(), p.y());
 
     while (len < thresh && terms < acc) {
-      tmp = cur.x() * cur.x() - cur.y() * cur.y() + p.x();
-      cur.y() = 2.0f * cur.x() * cur.y() + p.y();
-      cur.x() = tmp;
+      cur = std::pow(cur, n) + c;
 
-      len = cur.lengthSquared();
-
+      len = norm(cur);
       if (len < thresh) {
         ++terms;
       }
