@@ -83,9 +83,7 @@ namespace fractsim {
   void
   RenderingScheduler::cancelJobs() {
     // Protect from concurrent accesses.
-    log("Waiting for pool locker");
     UniqueGuard guard(m_poolLocker);
-    log("Waiting for jobs locker");
     Guard guard2(m_jobsLocker);
 
     // Clear the internal queue so that no more jobs can be fetched.
