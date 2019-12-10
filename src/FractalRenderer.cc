@@ -93,8 +93,10 @@ namespace fractsim {
     float factor = motion.y() > 0 ? getDefaultZoomInFactor() : getDefaultZoomOutFactor();
 
     utils::Sizef thisArea = sdl::core::LayoutItem::getRenderingArea().toSize();
-    utils::Vector2f mousePos = e.getMousePosition();
-    utils::Vector2f conv(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
+    utils::Vector2f mousePos = mapFromGlobal(e.getMousePosition());
+    utils::Vector2f windowPerc(mousePos.x() / thisArea.w(), mousePos.y() / thisArea.h());
+
+    utils::Vector2f conv = m_renderingOpt->getPointAt(windowPerc);
 
     utils::Boxf newArea = m_renderingOpt->zoom(conv, factor);
     m_fractalData->setRenderingArea(newArea);
