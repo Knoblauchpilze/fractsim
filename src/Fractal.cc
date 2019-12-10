@@ -57,7 +57,8 @@ namespace fractsim {
 
     // Create a brush from the array of colors.
     sdl::core::engine::BrushShPtr brush = std::make_shared<sdl::core::engine::Brush>(
-      std::string("brush_for_") + getName()
+      std::string("brush_for_") + getName(),
+      false
     );
 
     brush->createFromRaw(utils::Sizei::fromVector(m_dims), colors);
