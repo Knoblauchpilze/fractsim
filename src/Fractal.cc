@@ -98,7 +98,10 @@ namespace fractsim {
       );
     }
 
-    unsigned p = cell.y() * m_dims.x() + cell.x();
+    // Inverse the internal data array along the `y` axis: indeed as we will use it
+    // to generate a surface we need to account for the axis inversion that will be
+    // applied there.
+    unsigned p = (m_dims.y() - 1 - cell.y()) * m_dims.x() + cell.x();
 
     if (cell.x() < 0 || cell.y() < 0 || cell.x() >= m_dims.x() || cell.y() >= m_dims.y()) {
       error(
