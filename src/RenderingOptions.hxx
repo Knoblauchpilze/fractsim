@@ -61,6 +61,15 @@ namespace fractsim {
     m_canvas = canvas;
   }
 
+  inline
+  utils::Vector2f
+  RenderingOptions::getPointAt(const utils::Vector2f& p) const noexcept {
+    return utils::Vector2f(
+      m_area.x() + p.x() * m_area.w(),
+      m_area.y() + p.y() * m_area.h()
+    );
+  }
+
 }
 
 #endif    /* RENDERING_OPTIONS_HXX */

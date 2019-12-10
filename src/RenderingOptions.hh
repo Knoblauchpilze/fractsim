@@ -52,7 +52,7 @@ namespace fractsim {
 
       /**
        * @brief - Perform a zoom which keeps the `center` at the specified location and
-       *          with the specified factor. Note that theoreticall the center could be
+       *          with the specified factor. Note that theoretically the center could be
        *          outside of the visible range.
        * @param center - the point to fix when performing the zoom.
        * @param factor - a measure of the ratio between the new size and the current size
@@ -79,6 +79,19 @@ namespace fractsim {
        */
       void
       setCanvasSize(const utils::Sizef& canvas);
+
+      /**
+       * @brief - Returns the real world coordinates of the point corresponding to the
+       *          input percentage of the area. The coordinate are interpreted as some
+       *          percentage of the internal rendering area, such that `p.x() = 1.0f`
+       *          translate into `getRenderingArea().getRightBound()` and so on.
+       *          Note that the input range for each coordinate of the `p` vector is
+       *          `[-0.5; 0.5]`.
+       * @param p - the point in percentage to convert.
+       * @return - the real world coordinate of the input point.
+       */
+      utils::Vector2f
+      getPointAt(const utils::Vector2f& p) const noexcept;
 
     private:
 
