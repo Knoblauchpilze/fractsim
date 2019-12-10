@@ -30,15 +30,39 @@ namespace fractsim {
     // Clamp the confidence to a valid range.
     float clamped = std::min(1.0f, std::max(0.0f, confidence));
 
-    if (clamped > 0.0f) {
-      log("Should set " + p.toString() + " with confidence " + std::to_string(clamped), utils::Level::Warning);
-    }
-
     // Compute the coordinates of the input point so that we can fill in the internal
     // cache. We shuold also check whether the cache is valid.
     utils::Vector2i cell = computeCellFromCoords(p);
 
     setOrThrow(cell, clamped);
+  }
+
+  sdl::core::engine::BrushShPtr
+  Fractal::createBrush(sdl::core::engine::GradientShPtr gradient) {
+    // Check consistency.
+    if (gradient == nullptr) {
+      error(
+        std::string("Could not create brush for fractal"),
+        std::string("Invalid null gradient")
+      );
+    }
+
+    // Create the colors representing the brush.
+    unsigned total = m_dims.x() * m_dims.y();
+    std::vector<sdl::core::engine::Color> colors(total, sdl::core::engine::Color::NamedColor::Black);
+
+    for (unsigned id = 0u ; id < total ; ++id) {
+      colors[id] = gradient->getColorAt(m_data[id]);
+    }
+
+    // Create a brush from the array of colors.
+    sdl::core::engine::BrushShPtr brush = std::make_shared<sdl::core::engine::Brush>(
+      std::string("brush_for_") + getName()
+    );
+
+    brush->createFromRaw(utils::Sizei::fromVector(m_dims), colors);
+
+    return brush;
   }
 
   utils::Vector2i

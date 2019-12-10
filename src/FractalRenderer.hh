@@ -24,7 +24,7 @@ namespace fractsim {
       FractalRenderer(const utils::Sizef& sizeHint = utils::Sizef(),
                       sdl::core::SdlWidget* parent = nullptr);
 
-      ~FractalRenderer() = default;
+      ~FractalRenderer();
 
       /**
        * @brief - Used to request a new rendering with the current settings.
@@ -155,6 +155,36 @@ namespace fractsim {
       utils::Boxf
       convertFractalAreaToLocal(const utils::Boxf& area) const;
 
+      /**
+       * @brief - Used to clear the texture associated to this fractal.
+       */
+      void
+      clearTiles();
+
+      /**
+       * @brief - Used to determine whether the tiles have changed since the creation
+       *          of the texture representing them. If this is the case it means that
+       *          the `m_tex` should be recreated.
+       *          Assumes that the locker is alreadu acquired.
+       */
+      bool
+      tilesChanged() const noexcept;
+
+      /**
+       * @brief - Used to specify that the tiles have changed and thus that the `m_tex`
+       *          texture should be recreated on the next call to `drawContentPrivate`.
+       *          Assumes that the locker is alreadu acquired.
+       */
+      void
+      setTilesChanged() noexcept;
+
+      /**
+       * @brief - Performs the creation of the texture representing this fractal from
+       *          the data associated to it. Assumes that the locker is already acquired.
+       */
+      void
+      loadTiles();
+
     private:
 
       /**
@@ -191,6 +221,20 @@ namespace fractsim {
        * @brief - Convenience object allowing to schedule the rendering.
        */
       RenderingSchedulerShPtr m_scheduler;
+
+      /**
+       * @brief - The index returned by the engine for the texture representing the fractal
+       *          on screen. It is rendered from the tiles' data computed internally and is
+       *          valid as long as the `m_tilesRendered` boolean is set to `false`.
+       */
+      utils::Uuid m_tex;
+
+      /**
+       * @brief - This value indicates whether the `m_tex` identifier is still valid or not.
+       *          Each time a tile is rendered this value is set to `true` indicating that
+       *          the texture representing the fractal needs to be updated.
+       */
+      bool m_tilesRendered;
   };
 
 }

@@ -16,7 +16,10 @@ namespace fractsim {
     m_fractalOptions(nullptr),
     m_fractalData(nullptr),
 
-    m_scheduler(std::make_shared<RenderingScheduler>())
+    m_scheduler(std::make_shared<RenderingScheduler>()),
+
+    m_tex(),
+    m_tilesRendered(true)
   {
     setService(std::string("fractal_renderer"));
 
@@ -35,7 +38,7 @@ namespace fractsim {
       return;
     }
 
-    // Assign the new options.
+    // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
     // Create rendering options if needed.
@@ -74,6 +77,9 @@ namespace fractsim {
     // also schedule the rendering.
     utils::Vector2i motion = e.getScroll();
 
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
     // Perform the zoom in operation if needed.
     if (m_renderingOpt == nullptr) {
       log(
@@ -100,10 +106,44 @@ namespace fractsim {
   }
 
   void
-  FractalRenderer::drawContentPrivate(const utils::Uuid& /*uuid*/,
-                                      const utils::Boxf& /*area*/)
+  FractalRenderer::drawContentPrivate(const utils::Uuid& uuid,
+                                      const utils::Boxf& area)
   {
-    // TODO: Implementation.
+    // Acquire the lock on the attributes of this widget.
+    Guard guard(m_propsLocker);
+
+    // Load the tiles: this should happen only if some tiles have been
+    // rendered since the last draw operation. This status is kept by
+    // the `m_tilesRendered` boolean. Generally this indicates that a
+    // compute operation is running and that some more tiles have been
+    // received.
+    if (tilesChanged()) {
+      // Load the text.
+      loadTiles();
+
+      // The tiles have been updated.
+      m_tilesRendered = false;
+    }
+
+    // Check whether there's something to display.
+    if (!m_tex.valid()) {
+      return;
+    }
+
+    // Convert the area to local so that we blit only the right area of
+    // the texture representing the fractal.
+    utils::Boxf thisArea = LayoutItem::getRenderingArea().toOrigin();
+    utils::Sizef texSize = getEngine().queryTexture(m_tex);
+
+    utils::Boxf srcArea = thisArea.intersect(area);
+    utils::Boxf dstArea = thisArea.intersect(area);
+
+    utils::Boxf srcEngine = convertToEngineFormat(srcArea, texSize);
+    utils::Boxf dstEngine = convertToEngineFormat(dstArea, area);
+
+    log("Repainting " + area.toString() + " (src: " + srcArea.toString() + ", tot: " + texSize.toString() + ", to " + dstArea.toString());
+
+    getEngine().drawTexture(m_tex, &srcEngine, &uuid, &dstEngine);
   }
 
   void
@@ -182,10 +222,17 @@ namespace fractsim {
 
     for (unsigned id = 0u ; id < tiles.size() ; ++id) {
       utils::Boxf local = convertFractalAreaToLocal(tiles[id]->getArea());
-      e->addUpdateRegion(mapToGlobal(local));
+
+      if (local.valid()) {
+        log("Handling repaint from tile " + tiles[id]->getArea().toString());
+        e->addUpdateRegion(mapToGlobal(local));
+      }
     }
 
     postEvent(e);
+
+    // The tiles need to be rendered again.
+    setTilesChanged();
   }
 
 }

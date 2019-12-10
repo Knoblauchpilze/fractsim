@@ -25,6 +25,7 @@ set(SDL_MINIMAL_DUMMY_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
 
 target_link_libraries(fractsim_lib
   sdl_core
+  sdl_graphic
   )
 
 target_include_directories (fractsim_lib PUBLIC

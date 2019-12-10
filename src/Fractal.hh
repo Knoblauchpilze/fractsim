@@ -7,6 +7,8 @@
 # include <maths_utils/Vector2.hh>
 # include <maths_utils/Size.hh>
 # include <maths_utils/Box.hh>
+# include <sdl_engine/Brush.hh>
+# include <sdl_graphic/Gradient.hh>
 
 namespace fractsim {
 
@@ -65,6 +67,16 @@ namespace fractsim {
        */
       void
       setRenderingArea(const utils::Boxf& area);
+
+      /**
+       * @brief - Create a new brush that can be used to create a texture representing this
+       *          fractal. The gradient in input is used to fetch colors based on the data
+       *          available for the convergence of the fractal.
+       * @param gradient - the palette to use to colorize the fractal.
+       * @return - a pointer to a brush representing the fractal.
+       */
+      sdl::core::engine::BrushShPtr
+      createBrush(sdl::core::engine::GradientShPtr gradient);
 
     private:
 
