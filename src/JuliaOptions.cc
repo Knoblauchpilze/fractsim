@@ -77,10 +77,10 @@ namespace fractsim {
 
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
-    sdl::graphic::LabelWidget* realPartLabel = createLabel("real_part_label", "Power:", this);
+    sdl::graphic::LabelWidget* realPartLabel = createLabel("real_part_label", "Real part:", this);
     sdl::graphic::TextBox* realPartValue = createTextBox(getConstantRealPartValueName(), this);
 
-    sdl::graphic::LabelWidget* imgPartLabel = createLabel("img_part_label", "Power:", this);
+    sdl::graphic::LabelWidget* imgPartLabel = createLabel("img_part_label", "Imaginary part:", this);
     sdl::graphic::TextBox* imgPartValue = createTextBox(getConstantImgPartValueName(), this);
 
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
