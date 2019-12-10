@@ -97,8 +97,8 @@ namespace fractsim {
     utils::Boxf total = m_renderingOpt->getRenderingArea();
     utils::Sizef canvas = m_renderingOpt->getCanvasSize();
 
-    float dToLeft = (area.x() - total.x()) / total.w();
-    float dToBottom = (area.y() - total.y()) / total.h();
+    float dToLeft = (area.x() - total.getLeftBound()) / total.w();
+    float dToBottom = (area.y() - total.getBottomBound()) / total.h();
 
     utils::Vector2f areaToResize(canvas.w() / total.w(), canvas.h() / total.h());
 

@@ -133,15 +133,14 @@ namespace fractsim {
     // Convert the area to local so that we blit only the right area of
     // the texture representing the fractal.
     utils::Boxf thisArea = LayoutItem::getRenderingArea().toOrigin();
+    utils::Sizef sizeEnv = getEngine().queryTexture(uuid);
     utils::Sizef texSize = getEngine().queryTexture(m_tex);
 
     utils::Boxf srcArea = thisArea.intersect(area);
     utils::Boxf dstArea = thisArea.intersect(area);
 
     utils::Boxf srcEngine = convertToEngineFormat(srcArea, texSize);
-    utils::Boxf dstEngine = convertToEngineFormat(dstArea, area);
-
-    log("Repainting " + area.toString() + " (src: " + srcArea.toString() + ", tot: " + texSize.toString() + ", to " + dstArea.toString());
+    utils::Boxf dstEngine = convertToEngineFormat(dstArea, sizeEnv);
 
     getEngine().drawTexture(m_tex, &srcEngine, &uuid, &dstEngine);
   }
@@ -224,7 +223,6 @@ namespace fractsim {
       utils::Boxf local = convertFractalAreaToLocal(tiles[id]->getArea());
 
       if (local.valid()) {
-        log("Handling repaint from tile " + tiles[id]->getArea().toString());
         e->addUpdateRegion(mapToGlobal(local));
       }
     }
