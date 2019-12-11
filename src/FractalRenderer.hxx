@@ -187,6 +187,12 @@ namespace fractsim {
   inline
   utils::Vector2f
   FractalRenderer::convertLocalToRealWorld(const utils::Vector2f& global) {
+    // Check if a rendering window is assigned.
+    if (m_renderingOpt == nullptr) {
+      // Return default coordinates.
+      return utils::Vector2f();
+    }
+
     // Map the position to local coordinate frame.
     utils::Vector2f pos = mapFromGlobal(global);
 
