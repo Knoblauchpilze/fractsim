@@ -24,11 +24,14 @@ copy:
 
 sandbox: release copy copyRelease
 
-distDebug: debug copy copyDebug
+sandboxDebug: debug copy copyDebug
 
 r: sandbox
 	cd sandbox && ./run.sh local
 
-d: distDebug
+d: sandboxDebug
 	cd sandbox && ./debug.sh local
+
+v: sandboxDebug
+	cd sandbox && ./valgrind.sh local
 
