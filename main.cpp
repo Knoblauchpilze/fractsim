@@ -24,6 +24,11 @@
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
+// TODO: Connect progress bar
+// TODO: Connect zoom panel
+// TODO: Maybe add a display of the current rendering window
+// TODO: Also add the position of the mouse in world coordinates
+// TODO: Check why the right_dock_widget seems to get notified of repaint events.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
@@ -60,13 +65,13 @@ int main(int /*argc*/, char** /*argv*/) {
     app->setCentralWidget(renderer);
 
     fractsim::MandelbrotOptions* mandelOpt = new fractsim::MandelbrotOptions();
-    app->addDockWidget(mandelOpt, sdl::app::DockWidgetArea::RightArea);
+    app->addDockWidget(mandelOpt, sdl::app::DockWidgetArea::RightArea, std::string("Mandelbrot"));
 
     fractsim::JuliaOptions* juliaOpt = new fractsim::JuliaOptions();
-    app->addDockWidget(juliaOpt, sdl::app::DockWidgetArea::RightArea);
+    app->addDockWidget(juliaOpt, sdl::app::DockWidgetArea::RightArea, std::string("Julia"));
 
     fractsim::NewtonOptions* newtonOpt = new fractsim::NewtonOptions(5u);
-    app->addDockWidget(newtonOpt, sdl::app::DockWidgetArea::RightArea);
+    app->addDockWidget(newtonOpt, sdl::app::DockWidgetArea::RightArea, std::string("Newton"));
 
     fractsim::RenderingStatus* status = new fractsim::RenderingStatus();
     app->addDockWidget(status, sdl::app::DockWidgetArea::TopArea);
