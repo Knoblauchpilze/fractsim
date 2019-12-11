@@ -25,8 +25,14 @@
 // TODO: Add button to reset to default settings for the specified fractal type.
 // TODO: Connect progress bar.
 // TODO: Check why the right_dock_widget seems to get notified of repaint events.
-// TODO: Crash when we maximize and then call `Render`.
 // TODO: Random crash when zooming too fast.
+
+// TODO: Crash when we maximize and then call `Render`.
+// There is no copy of the pixel data when creating a texture from the pixels so
+// it crashes because we release the brush before actually accessing the texture.
+// We should change that.
+// In 'Brush.cc:58' the `raw` array is freed after the creation of the texture
+// which might cause undefined behavior.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
