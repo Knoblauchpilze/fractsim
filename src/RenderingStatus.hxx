@@ -92,6 +92,7 @@ namespace fractsim {
     return getChildAs<sdl::graphic::LabelWidget>(getZoomLabelName());
   }
 
+  inline
   sdl::graphic::ProgressBar*
   RenderingStatus::getProgressBar() {
     return getChildAs<sdl::graphic::ProgressBar>(getProgressBarName());

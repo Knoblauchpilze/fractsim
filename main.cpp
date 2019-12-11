@@ -17,6 +17,7 @@
 # include "JuliaOptions.hh"
 # include "NewtonOptions.hh"
 # include "RenderingStatus.hh"
+# include "StatusBar.hh"
 
 // TODO: `R` key seems to fail sometime.
 // TODO: Check offset of 1 pixel when repainting tiles.
@@ -24,11 +25,13 @@
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
 // TODO: Connect progress bar.
-// TODO: Maybe add a display of the current rendering window.
-// TODO: Also add the position of the mouse in world coordinates.
 // TODO: Check why the right_dock_widget seems to get notified of repaint events.
 // TODO: Crash when we maximize and then call `Render`.
 // TODO: Random crash when zooming too fast.
+
+// TODO: Add status bar.
+// TODO: Maybe add a display of the current rendering window.
+// TODO: Also add the position of the mouse in world coordinates.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
@@ -75,6 +78,9 @@ int main(int /*argc*/, char** /*argv*/) {
 
     fractsim::RenderingStatus* status = new fractsim::RenderingStatus();
     app->addDockWidget(status, sdl::app::DockWidgetArea::TopArea);
+
+    fractsim::StatusBar* bar = new fractsim::StatusBar();
+    app->setStatusBar(bar);
 
     // Connect the options changed signal to the request rendering slot.
     mandelOpt->onOptionsChanged.connect_member<fractsim::FractalRenderer>(

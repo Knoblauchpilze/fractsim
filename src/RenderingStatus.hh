@@ -89,7 +89,7 @@ namespace fractsim {
       /**
        * @brief - Used to defnie the margins of the layout applied around the whole
        *          widget. Usually `0`.
-       * @return - a value representing the global margin for this widget.
+       * @return - a value representing the global margins for this widget.
        */
       static
       float

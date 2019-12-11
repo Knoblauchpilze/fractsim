@@ -9,8 +9,7 @@ namespace fractsim {
                                    sdl::core::SdlWidget* parent):
     sdl::core::SdlWidget(std::string("rendering_status"),
                          hint,
-                         parent,
-                         sdl::core::engine::Color::NamedColor::Silver),
+                         parent),
 
     m_propsLocker()
   {

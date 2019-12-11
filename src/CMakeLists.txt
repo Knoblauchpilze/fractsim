@@ -15,6 +15,7 @@ set (SOURCES
   RenderingScheduler.cc
   RenderingTile.cc
   Fractal.cc
+  StatusBar.cc
   )
 
 add_library (fractsim_lib SHARED
