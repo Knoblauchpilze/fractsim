@@ -104,6 +104,9 @@ namespace fractsim {
     // Schedule the rendering.
     scheduleRendering();
 
+    // Trigger a new signal to notify listeners.
+    onZoomChanged.emit(m_renderingOpt->getZoom());
+
     return toReturn;
   }
 

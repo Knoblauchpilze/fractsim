@@ -235,6 +235,15 @@ namespace fractsim {
        *          the texture representing the fractal needs to be updated.
        */
       bool m_tilesRendered;
+
+    public:
+
+      /**
+       * @brief - Signal emitted whenver the zoom value is modified by some internal actions
+       *          like scroling. Listeners can register to this signal when needed.
+       *          The zoom information contains the information about both axes.
+       */
+      utils::Signal<utils::Vector2f> onZoomChanged;
   };
 
 }

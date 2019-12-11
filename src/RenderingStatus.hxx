@@ -2,6 +2,7 @@
 # define   RENDERING_STATUS_HXX
 
 # include "RenderingStatus.hh"
+# include <sstream>
 
 namespace fractsim {
 
@@ -9,6 +10,26 @@ namespace fractsim {
   sdl::graphic::Button&
   RenderingStatus::getRenderButton() {
     return *getChildAs<sdl::graphic::Button>(getRenderButtonName());
+  }
+
+  inline
+  void
+  RenderingStatus::onZoomChanged(utils::Vector2f zoom) {
+    // Compute the mean zoom value by taking the average.
+    const float avgZoom = (zoom.x() + zoom.y()) / 2.0f;
+
+    std::stringstream zoomTxtWrapper;
+    zoomTxtWrapper << "Zoom: ";
+    zoomTxtWrapper << std::fixed << std::setprecision(0);
+    zoomTxtWrapper << avgZoom;
+
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Try to retrieve the label widget and set the text corresponding
+    // to the new zoom level.
+    sdl::graphic::LabelWidget* txt = getZoomLabel();
+    txt->setText(zoomTxtWrapper.str());
   }
 
   inline

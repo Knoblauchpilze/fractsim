@@ -37,6 +37,14 @@ namespace fractsim {
       sdl::graphic::Button&
       getRenderButton();
 
+      /**
+       * @brief - Used to connect external zoom providers which can notify this
+       *          component that a new zoom value has been set.
+       * @param zoom - the new zoom value.
+       */
+      void
+      onZoomChanged(utils::Vector2f zoom);
+
     protected:
 
       /**

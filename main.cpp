@@ -24,11 +24,12 @@
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
-// TODO: Connect progress bar
-// TODO: Connect zoom panel
-// TODO: Maybe add a display of the current rendering window
-// TODO: Also add the position of the mouse in world coordinates
+// TODO: Connect progress bar.
+// TODO: Maybe add a display of the current rendering window.
+// TODO: Also add the position of the mouse in world coordinates.
 // TODO: Check why the right_dock_widget seems to get notified of repaint events.
+// TODO: Crash when we maximize and then call `Render`.
+// TODO: Random crash when zooming too fast.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
@@ -102,6 +103,11 @@ int main(int /*argc*/, char** /*argv*/) {
     status->getRenderButton().onClick.connect_member<fractsim::NewtonOptions>(
       newtonOpt,
       &fractsim::NewtonOptions::validateOptions
+    );
+
+    renderer->onZoomChanged.connect_member<fractsim::RenderingStatus>(
+      status,
+      &fractsim::RenderingStatus::onZoomChanged
     );
 
     // Run it.
