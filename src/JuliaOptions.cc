@@ -1,5 +1,7 @@
 
 # include "JuliaOptions.hh"
+# include <sstream>
+# include <iomanip>
 # include <sdl_graphic/GridLayout.hh>
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
@@ -85,6 +87,24 @@ namespace fractsim {
 
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
     sdl::graphic::TextBox* accuracyValue = createTextBox(getAccuracyValueName(), this);
+
+    // Assign default values.
+    std::stringstream formatter;
+    formatter << std::fixed << std::setprecision(1);
+
+    formatter << getDefaultRealPartConstant();
+    realPartValue->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << getDefaultImgPartConstant();
+    imgPartValue->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << std::fixed << std::setprecision(0);
+    formatter << getDefaultAccuracy();
+    accuracyValue->setValue(formatter.str());
 
     // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);

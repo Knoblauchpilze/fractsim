@@ -19,7 +19,6 @@
 # include "RenderingStatus.hh"
 
 // TODO: `R` key seems to fail sometime.
-// TODO: Improve default values to be correct (so set text in `TextBox`es).
 // TODO: Check offset of 1 pixel when repainting tiles.
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).

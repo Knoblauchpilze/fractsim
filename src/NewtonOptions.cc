@@ -1,5 +1,7 @@
 
 # include "NewtonOptions.hh"
+# include <sstream>
+# include <iomanip>
 # include <sdl_graphic/GridLayout.hh>
 # include <sdl_graphic/LabelWidget.hh>
 # include <sdl_graphic/TextBox.hh>
@@ -99,6 +101,23 @@ namespace fractsim {
     sdl::graphic::TextBox* realPartConstant = createTextBox(getCoefficientRealPartValueName(0u), this);
     sdl::graphic::TextBox* imgPartConstant = createTextBox(getCoefficientImgPartValueName(0u), this);
 
+    // Assign default values.
+    std::stringstream formatter;
+    formatter << std::fixed << std::setprecision(0);
+    formatter << getDefaultAccuracy();
+    accuracyValue->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << std::fixed << std::setprecision(1);
+    formatter << getDefaultRealPartCoefficient(0u);
+    realPartConstant->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << getDefaultImgPartCoefficient(0u);
+    imgPartConstant->setValue(formatter.str());
+
     for (unsigned deg = 0u ; deg < m_maxDegree ; ++deg) {
       std::string degStr = std::to_string(deg + 1u);
 
@@ -116,6 +135,17 @@ namespace fractsim {
         getCoefficientImgPartValueName(deg + 1u),
         this
       );
+
+      // Assign default values.
+      formatter.str("");
+      formatter.clear();
+      formatter << getDefaultRealPartCoefficient(deg);
+      realPartDeg->setValue(formatter.str());
+
+      formatter.str("");
+      formatter.clear();
+      formatter << getDefaultImgPartCoefficient(deg);
+      imgPartDeg->setValue(formatter.str());
 
       // Each degree is added sequentially after the accuracy
       // elements and the constant elements.
