@@ -29,8 +29,6 @@
 // TODO: Crash when we maximize and then call `Render`.
 // TODO: Random crash when zooming too fast.
 
-// TODO: Maybe add a display of the current rendering window.
-
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
   utils::StdLogger logger;
@@ -116,6 +114,10 @@ int main(int /*argc*/, char** /*argv*/) {
     renderer->onCoordChanged.connect_member<fractsim::StatusBar>(
       bar,
       &fractsim::StatusBar::onMouseCoordsChanged
+    );
+    renderer->onRenderingAreaChanged.connect_member<fractsim::StatusBar>(
+      bar,
+      &fractsim::StatusBar::onRenderingAreaChanged
     );
 
     // Run it.

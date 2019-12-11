@@ -22,7 +22,8 @@ namespace fractsim {
     m_tilesRendered(true),
 
     onZoomChanged(),
-    onCoordChanged()
+    onCoordChanged(),
+    onRenderingAreaChanged()
   {
     setService(std::string("fractal_renderer"));
 
@@ -44,12 +45,16 @@ namespace fractsim {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
+    bool newArea = false;
+
     // Create rendering options if needed.
     if (m_renderingOpt == nullptr) {
       m_renderingOpt = std::make_shared<RenderingOptions>(
         options->getDefaultRenderingWindow(),
         sdl::core::LayoutItem::getRenderingArea().toSize()
       );
+
+      newArea = true;
     }
 
     // Create fractal data if needed.
@@ -64,6 +69,11 @@ namespace fractsim {
 
     // Schedule a rendering.
     scheduleRendering();
+
+    // Notify listeners if needed.
+    if (newArea) {
+      onRenderingAreaChanged.emit(m_renderingOpt->getRenderingArea());
+    }
   }
 
   bool
@@ -103,8 +113,9 @@ namespace fractsim {
     // Schedule the rendering.
     scheduleRendering();
 
-    // Trigger a new signal to notify listeners.
+    // Trigger new signals to notify listeners.
     onZoomChanged.emit(m_renderingOpt->getZoom());
+    onRenderingAreaChanged.emit(newArea);
 
     return toReturn;
   }

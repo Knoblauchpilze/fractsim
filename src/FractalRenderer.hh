@@ -272,6 +272,13 @@ namespace fractsim {
        *          example).
        */
       utils::Signal<utils::Vector2f> onCoordChanged;
+
+      /**
+       * @brief - Signal emitted whenever the rendering area associated to this renderer is
+       *          modified. This allows external listeners to be notified about such events
+       *          and maybe keep track of the current rendering area.
+       */
+      utils::Signal<utils::Boxf> onRenderingAreaChanged;
   };
 
 }

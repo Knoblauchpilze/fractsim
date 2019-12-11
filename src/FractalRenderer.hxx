@@ -46,6 +46,9 @@ namespace fractsim {
 
         // Schedule a rendering.
         scheduleRendering();
+
+        // Notify listeners.
+        onRenderingAreaChanged.emit(area);
       }
     }
 
