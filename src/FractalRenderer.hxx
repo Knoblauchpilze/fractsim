@@ -54,6 +54,22 @@ namespace fractsim {
   }
 
   inline
+  bool
+  FractalRenderer::mouseMoveEvent(const sdl::core::engine::MouseEvent& e) {
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Convert the position to internal coordinates.
+    utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
+
+    // Notify external listeners.
+    onCoordChanged.emit(conv);
+
+    // Use the base handler to provide a return value.
+    return sdl::graphic::ScrollableWidget::mouseMoveEvent(e);
+  }
+
+  inline
   float
   FractalRenderer::getDefaultZoomInFactor() noexcept {
     return 2.0f;
@@ -166,6 +182,24 @@ namespace fractsim {
         std::string("Failed to transform brush into texture")
       );
     }
+  }
+
+  inline
+  utils::Vector2f
+  FractalRenderer::convertLocalToRealWorld(const utils::Vector2f& global) {
+    // Map the position to local coordinate frame.
+    utils::Vector2f pos = mapFromGlobal(global);
+
+    // Convert into some sort of percentage of the window.
+    utils::Sizef thisArea = sdl::core::LayoutItem::getRenderingArea().toSize();
+
+    utils::Vector2f windowPerc(pos.x() / thisArea.w(), pos.y() / thisArea.h());
+
+    // Convert using the dedicated handler.
+    utils::Vector2f conv = m_renderingOpt->getPointAt(windowPerc);
+
+    // This is the corresponding real world position.
+    return conv;
   }
 
 }

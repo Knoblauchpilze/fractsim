@@ -29,9 +29,7 @@
 // TODO: Crash when we maximize and then call `Render`.
 // TODO: Random crash when zooming too fast.
 
-// TODO: Add status bar.
 // TODO: Maybe add a display of the current rendering window.
-// TODO: Also add the position of the mouse in world coordinates.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
@@ -113,6 +111,11 @@ int main(int /*argc*/, char** /*argv*/) {
     renderer->onZoomChanged.connect_member<fractsim::RenderingStatus>(
       status,
       &fractsim::RenderingStatus::onZoomChanged
+    );
+
+    renderer->onCoordChanged.connect_member<fractsim::StatusBar>(
+      bar,
+      &fractsim::StatusBar::onMouseCoordsChanged
     );
 
     // Run it.

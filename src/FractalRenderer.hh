@@ -55,6 +55,17 @@ namespace fractsim {
       keyPressEvent(const sdl::core::engine::KeyEvent& e) override;
 
       /**
+       * @brief - Reimplementation of the base class method to detect whenever the
+       *          mouse moves inside the widget. This allows to provide notification
+       *          to external listeners by converting the position into a real world
+       *          coordinates.
+       * @param e - the event to be interpreted.
+       * @return - `true` if the event was recognized and `false` otherwise.
+       */
+      bool
+      mouseMoveEvent(const sdl::core::engine::MouseEvent& e) override;
+
+      /**
        * @brief - Reimplementation of the base class method to detect when the wheel
        *          is used: this should trigger the zooming behavior based on the factor
        *          defined for this renderer.
@@ -185,6 +196,16 @@ namespace fractsim {
       void
       loadTiles();
 
+      /**
+       * @brief - Used to convert the input position expressed in global coordinate frame
+       *          into a position expressed in real world coordinate.
+       *          Note that this method assumes that the locker is already acquired.
+       * @param global - the global coordinate frame position to convert.
+       * @return - the corresponding position in real world coordinate frame.
+       */
+      utils::Vector2f
+      convertLocalToRealWorld(const utils::Vector2f& global);
+
     private:
 
       /**
@@ -244,6 +265,13 @@ namespace fractsim {
        *          The zoom information contains the information about both axes.
        */
       utils::Signal<utils::Vector2f> onZoomChanged;
+
+      /**
+       * @brief - Signal emitted whenever the coordinates of the point located under the mouse
+       *          is changed. This is usually to keep track of said position (using a label for
+       *          example).
+       */
+      utils::Signal<utils::Vector2f> onCoordChanged;
   };
 
 }
