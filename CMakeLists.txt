@@ -13,7 +13,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
-project(fractsim)
+project(fractsim CXX CUDA)
 
 find_package (SDL2 REQUIRED)
 find_package (SDL2_ttf REQUIRED)
