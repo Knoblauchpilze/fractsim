@@ -19,11 +19,11 @@
 # include "RenderingStatus.hh"
 # include "StatusBar.hh"
 
-// TODO: Check offset of 1 pixel when repainting tiles.
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
-// TODO Crash when zooming too fast.
+// TODO: Crash when zooming too fast.
+// TODO: Check rounding error at high zoom levels.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
