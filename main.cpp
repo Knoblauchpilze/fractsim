@@ -23,7 +23,6 @@
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
-// TODO: Check why the right_dock_widget seems to get notified of repaint events.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
