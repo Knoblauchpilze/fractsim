@@ -88,13 +88,13 @@ namespace fractsim {
   inline
   unsigned
   FractalRenderer::getHorizontalTileCount() noexcept {
-    return 5u;
+    return 4u;
   }
 
   inline
   unsigned
   FractalRenderer::getVerticalTileCount() noexcept {
-    return 3u;
+    return 4u;
   }
 
   inline

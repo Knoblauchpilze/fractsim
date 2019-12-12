@@ -24,6 +24,7 @@
 // TODO: Add button to reset to default settings for the specified fractal type.
 // TODO: Crash when zooming too fast.
 // TODO: Check rounding error at high zoom levels.
+// TODO: Crash when using textbox (removing text for example).
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
