@@ -243,6 +243,10 @@ namespace fractsim {
     for (unsigned id = 0u ; id < tiles.size() ; ++id) {
       utils::Boxf local = convertFractalAreaToLocal(tiles[id]->getArea());
 
+      // Expand the bounding box in order to prevent weird artifacts when the area is not
+      // exactly matching the previous one.
+      local = expandByOne(local);
+
       if (local.valid()) {
         e->addUpdateRegion(mapToGlobal(local));
       }

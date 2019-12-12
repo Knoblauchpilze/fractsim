@@ -211,6 +211,13 @@ namespace fractsim {
     return conv;
   }
 
+  inline
+  utils::Boxf
+  FractalRenderer::expandByOne(const utils::Boxf& area) const noexcept {
+    // TODO: Implementation.
+    return area;
+  }
+
 }
 
 #endif    /* FRACTAL_RENDERER_HXX */

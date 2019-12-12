@@ -206,6 +206,16 @@ namespace fractsim {
       utils::Vector2f
       convertLocalToRealWorld(const utils::Vector2f& global);
 
+      /**
+       * @brief - Used to expand the input area in all the dimensions as long as the area
+       *          stays in the boundaries of this object. This can be used to put some sort
+       *          of security margin when performing the repaint.
+       * @param area - the area to expand.
+       * @return - an expanded version of the area.
+       */
+      utils::Boxf
+      expandByOne(const utils::Boxf& area) const noexcept;
+
     private:
 
       /**
