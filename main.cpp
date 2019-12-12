@@ -26,6 +26,7 @@
 // TODO: Check rounding error at high zoom levels.
 // TODO: Crash when using textbox (removing text for example).
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
+// Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
