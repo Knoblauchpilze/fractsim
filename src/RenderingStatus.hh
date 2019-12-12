@@ -45,6 +45,15 @@ namespace fractsim {
       void
       onZoomChanged(utils::Vector2f zoom);
 
+      /**
+       * @brief - Used to connect external elements which can provide information
+       *          about the current completion of the rendering task.
+       * @param perc - a value in the range `[0; 1]` indicating the completion
+       *               percentage for the current rendering task.
+       */
+      void
+      onCompletionChanged(float perc);
+
     protected:
 
       /**

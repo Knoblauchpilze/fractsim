@@ -33,6 +33,16 @@ namespace fractsim {
   }
 
   inline
+  void
+  RenderingStatus::onCompletionChanged(float perc) {
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    sdl::graphic::ProgressBar* bar = getProgressBar();
+    bar->setCompletion(perc);
+  }
+
+  inline
   float
   RenderingStatus::getStatusMaxHeight() noexcept {
     return 200.0f;

@@ -244,6 +244,13 @@ namespace fractsim {
       RenderingSchedulerShPtr m_scheduler;
 
       /**
+       * @brief - Used to keep track of the tiles already rendered so far in the current
+       *          rendering operation. This allows to compute some sort of percentage of
+       *          completion of the task.
+       */
+      unsigned m_taskProgress;
+
+      /**
        * @brief - The index returned by the engine for the texture representing the fractal
        *          on screen. It is rendered from the tiles' data computed internally and is
        *          valid as long as the `m_tilesRendered` boolean is set to `false`.
@@ -279,6 +286,13 @@ namespace fractsim {
        *          and maybe keep track of the current rendering area.
        */
       utils::Signal<utils::Boxf> onRenderingAreaChanged;
+
+      /**
+       * @brief - Signal emitted whenever a tile has been rendered. The value attached to
+       *          the emitted signal corresponds to the percentage of tiles that have been
+       *          complete, in the range `[0; 1]`.
+       */
+      utils::Signal<float> onTileCompleted;
   };
 
 }

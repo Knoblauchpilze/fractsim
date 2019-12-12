@@ -17,13 +17,15 @@ namespace fractsim {
     m_fractalData(nullptr),
 
     m_scheduler(std::make_shared<RenderingScheduler>()),
+    m_taskProgress(0u),
 
     m_tex(),
     m_tilesRendered(true),
 
     onZoomChanged(),
     onCoordChanged(),
-    onRenderingAreaChanged()
+    onRenderingAreaChanged(),
+    onTileCompleted()
   {
     setService(std::string("fractal_renderer"));
 
@@ -222,6 +224,10 @@ namespace fractsim {
 
     m_scheduler->enqueueJobs(tiles);
 
+    // Notify listeners that the progression is no `0`.
+    m_taskProgress = 0u;
+    onTileCompleted.emit(0.0f);
+
     // Start the computing.
     m_scheduler->notifyRenderingJobs();
   }
@@ -246,6 +252,10 @@ namespace fractsim {
 
     // The tiles need to be rendered again.
     setTilesChanged();
+
+    // Some more tiles have been processed.
+    m_taskProgress += tiles.size();
+    onTileCompleted.emit(1.0f * m_taskProgress / (getHorizontalTileCount() * getVerticalTileCount()));
   }
 
 }

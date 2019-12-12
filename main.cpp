@@ -23,7 +23,6 @@
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
-// TODO: Connect progress bar.
 // TODO: Check why the right_dock_widget seems to get notified of repaint events.
 
 int main(int /*argc*/, char** /*argv*/) {
@@ -106,6 +105,10 @@ int main(int /*argc*/, char** /*argv*/) {
     renderer->onZoomChanged.connect_member<fractsim::RenderingStatus>(
       status,
       &fractsim::RenderingStatus::onZoomChanged
+    );
+    renderer->onTileCompleted.connect_member<fractsim::RenderingStatus>(
+      status,
+      &fractsim::RenderingStatus::onCompletionChanged
     );
 
     renderer->onCoordChanged.connect_member<fractsim::StatusBar>(
