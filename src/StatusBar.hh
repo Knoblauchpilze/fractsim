@@ -26,16 +26,6 @@ namespace fractsim {
       ~StatusBar() = default;
 
       /**
-       * @brief - Used to connect external elements which have built-in knowlegde of
-       *          the rendering area displayed in the renderer. This information needs
-       *          to be passed on to this widget so that we can update the internal
-       *          item displaying this information.
-       * @param area - the new rendering area associated to the renderer.
-       */
-      void
-      onRenderingAreaChanged(utils::Boxf area);
-
-      /**
        * @brief - Used to connect to external elements which can provide information
        *          on the current position of the mouse. This information can be passed
        *          on to this widget so that we can update the corresponding label.
@@ -45,6 +35,24 @@ namespace fractsim {
        */
       void
       onMouseCoordsChanged(utils::Vector2f p);
+
+      /**
+       * @brief - Used to connect external zoom providers which can notify this
+       *          component that a new zoom value has been set.
+       * @param zoom - the new zoom value.
+       */
+      void
+      onZoomChanged(utils::Vector2f zoom);
+
+      /**
+       * @brief - Used to connect external elements which have built-in knowlegde of
+       *          the rendering area displayed in the renderer. This information needs
+       *          to be passed on to this widget so that we can update the internal
+       *          item displaying this information.
+       * @param area - the new rendering area associated to the renderer.
+       */
+      void
+      onRenderingAreaChanged(utils::Boxf area);
 
     protected:
 
@@ -97,6 +105,15 @@ namespace fractsim {
       getMouseCoordsLabelName() noexcept;
 
       /**
+       * @brief - Used to retrieve the default name for the zoom label.
+       * @return - a string that should be used to provide consistent naming for
+       *           the zoom label.
+       */
+      static
+      const char*
+      getZoomLabelName() noexcept;
+
+      /**
        * @brief - Used to retrieve the default name for the rendering area label.
        * @return - a string that should be used to provide consistent naming for
        *           the rendering area label.
@@ -123,6 +140,17 @@ namespace fractsim {
        */
       sdl::graphic::LabelWidget*
       getMouseCoordsLabel();
+
+      /**
+       * @brief - Used to retrieve the label widget holding the zoom. Typically
+       *          used when the zoom value should be changed.
+       *          The return value is guaranteed to be not `null` if the method
+       *          returns. Note that the locker is assumed to already be acquired
+       *          upon calling this function.
+       * @return - the label widget associated to this status.
+       */
+      sdl::graphic::LabelWidget*
+      getZoomLabel();
 
       /**
        * @brief - Used to retrieve the label displaying the current rendering area

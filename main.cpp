@@ -23,6 +23,7 @@
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Add button to reset to default settings for the specified fractal type.
+// TODO Crash when zooming too fast.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
@@ -101,10 +102,6 @@ int main(int /*argc*/, char** /*argv*/) {
       &fractsim::NewtonOptions::validateOptions
     );
 
-    renderer->onZoomChanged.connect_member<fractsim::RenderingStatus>(
-      status,
-      &fractsim::RenderingStatus::onZoomChanged
-    );
     renderer->onTileCompleted.connect_member<fractsim::RenderingStatus>(
       status,
       &fractsim::RenderingStatus::onCompletionChanged
@@ -113,6 +110,10 @@ int main(int /*argc*/, char** /*argv*/) {
     renderer->onCoordChanged.connect_member<fractsim::StatusBar>(
       bar,
       &fractsim::StatusBar::onMouseCoordsChanged
+    );
+    renderer->onZoomChanged.connect_member<fractsim::StatusBar>(
+      bar,
+      &fractsim::StatusBar::onZoomChanged
     );
     renderer->onRenderingAreaChanged.connect_member<fractsim::StatusBar>(
       bar,

@@ -38,14 +38,6 @@ namespace fractsim {
       getRenderButton();
 
       /**
-       * @brief - Used to connect external zoom providers which can notify this
-       *          component that a new zoom value has been set.
-       * @param zoom - the new zoom value.
-       */
-      void
-      onZoomChanged(utils::Vector2f zoom);
-
-      /**
        * @brief - Used to connect external elements which can provide information
        *          about the current completion of the rendering task.
        * @param perc - a value in the range `[0; 1]` indicating the completion
@@ -77,25 +69,6 @@ namespace fractsim {
       getRenderButtonMaxSize() noexcept;
 
       /**
-       * @brief - Defines the maximum size for the label displaying the current zoom
-       *          level. As long as the button is large enough to display the zoom
-       *          it does not need to grow further.
-       * @return - a value describing the size assumed to be sufficient to display
-       *           the zoom level.
-       */
-      static
-      utils::Sizef
-      getZoomLabelMaxSize() noexcept;
-
-      /**
-       * @brief - Defines the font to use for the zoom label.
-       * @return - a name identifying the font to use for the zoom label.
-       */
-      static
-      const char*
-      getZoomLabelFont() noexcept;
-
-      /**
        * @brief - Used to defnie the margins of the layout applied around the whole
        *          widget. Usually `0`.
        * @return - a value representing the global margins for this widget.
@@ -123,15 +96,6 @@ namespace fractsim {
       getRenderButtonName() noexcept;
 
       /**
-       * @brief - Used to retrieve the default name for the zoom label.
-       * @return - a string that should be used to provide consistent naming for
-       *           the zoom label.
-       */
-      static
-      const char*
-      getZoomLabelName() noexcept;
-
-      /**
        * @brief - Used to retrieve the default name for the progress bar.
        * @return - a string that should be used to provide consistent naming for
        *           the progress bar.
@@ -146,17 +110,6 @@ namespace fractsim {
        */
       void
       build();
-
-      /**
-       * @brief - Used to retrieve the label widget holding the zoom. Typically
-       *          used when the zoom value should be changed.
-       *          The return value is guaranteed to be not `null` if the method
-       *          returns. Note that the locker is assumed to already be acquired
-       *          upon calling this function.
-       * @return - the label widget associated to this status.
-       */
-      sdl::graphic::LabelWidget*
-      getZoomLabel();
 
       /**
        * @brief - Used to retrieve the progress bar holding the current completion

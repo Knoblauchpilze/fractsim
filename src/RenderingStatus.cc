@@ -22,8 +22,8 @@ namespace fractsim {
     setFocusPolicy(sdl::core::FocusPolicy());
 
     // The rendering status is composed of a display allowing to display the
-    // current zoom level, the progress bar of the current computation, some
-    // indication of the palette to use and a render button.
+    // progress bar of the current computation, some indication of the palette
+    // to use and a render button.
     sdl::graphic::LinearLayoutShPtr layout = std::make_shared<sdl::graphic::LinearLayout>(
       "rendering_status_layout",
       this,
@@ -52,23 +52,6 @@ namespace fractsim {
       );
     }
 
-    sdl::graphic::LabelWidget* zoom = new sdl::graphic::LabelWidget(
-      getZoomLabelName(),
-      "Zoom: 1",
-      getZoomLabelFont(),
-      15u,
-      sdl::graphic::LabelWidget::HorizontalAlignment::Center,
-      sdl::graphic::LabelWidget::VerticalAlignment::Center,
-      this,
-      sdl::core::engine::Color::fromRGB(1.0f, 0.75, 0.25f)
-    );
-    if (zoom == nullptr) {
-      error(
-        std::string("Could not create rendering status"),
-        std::string("Zoom label not allocated")
-      );
-    }
-
     sdl::graphic::ProgressBar* progress = new sdl::graphic::ProgressBar(
       getProgressBarName(),
       this
@@ -76,12 +59,9 @@ namespace fractsim {
 
     // Configure each element.
     render->setMaxSize(getRenderButtonMaxSize());
-    zoom->setMaxSize(getZoomLabelMaxSize());
-    zoom->setFocusPolicy(sdl::core::FocusPolicy());
 
     // Add each element to the layout.
     layout->addItem(render);
-    layout->addItem(zoom);
     layout->addItem(progress);
   }
 

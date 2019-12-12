@@ -51,6 +51,23 @@ namespace fractsim {
       );
     }
 
+    sdl::graphic::LabelWidget* zoom = new sdl::graphic::LabelWidget(
+      getZoomLabelName(),
+      "Zoom: 1",
+      getInfoLabelFont(),
+      15u,
+      sdl::graphic::LabelWidget::HorizontalAlignment::Center,
+      sdl::graphic::LabelWidget::VerticalAlignment::Center,
+      this,
+      sdl::core::engine::Color::fromRGB(1.0f, 0.75, 0.25f)
+    );
+    if (zoom == nullptr) {
+      error(
+        std::string("Could not create rendering status"),
+        std::string("Zoom label not allocated")
+      );
+    }
+
     sdl::graphic::LabelWidget* renderingArea = new sdl::graphic::LabelWidget(
       getRenderingAreaLabelName(),
       "x: [0, 0] y: [0, 0]",
@@ -70,10 +87,12 @@ namespace fractsim {
 
     // Configure each element.
     mouseCoords->setFocusPolicy(sdl::core::FocusPolicy());
+    zoom->setFocusPolicy(sdl::core::FocusPolicy());
     renderingArea->setFocusPolicy(sdl::core::FocusPolicy());
 
     // Add each element to the layout.
     layout->addItem(mouseCoords);
+    layout->addItem(zoom);
     layout->addItem(renderingArea);
   }
 
