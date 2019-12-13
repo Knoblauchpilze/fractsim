@@ -6,6 +6,24 @@
 namespace fractsim {
 
   inline
+  void
+  MandelbrotOptions::resetOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
+
+    // Reset elements.
+    {
+      Guard guard(m_propsLocker);
+      initElements();
+    }
+
+    // Notify of the rendering area.
+    validateOptions(dummy);
+  }
+
+  inline
   const char*
   MandelbrotOptions::getPowerValueName() noexcept {
     return "power_value";

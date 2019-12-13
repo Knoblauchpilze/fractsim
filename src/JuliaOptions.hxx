@@ -6,6 +6,24 @@
 namespace fractsim {
 
   inline
+  void
+  JuliaOptions::resetOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
+
+    // Reset elements.
+    {
+      Guard guard(m_propsLocker);
+      initElements();
+    }
+
+    // Notify of the rendering area.
+    validateOptions(dummy);
+  }
+
+  inline
   const char*
   JuliaOptions::getConstantRealPartValueName() noexcept {
     return "real_part_value";

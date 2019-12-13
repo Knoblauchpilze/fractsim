@@ -36,6 +36,14 @@ namespace fractsim {
       void
       validateOptions(const std::string& dummy) override;
 
+      /**
+       * @brief - Reimplementation of the base class method to reset the options
+       *          displayed in thepanel.
+       * @param dummy - unused parameter.
+       */
+      void
+      resetOptions(const std::string& dummy) override;
+
     private:
 
       /**
@@ -99,6 +107,13 @@ namespace fractsim {
        */
       void
       build();
+
+      /**
+       * @brief - Used to assign default values to the fields representing the options
+       *          for this panel.
+       */
+      void
+      initElements();
 
     private:
 

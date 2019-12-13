@@ -88,24 +88,6 @@ namespace fractsim {
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
     sdl::graphic::TextBox* accuracyValue = createTextBox(getAccuracyValueName(), this);
 
-    // Assign default values.
-    std::stringstream formatter;
-    formatter << std::fixed << std::setprecision(1);
-
-    formatter << getDefaultRealPartConstant();
-    realPartValue->setValue(formatter.str());
-
-    formatter.str("");
-    formatter.clear();
-    formatter << getDefaultImgPartConstant();
-    imgPartValue->setValue(formatter.str());
-
-    formatter.str("");
-    formatter.clear();
-    formatter << std::fixed << std::setprecision(0);
-    formatter << getDefaultAccuracy();
-    accuracyValue->setValue(formatter.str());
-
     // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);
     layout->addItem(accuracyValue, 0, 1, 1, 1);
@@ -113,6 +95,35 @@ namespace fractsim {
     layout->addItem(realPartValue, 0, 3, 1, 1);
     layout->addItem(imgPartLabel,  0, 4, 1, 1);
     layout->addItem(imgPartValue,  0, 5, 1, 1);
+
+    // Assign default values to elements.
+    initElements();
+  }
+
+  void
+  JuliaOptions::initElements() {
+    // Retrieve elements.
+    sdl::graphic::TextBox* accuracyTB = getChildAs<sdl::graphic::TextBox>(getAccuracyValueName());
+    sdl::graphic::TextBox* realTB = getChildAs<sdl::graphic::TextBox>(getConstantRealPartValueName());
+    sdl::graphic::TextBox* imgTB = getChildAs<sdl::graphic::TextBox>(getConstantImgPartValueName());
+
+    // Assign default values.
+    std::stringstream formatter;
+    formatter << std::fixed << std::setprecision(1);
+
+    formatter << getDefaultRealPartConstant();
+    realTB->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << getDefaultImgPartConstant();
+    imgTB->setValue(formatter.str());
+
+    formatter.str("");
+    formatter.clear();
+    formatter << std::fixed << std::setprecision(0);
+    formatter << getDefaultAccuracy();
+    accuracyTB->setValue(formatter.str());
   }
 
 }

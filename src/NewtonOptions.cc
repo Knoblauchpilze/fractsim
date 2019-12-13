@@ -101,23 +101,6 @@ namespace fractsim {
     sdl::graphic::TextBox* realPartConstant = createTextBox(getCoefficientRealPartValueName(0u), this);
     sdl::graphic::TextBox* imgPartConstant = createTextBox(getCoefficientImgPartValueName(0u), this);
 
-    // Assign default values.
-    std::stringstream formatter;
-    formatter << std::fixed << std::setprecision(0);
-    formatter << getDefaultAccuracy();
-    accuracyValue->setValue(formatter.str());
-
-    formatter.str("");
-    formatter.clear();
-    formatter << std::fixed << std::setprecision(1);
-    formatter << getDefaultRealPartCoefficient(0u);
-    realPartConstant->setValue(formatter.str());
-
-    formatter.str("");
-    formatter.clear();
-    formatter << getDefaultImgPartCoefficient(0u);
-    imgPartConstant->setValue(formatter.str());
-
     for (unsigned deg = 0u ; deg < m_maxDegree ; ++deg) {
       std::string degStr = std::to_string(deg + 1u);
 
@@ -136,17 +119,6 @@ namespace fractsim {
         this
       );
 
-      // Assign default values.
-      formatter.str("");
-      formatter.clear();
-      formatter << getDefaultRealPartCoefficient(deg);
-      realPartDeg->setValue(formatter.str());
-
-      formatter.str("");
-      formatter.clear();
-      formatter << getDefaultImgPartCoefficient(deg);
-      imgPartDeg->setValue(formatter.str());
-
       // Each degree is added sequentially after the accuracy
       // elements and the constant elements.
       layout->addItem(labelDeg,    0, 5u + 3u * deg + 0u, 1, 1);
@@ -160,6 +132,43 @@ namespace fractsim {
     layout->addItem(constantLabel,    0, 2, 1, 1);
     layout->addItem(realPartConstant, 0, 3, 1, 1);
     layout->addItem(imgPartConstant,  0, 4, 1, 1);
+
+    // Assign default values to elements.
+    initElements();
+  }
+
+  void
+  NewtonOptions::initElements() {
+    // Unlike other sets of options, we have to retrieve and set elements
+    // at the same time.
+    sdl::graphic::TextBox* accuracyTB = getChildAs<sdl::graphic::TextBox>(getAccuracyValueName());
+
+    std::stringstream formatter;
+    formatter << std::fixed << std::setprecision(0);
+    formatter << getDefaultAccuracy();
+    accuracyTB->setValue(formatter.str());
+
+    formatter << std::fixed << std::setprecision(1);
+
+    for (unsigned deg = 0u ; deg <= m_maxDegree ; ++deg) {
+      sdl::graphic::TextBox* realTB = getChildAs<sdl::graphic::TextBox>(
+        getCoefficientRealPartValueName(deg)
+      );
+      sdl::graphic::TextBox* imgTB = getChildAs<sdl::graphic::TextBox>(
+        getCoefficientImgPartValueName(deg)
+      );
+
+      // Assign default values.
+      formatter.str("");
+      formatter.clear();
+      formatter << getDefaultRealPartCoefficient(deg);
+      realTB->setValue(formatter.str());
+
+      formatter.str("");
+      formatter.clear();
+      formatter << getDefaultImgPartCoefficient(deg);
+      imgTB->setValue(formatter.str());
+    }
   }
 
 }

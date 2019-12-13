@@ -27,6 +27,16 @@ namespace fractsim {
       virtual void
       validateOptions(const std::string& dummy) = 0;
 
+      /**
+       * @brief - Interface method used when the options defined in the panel are
+       *          to be reset. This allows for easy 'go-back-to-safe-state' behavior
+       *          that can be controlled by the user.
+       * @param dummy - a dummy parameter, representing the name of the caller of
+       *                this method. Should not be needed for any process.
+       */
+      virtual void
+      resetOptions(const std::string& dummy) = 0;
+
     protected:
 
       /**

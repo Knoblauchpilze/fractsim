@@ -6,6 +6,24 @@
 namespace fractsim {
 
   inline
+  void
+  NewtonOptions::resetOptions(const std::string& dummy) {
+    // Check whether the options are visible.
+    if (!isVisible()) {
+      return;
+    }
+
+    // Reset elements.
+    {
+      Guard guard(m_propsLocker);
+      initElements();
+    }
+
+    // Notify of the rendering area.
+    validateOptions(dummy);
+  }
+
+  inline
   std::string
   NewtonOptions::getCoefficientRealPartValueName(unsigned degree) noexcept {
     return "deg_" + std::to_string(degree) + "_real_part";
