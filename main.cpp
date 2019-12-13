@@ -23,8 +23,11 @@
 // TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Crash when zooming too fast: it comes from `computeCellFromCoords` where apparently
 // some cell can't compute the zoom when it changes too fast.
-// TODO: Check rounding error at high zoom levels.
-// TODO: Crash when using textbox (removing text for example).
+// TODO: Check rounding error at high zoom levels: actually we reach the limit of the real-world
+// based system. Maybe we should compute from the cells themselves. Or maybe have some sort of
+// averaging of the pixels at very high order ?
+// TODO: Crash when using textbox (removing text for example). Select last two digits and enter
+// a new one. This will crash.
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
 // Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
 

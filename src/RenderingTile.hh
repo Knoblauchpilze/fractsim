@@ -21,15 +21,16 @@ namespace fractsim {
        *          The tile also has to be aware of the fractal proxy which allows
        *          to save the result of the computations.
        * @param area - the rendering area for which the computations should be done.
-       * @param step - indicates the number of individual pixels that should be used
-       *               to represent the input area.
+       * @param step - represents the real world area covered by a single pixel. Can
+       *               be used as an indication of how many pixels are needed for
+       *               this tile.
        * @param options - the options to use to compute the fractal (accuracy, actual
        *                  formula, etc.).
        * @param proxy - the fractal proxy used to save the result of the computations
        *                performed by the tile.
        */
       RenderingTile(const utils::Boxf& area,
-                    const utils::Vector2i& step,
+                    const utils::Sizef& step,
                     FractalOptionsShPtr options,
                     FractalShPtr proxy);
 
@@ -57,11 +58,10 @@ namespace fractsim {
       utils::Boxf m_area;
 
       /**
-       * @brief - Holds the discretization to apply to the area to obtain individual
-       *          pixels. Basically we will divide the `m_area` into this many pixels
-       *          and perform the computation for each one of them.
+       * @brief - Holds the real world area covered by a single pixel. Basically we
+       *          can extract a discretization interval from this value.
        */
-      utils::Vector2i m_discretization;
+      utils::Sizef m_discretization;
 
       /**
        * @brief - Describes the object to use to perform the computation for each

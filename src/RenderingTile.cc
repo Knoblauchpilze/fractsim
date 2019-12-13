@@ -4,7 +4,7 @@
 namespace fractsim {
 
   RenderingTile::RenderingTile(const utils::Boxf& area,
-                               const utils::Vector2i& step,
+                               const utils::Sizef& step,
                                FractalOptionsShPtr options,
                                FractalShPtr proxy):
     utils::CoreObject(std::string("tile_") + area.toString()),
@@ -41,24 +41,38 @@ namespace fractsim {
 
   void
   RenderingTile::render() {
-    // Traverse the rendering area and compute each individual point. We
-    // can compute the real world delta by applying the discretization
-    // interval on the area.
-    utils::Vector2f delta(
-      m_area.w() / m_discretization.x(),
-      m_area.h() / m_discretization.y()
+    // The delta is given directly by the `m_discretization` interval.
+    // In order to define how many point we will pick to perform the
+    // computation, we just have to commensurate this to the size of
+    // the area assigned to this tile.
+    utils::Vector2f fCount(
+      m_area.w() / m_discretization.w(),
+      m_area.h() / m_discretization.h()
     );
+
+    // Convert to integer.
+    utils::Vector2i iCount(
+      static_cast<int>(std::ceil(fCount.x())),
+      static_cast<int>(std::ceil(fCount.y()))
+    );
+
+    log("Rendering tile with pix " + m_discretization.toString() + ", count is " + iCount.toString() + " (f: " + fCount.toString() + ")");
 
     float xMin = m_area.getLeftBound();
     float yMin = m_area.getBottomBound();
 
-    for (int y = 0 ; y < m_discretization.y() ; ++y) {
-      for (int x = 0 ; x < m_discretization.x() ; ++x) {
+    for (int y = 0 ; y < iCount.y() ; ++y) {
+      for (int x = 0 ; x < iCount.x() ; ++x) {
         // Determine the coordinate of the point to compute.
         utils::Vector2f p(
-          xMin + x * delta.x(),
-          yMin + y * delta.y()
+          xMin + x * m_discretization.w(),
+          yMin + y * m_discretization.h()
         );
+
+        // Determine whether the point still belongs to the area.
+        if (!m_area.contains(p)) {
+          continue;
+        }
 
         // Compute whether it belongs to the fractal at the
         // current level of accuracy.

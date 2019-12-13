@@ -207,9 +207,7 @@ namespace fractsim {
     utils::Sizef canvas = m_renderingOpt->getCanvasSize();
 
     utils::Sizef tileDims(area.w() / getHorizontalTileCount(), area.h() / getVerticalTileCount());
-
-    utils::Sizef fTilePix(canvas.w() / getHorizontalTileCount(), canvas.h() / getVerticalTileCount());
-    utils::Vector2i tilePix(static_cast<int>(std::ceil(fTilePix.w())), static_cast<int>(std::ceil(fTilePix.h())));
+    utils::Sizef rwPixSize(area.w() / canvas.w(), area.h() / canvas.h());
 
     std::vector<RenderingTileShPtr> tiles;
     for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
@@ -221,7 +219,7 @@ namespace fractsim {
               area.getTopBound() - 1.0f * y * tileDims.h() - tileDims.h() / 2.0f,
               tileDims
             ),
-            tilePix,
+            rwPixSize,
             m_fractalOptions,
             m_fractalData
           )

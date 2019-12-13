@@ -22,8 +22,8 @@ namespace fractsim {
     m_canvas = canvas;
 
     // We need to convert the canvas to the nearest integer.
-    m_dims.x() = static_cast<int>(std::round(canvas.w()));
-    m_dims.y() = static_cast<int>(std::round(canvas.h()));
+    m_dims.x() = static_cast<int>(std::ceil(canvas.w()));
+    m_dims.y() = static_cast<int>(std::ceil(canvas.h()));
 
     // Compute the new area covered by a pixel.
     computeCellDelta();
@@ -60,8 +60,8 @@ namespace fractsim {
   inline
   void
   Fractal::computeCellDelta() {
-    m_cellDelta.x() = m_area.w() / m_dims.x();
-    m_cellDelta.y() = m_area.h() / m_dims.y();
+    m_cellDelta.x() = m_area.w() / m_canvas.w();
+    m_cellDelta.y() = m_area.h() / m_canvas.h();
   }
 
 }

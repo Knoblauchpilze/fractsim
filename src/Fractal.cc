@@ -30,8 +30,9 @@ namespace fractsim {
     // Clamp the confidence to a valid range.
     float clamped = std::min(1.0f, std::max(0.0f, confidence));
 
-    // Compute the coordinates of the input point so that we can fill in the internal
-    // cache. We shuold also check whether the cache is valid.
+    // Compute the coordinates of the input point so that we can fill
+    // in the internal cache. We should also check whether the cache
+    // is valid.
     utils::Vector2i cell = computeCellFromCoords(p);
 
     setOrThrow(cell, clamped);
@@ -76,10 +77,29 @@ namespace fractsim {
       );
     }
 
-    // Compute the expected cell using the delta.
-    float dToLeft = p.x() - m_area.getLeftBound();
-    float dToBottom = p.y() - m_area.getBottomBound();
+    // Compute the expected cell using the delta. We protect
+    // ourselves against rounding errors: the distance *must*
+    // always be positive (see `RenderingTile::render` method
+    // for more info).
+    float dToLeft = std::max(0.0f, p.x() - m_area.getLeftBound());
+    float dToBottom = std::max(0.0f, p.y() - m_area.getBottomBound());
 
+    if (p.y() < -0.75f && p.x() > 0.598f) {
+      log(
+        "p: " + p.toString() + ", area: " + m_area.toString() +
+        ", dist: " + std::to_string(dToLeft) + "x" + std::to_string(dToBottom) +
+        ", delta: " + m_cellDelta.toString() +
+        ", cell " + utils::Vector2i(
+          static_cast<int>(std::floor(dToLeft / m_cellDelta.x())),
+          static_cast<int>(std::floor(dToBottom / m_cellDelta.y()))
+        ).toString() +
+        ", fCell " + utils::Vector2f(dToLeft / m_cellDelta.x(), dToBottom / m_cellDelta.y()).toString()
+      );
+    }
+
+    // We want to round down the coordinates: we consider that
+    // the pixel is stored in the smallest cell that contains
+    // part of it, both along the `x` and `y` axis.
     return utils::Vector2i(
       static_cast<int>(std::round(dToLeft / m_cellDelta.x())),
       static_cast<int>(std::round(dToBottom / m_cellDelta.y()))
@@ -98,17 +118,14 @@ namespace fractsim {
       );
     }
 
-    // Inverse the internal data array along the `y` axis: indeed as we will use it
-    // to generate a surface we need to account for the axis inversion that will be
-    // applied there.
-    unsigned p = (m_dims.y() - 1 - cell.y()) * m_dims.x() + cell.x();
+    // Clamp input data. Note that we perform an inversion of the internal data array
+    // along the `y` axis: indeed as we will use it to generate a surface we need to
+    // account for the axis inversion that will be applied there.
+    int x = std::min(m_dims.x() - 1, std::max(cell.x(), 0));
+    int y = std::min(m_dims.y() - 1, std::max(m_dims.y() - 1 - cell.y(), 0));
 
-    if (cell.x() < 0 || cell.y() < 0 || cell.x() >= m_dims.x() || cell.y() >= m_dims.y()) {
-      error(
-        std::string("Could not set value 2 ") + std::to_string(value) + " for cell " + cell.toString(),
-        std::string("Invalid cell coordinate for dimensions ") + m_dims.toString()
-      );
-    }
+    unsigned p = y * m_dims.x() + x;
+
     if (p >= m_data.size()) {
       error(
         std::string("Could not set value ") + std::to_string(value) + " for cell " + cell.toString(),
