@@ -39,7 +39,7 @@ namespace fractsim {
       getRenderButtonName(),
       "Render",
       "data/img/compute.bmp",
-      "data/fonts/Goodtime.ttf",
+      getButtonFontName(),
       15u,
       this,
       utils::Sizef(),
@@ -52,6 +52,23 @@ namespace fractsim {
       );
     }
 
+    sdl::graphic::Button* reset = new sdl::graphic::Button(
+      getResetButtonName(),
+      std::string(),
+      std::string("data/img/reset.bmp"),
+      getButtonFontName(),
+      15u,
+      this,
+      utils::Sizef(),
+      sdl::core::engine::Color::NamedColor::White
+    );
+    if (reset == nullptr) {
+      error(
+        std::string("Could not create rendering status"),
+        std::string("Reset button not allocated")
+      );
+    }
+
     sdl::graphic::ProgressBar* progress = new sdl::graphic::ProgressBar(
       getProgressBarName(),
       this
@@ -59,9 +76,11 @@ namespace fractsim {
 
     // Configure each element.
     render->setMaxSize(getRenderButtonMaxSize());
+    reset->setMaxSize(getResetButtonMaxSize());
 
     // Add each element to the layout.
     layout->addItem(render);
+    layout->addItem(reset);
     layout->addItem(progress);
   }
 

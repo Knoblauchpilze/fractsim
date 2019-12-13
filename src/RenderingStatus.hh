@@ -38,6 +38,15 @@ namespace fractsim {
       getRenderButton();
 
       /**
+       * @brief - Similar to the `getRenderButton` method but used to retrieve
+       *          the reset button. Still not perfect in terms of design but it
+       *          does the job.
+       * @return - a reference to the reset button associated to this status.
+       */
+      sdl::graphic::Button&
+      getResetButton();
+
+      /**
        * @brief - Used to connect external elements which can provide information
        *          about the current completion of the rendering task.
        * @param perc - a value in the range `[0; 1]` indicating the completion
@@ -69,6 +78,15 @@ namespace fractsim {
       getRenderButtonMaxSize() noexcept;
 
       /**
+       * @brief - Retrieves the maximum size for the reset button. Very similar to
+       *          the purpose achieved by the `getRenderButtonMaxSize`.
+       * @return - a value describing the maximum size of the reset button.
+       */
+      static
+      utils::Sizef
+      getResetButtonMaxSize() noexcept;
+
+      /**
        * @brief - Used to defnie the margins of the layout applied around the whole
        *          widget. Usually `0`.
        * @return - a value representing the global margins for this widget.
@@ -96,6 +114,16 @@ namespace fractsim {
       getRenderButtonName() noexcept;
 
       /**
+       * @brief - Similar to the `getRenderButtonName` but retrieves the default
+       *          name to use for the reset button.
+       * @return - a string that should be used to provide consistent naming for
+       *           the reset button.
+       */
+      static
+      const char*
+      getResetButtonName() noexcept;
+
+      /**
        * @brief - Used to retrieve the default name for the progress bar.
        * @return - a string that should be used to provide consistent naming for
        *           the progress bar.
@@ -103,6 +131,15 @@ namespace fractsim {
       static
       const char*
       getProgressBarName() noexcept;
+
+      /**
+       * @brief - Retrieve a font name that can be used for buttons in this widget.
+       * @return - a string representing the font to use for labels of buttons in
+       *           this widget.
+       */
+      static
+      const char*
+      getButtonFontName() noexcept;
 
       /**
        * @brief - Used to build the content of this widget so that it can be  

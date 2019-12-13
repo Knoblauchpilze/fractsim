@@ -21,8 +21,8 @@
 
 // TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar).
-// TODO: Add button to reset to default settings for the specified fractal type.
-// TODO: Crash when zooming too fast.
+// TODO: Crash when zooming too fast: it comes from `computeCellFromCoords` where apparently
+// some cell can't compute the zoom when it changes too fast.
 // TODO: Check rounding error at high zoom levels.
 // TODO: Crash when using textbox (removing text for example).
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
@@ -106,6 +106,19 @@ int main(int /*argc*/, char** /*argv*/) {
     status->getRenderButton().onClick.connect_member<fractsim::NewtonOptions>(
       newtonOpt,
       &fractsim::NewtonOptions::validateOptions
+    );
+
+    status->getResetButton().onClick.connect_member<fractsim::MandelbrotOptions>(
+      mandelOpt,
+      &fractsim::MandelbrotOptions::resetOptions
+    );
+    status->getResetButton().onClick.connect_member<fractsim::JuliaOptions>(
+      juliaOpt,
+      &fractsim::JuliaOptions::resetOptions
+    );
+    status->getResetButton().onClick.connect_member<fractsim::NewtonOptions>(
+      newtonOpt,
+      &fractsim::NewtonOptions::resetOptions
     );
 
     renderer->onTileCompleted.connect_member<fractsim::RenderingStatus>(

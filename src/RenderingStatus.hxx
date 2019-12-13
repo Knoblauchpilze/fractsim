@@ -12,6 +12,12 @@ namespace fractsim {
   }
 
   inline
+  sdl::graphic::Button&
+  RenderingStatus::getResetButton() {
+    return *getChildAs<sdl::graphic::Button>(getResetButtonName());
+  }
+
+  inline
   void
   RenderingStatus::onCompletionChanged(float perc) {
     // Protect from concurrent accesses.
@@ -34,6 +40,12 @@ namespace fractsim {
   }
 
   inline
+  utils::Sizef
+  RenderingStatus::getResetButtonMaxSize() noexcept {
+    return utils::Sizef(100.0f, getStatusMaxHeight());
+  }
+
+  inline
   float
   RenderingStatus::getGlobalMargins() noexcept {
     return 0.0f;
@@ -53,8 +65,20 @@ namespace fractsim {
 
   inline
   const char*
+  RenderingStatus::getResetButtonName() noexcept {
+    return "rendering_status_reset";
+  }
+
+  inline
+  const char*
   RenderingStatus::getProgressBarName() noexcept {
     return "rendering_status_progress";
+  }
+
+  inline
+  const char*
+  RenderingStatus::getButtonFontName() noexcept {
+    return "data/fonts/Goodtime.ttf";
   }
 
   inline

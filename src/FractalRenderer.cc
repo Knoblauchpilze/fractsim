@@ -47,16 +47,16 @@ namespace fractsim {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
-    bool newArea = false;
-
     // Create rendering options if needed.
     if (m_renderingOpt == nullptr) {
       m_renderingOpt = std::make_shared<RenderingOptions>(
         options->getDefaultRenderingWindow(),
         sdl::core::LayoutItem::getRenderingArea().toSize()
       );
-
-      newArea = true;
+    }
+    else {
+      m_renderingOpt->setRenderingArea(options->getDefaultRenderingWindow());
+      m_fractalData->setRenderingArea(m_renderingOpt->getRenderingArea());
     }
 
     // Create fractal data if needed.
@@ -73,9 +73,7 @@ namespace fractsim {
     scheduleRendering();
 
     // Notify listeners if needed.
-    if (newArea) {
-      onRenderingAreaChanged.emit(m_renderingOpt->getRenderingArea());
-    }
+    onRenderingAreaChanged.emit(m_renderingOpt->getRenderingArea());
   }
 
   bool
