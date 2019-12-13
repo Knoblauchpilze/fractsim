@@ -251,7 +251,7 @@ namespace fractsim {
        *          use to perform a rendering.
        *          This value is supposed to be null in case no fractal has already been
        *          renderer.
-       */ 
+       */
       FractalOptionsShPtr m_fractalOptions;
 
       /**

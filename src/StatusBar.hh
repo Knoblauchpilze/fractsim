@@ -123,7 +123,7 @@ namespace fractsim {
       getRenderingAreaLabelName() noexcept;
 
       /**
-       * @brief - Used to build the content of this widget so that it can be  
+       * @brief - Used to build the content of this widget so that it can be
        *          readily displayed.
        */
       void

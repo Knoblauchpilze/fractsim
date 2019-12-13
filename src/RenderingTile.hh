@@ -68,7 +68,7 @@ namespace fractsim {
        *          individual pixel of the rendering area. Allows to abstract away
        *          the complexity of having distinct tiles for each different type
        *          of fractal.
-       */ 
+       */
       FractalOptionsShPtr m_computing;
 
       /**

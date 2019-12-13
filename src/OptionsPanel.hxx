@@ -93,7 +93,7 @@ namespace fractsim {
   inline
   sdl::graphic::TextBox*
   OptionsPanel::createTextBox(const std::string& name,
-                              sdl::core::SdlWidget* parent) const noexcept
+                              sdl::core::SdlWidget* parent) noexcept
   {
     sdl::graphic::TextBox* textBox = new sdl::graphic::TextBox(
       name,
@@ -108,6 +108,12 @@ namespace fractsim {
         std::numeric_limits<float>::max(),
         getValueMaxHeight()
       )
+    );
+
+    // Connect the value changed signal to the options internal handling slot.
+    textBox->onValueChanged.connect_member<OptionsPanel>(
+      this,
+      &OptionsPanel::validateOptions
     );
 
     return textBox;

@@ -148,7 +148,7 @@ namespace fractsim {
        */
       sdl::graphic::TextBox*
       createTextBox(const std::string& name,
-                    sdl::core::SdlWidget* parent) const noexcept;
+                    sdl::core::SdlWidget* parent) noexcept;
 
       /**
        * @brief - Used to convert the input text to an unsigned value. In case it
