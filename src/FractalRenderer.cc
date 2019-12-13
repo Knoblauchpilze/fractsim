@@ -72,8 +72,11 @@ namespace fractsim {
     // Schedule a rendering.
     scheduleRendering();
 
-    // Notify listeners if needed.
-    onRenderingAreaChanged.emit(m_renderingOpt->getRenderingArea());
+    // Notify listeners of the new area.
+    onRenderingAreaChanged.safeEmit(
+      std::string("onRenderingAreaChanged(") + m_renderingOpt->getRenderingArea().toString() + ")",
+      m_renderingOpt->getRenderingArea()
+    );
   }
 
   bool
@@ -114,8 +117,14 @@ namespace fractsim {
     scheduleRendering();
 
     // Trigger new signals to notify listeners.
-    onZoomChanged.emit(m_renderingOpt->getZoom());
-    onRenderingAreaChanged.emit(newArea);
+    onZoomChanged.safeEmit(
+      std::string("onZoomChanged(") + m_renderingOpt->getZoom().toString() + ")",
+      m_renderingOpt->getZoom()
+    );
+    onRenderingAreaChanged.safeEmit(
+      std::string("onRenderingAreaChanged(") + newArea.toString() + ")",
+      newArea
+    );
 
     return toReturn;
   }
@@ -224,7 +233,10 @@ namespace fractsim {
 
     // Notify listeners that the progression is no `0`.
     m_taskProgress = 0u;
-    onTileCompleted.emit(0.0f);
+    onTileCompleted.safeEmit(
+      std::string("onTileCompleted(0.0)"),
+      0.0f
+    );
 
     // Start the computing.
     m_scheduler->notifyRenderingJobs();
@@ -257,7 +269,13 @@ namespace fractsim {
 
     // Some more tiles have been processed.
     m_taskProgress += tiles.size();
-    onTileCompleted.emit(1.0f * m_taskProgress / (getHorizontalTileCount() * getVerticalTileCount()));
+
+    float perc = 1.0f * m_taskProgress / (getHorizontalTileCount() * getVerticalTileCount());
+
+    onTileCompleted.safeEmit(
+      std::string("onTileCompleted(") + std::to_string(perc) + ")",
+      perc
+    );
   }
 
 }

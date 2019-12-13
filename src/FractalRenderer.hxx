@@ -48,7 +48,10 @@ namespace fractsim {
         scheduleRendering();
 
         // Notify listeners.
-        onRenderingAreaChanged.emit(area);
+        onRenderingAreaChanged.safeEmit(
+          std::string("onRenderingAreaChanged(") + area.toString() + ")",
+          area
+        );
       }
     }
 
@@ -66,7 +69,10 @@ namespace fractsim {
     utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
 
     // Notify external listeners.
-    onCoordChanged.emit(conv);
+    onCoordChanged.safeEmit(
+      std::string("onCoordChanged(") + conv.toString() + ")",
+      conv
+    );
 
     // Use the base handler to provide a return value.
     return sdl::graphic::ScrollableWidget::mouseMoveEvent(e);

@@ -47,15 +47,9 @@ namespace fractsim {
     opt->setAccuracy(accuracy);
     opt->setExponent(power);
 
-    utils::Signal<fractsim::FractalOptionsShPtr>& ref = onOptionsChanged;
-
-    log("Emitting on option changed for \"" + std::to_string(accuracy) + "\", \"" + std::to_string(power) + "\"");
-
-    withSafetyNet(
-      [&ref, opt]() {
-        ref.emit(opt);
-      },
-      std::string("onOptionsChanged(") + std::to_string(accuracy) + ", " + std::to_string(power) + ")"
+    onOptionsChanged.safeEmit(
+      std::string("onOptionsChanged(") + std::to_string(accuracy) + ", " + std::to_string(power) + ")",
+      opt
     );
   }
 

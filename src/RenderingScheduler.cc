@@ -289,7 +289,10 @@ namespace fractsim {
 
       // Notify listeners.
       rLock.unlock();
-      onTilesRendered.emit(res);
+      onTilesRendered.safeEmit(
+        std::string("onTilesRendered(") + std::to_string(res.size()) + ")",
+        res
+      );
       rLock.lock();
     }
 
