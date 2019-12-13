@@ -130,6 +130,20 @@ namespace fractsim {
       getDefaultResetKey() noexcept;
 
       /**
+       * @brief - Used to retrieve a default value describing how much the repaint
+       *          events' areas should be expanded. This process allows to cover for
+       *          rounding errors when the tiles are computed and then repainted on
+       *          the general canvas. The larger this value the more incertainty can
+       *          be erased but if there are consistent imprecisions it might be due
+       *          to something deeper so a value too large is not recommended.
+       * @return - a value describing how much the areas are expanded when repainting
+       *           a computed tile.
+       */
+      static
+      float
+      getExpansionThreshold() noexcept;
+
+      /**
        * @brief - Connect signals and build the renderer in a more general way.
        */
       void

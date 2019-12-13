@@ -104,6 +104,12 @@ namespace fractsim {
   }
 
   inline
+  float
+  FractalRenderer::getExpansionThreshold() noexcept {
+    return 1.0f;
+  }
+
+  inline
   utils::Boxf
   FractalRenderer::convertFractalAreaToLocal(const utils::Boxf& area) const {
     // The `area` represents a real world coordinate of the area. We need to
@@ -214,8 +220,18 @@ namespace fractsim {
   inline
   utils::Boxf
   FractalRenderer::expandByOne(const utils::Boxf& area) const noexcept {
-    // TODO: Implementation.
-    return area;
+    // Retrieve the bounds not to exceed.
+    utils::Boxf bounds = LayoutItem::getRenderingArea().toOrigin();
+
+    // Increase the size of the input area by the corresponding threshold.
+    utils::Boxf expanded(
+      area.getCenter(),
+      area.w() + getExpansionThreshold(),
+      area.h() + getExpansionThreshold()
+    );
+
+    // Do not exceed the bounds and return the area.
+    return expanded.intersect(bounds);
   }
 
 }
