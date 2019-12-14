@@ -50,7 +50,7 @@ namespace fractsim {
       static_cast<int>(std::round(m_canvas.h()))
     );
 
-    sdl::core::engine::Color def = sdl::core::engine::Color::NamedColor::Red;//gradient->getColorAt(0.0f);
+    sdl::core::engine::Color def = gradient->getColorAt(0.0f);
 
     std::vector<sdl::core::engine::Color> colors(iCanvasSize.area(), def);
 
