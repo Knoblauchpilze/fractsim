@@ -8,6 +8,7 @@
 # include "FractalOptions.hh"
 # include "RenderingOptions.hh"
 # include "RenderingScheduler.hh"
+# include "Fractal.hh"
 
 namespace fractsim {
 

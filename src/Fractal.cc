@@ -10,75 +10,14 @@ namespace fractsim {
     m_propsLocker(),
 
     m_canvas(),
-    m_dims(),
     m_area(),
-    m_cellDelta(),
 
-    m_data()
+    m_tiles()
   {
     setService(std::string("fractal"));
 
     resize(canvas);
-    setRenderingArea(area);
-  }
-
-  utils::Boxi
-  Fractal::generateBoxFromArea(const utils::Boxf& part) {
-    // Compute the distance to the left and bottom regions of the
-    // general area defined for this object.
-    float dToLeft = std::max(0.0f, part.getLeftBound() - m_area.getLeftBound());
-    float dToBottom = std::max(0.0f, part.getBottomBound() - m_area.getBottomBound());
-
-    // Compute the ratio between the dimensions of the input box
-    // and the internal box.
-    float wRatio = part.w() / m_area.w();
-    float hRatio = part.h() / m_area.h();
-
-    // Compute the dimensions and the starting position using the
-    // internal cells delta.
-    utils::Vector2f fStart(dToLeft / m_cellDelta.x(), dToBottom / m_cellDelta.y());
-    utils::Sizef fDims(wRatio * m_canvas.w(), hRatio * m_canvas.h());
-
-    // Convert to integer values.
-    utils::Vector2i iStart(
-      static_cast<int>(std::floor(fStart.x())),
-      static_cast<int>(std::floor(fStart.y()))
-    );
-
-    utils::Sizei iDims(
-      static_cast<int>(std::ceil(fDims.w())),
-      static_cast<int>(std::ceil(fDims.h()))
-    );
-
-    // Generate a box from this.
-    if (iDims.w() % 2 != 0) {
-      ++iDims.w();
-    }
-    if (iDims.h() % 2 != 0) {
-      ++iDims.h();
-    }
-
-    utils::Boxi cells(
-      iStart.x() + iDims.w() / 2,
-      iStart.y() + iDims.h() / 2,
-      iDims
-    );
-
-    return cells;
-  }
-
-  void
-  Fractal::assignValueForCoord(int x,
-                               int y,
-                               float confidence)
-  {
-    // Clamp the confidence to a valid range.
-    float clamped = std::min(1.0f, std::max(0.0f, confidence));
-
-    // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
-
-    setOrThrow(utils::Vector2i(x, y), clamped);
+    realWorldResize(area);
   }
 
   sdl::core::engine::BrushShPtr
@@ -94,12 +33,75 @@ namespace fractsim {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
-    // Create the colors representing the brush.
-    unsigned total = m_dims.x() * m_dims.y();
-    std::vector<sdl::core::engine::Color> colors(total, sdl::core::engine::Color::NamedColor::Black);
+    // We want to create an output brush with a size that is as close
+    // as `m_canvas` as possible. To do so we will need to retrieve
+    // the color from the rendering tiles for each pixel.
+    // We know that the `m_area` is supposed to be represented with a
+    // brush of size `m_canvas`. This allows to put an upper bound on
+    // the area that can be covered by a pixel.
+    // Once we computed this information, we can create a local array
+    // with as many pixels as required and start to fill each cell.
+    // The way we want to fill cell is by averaging the values of all
+    // the tiles that contains it.
 
-    for (unsigned id = 0u ; id < total ; ++id) {
-      colors[id] = gradient->getColorAt(m_data[id]);
+    // Allocate the output canvas.
+    utils::Sizei iCanvasSize(
+      static_cast<int>(std::round(m_canvas.w())),
+      static_cast<int>(std::round(m_canvas.h()))
+    );
+
+    sdl::core::engine::Color def = sdl::core::engine::Color::NamedColor::Red;//gradient->getColorAt(0.0f);
+
+    std::vector<sdl::core::engine::Color> colors(iCanvasSize.area(), def);
+
+    // Compute the sampling interval to render the output canvas.
+    utils::Sizef pixSize(
+      m_area.w() / m_canvas.w(),
+      m_area.h() / m_canvas.h()
+    );
+
+    float xMin = m_area.getLeftBound();
+    float yMin = m_area.getBottomBound();
+
+    // Populate the output canvas with data from the rendering tiles.
+    for (int y = 0 ; y < iCanvasSize.h() ; ++y) {
+      // Compute the coordinate of this pixel in the output canvas. Note that
+      // we perform an inversion of the internal data array along the `y` axis:
+      // indeed as we will use it to generate a surface we need to account for
+      // the axis inversion that will be applied there.
+      unsigned offset = (iCanvasSize.h() - 1 - y) * iCanvasSize.w();
+
+      for (int x = 0 ; x < iCanvasSize.w() ; ++x) {
+        // Compute the local coordinate of the point.
+        // Compute the point associated to this cell.
+        utils::Vector2f p(
+          xMin + x * pixSize.w(),
+          yMin + y * pixSize.h()
+        );
+
+        float totConf = 0.0f;
+        unsigned count = 0u;
+        bool in = true;
+
+        for (unsigned id = 0u ; id < m_tiles.size() ; ++id) {
+          float confidence = m_tiles[id]->getConfidenceAt(p, in);
+          if (in) {
+            totConf += confidence;
+            ++count;
+          }
+        }
+
+        // TODO: It seems that there are some weird stuff going on at `0` (i.e. at the
+        // intersection of two tiles).
+
+        // Check whether we could find some data for this point.
+        if (count == 0u) {
+          colors[offset + x] = def;
+        }
+        else {
+          colors[offset + x] = gradient->getColorAt(totConf / count);
+        }
+      }
     }
 
     // Create a brush from the array of colors.
@@ -108,40 +110,9 @@ namespace fractsim {
       false
     );
 
-    brush->createFromRaw(utils::Sizei::fromVector(m_dims), colors);
+    brush->createFromRaw(iCanvasSize, colors);
 
     return brush;
-  }
-
-  void
-  Fractal::setOrThrow(const utils::Vector2i& cell,
-                      float value)
-  {
-    // Check whether the internal cache is valid.
-    if (m_data.empty()) {
-      error(
-        std::string("Could not set value ") + std::to_string(value) + " for cell " + cell.toString(),
-        std::string("Invalid internal cache")
-      );
-    }
-
-    // Clamp input data. Note that we perform an inversion of the internal data array
-    // along the `y` axis: indeed as we will use it to generate a surface we need to
-    // account for the axis inversion that will be applied there.
-    int x = std::min(m_dims.x() - 1, std::max(cell.x(), 0));
-    int y = std::min(m_dims.y() - 1, std::max(m_dims.y() - 1 - cell.y(), 0));
-
-    unsigned p = y * m_dims.x() + x;
-
-    if (p >= m_data.size()) {
-      error(
-        std::string("Could not set value ") + std::to_string(value) + " for cell " + cell.toString(),
-        std::string("Invalid cell coordinate for dimensions ") + m_dims.toString()
-      );
-    }
-
-    // Assign the value.
-    m_data[p] = value;
   }
 
 }

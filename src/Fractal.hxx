@@ -6,9 +6,6 @@
 namespace fractsim {
 
   inline
-  Fractal::~Fractal() {}
-
-  inline
   void
   Fractal::resize(const utils::Sizef& canvas) {
     // Check consistency.
@@ -23,51 +20,48 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     m_canvas = canvas;
-
-    // We need to convert the canvas to the nearest integer.
-    m_dims.x() = static_cast<int>(std::ceil(canvas.w()));
-    m_dims.y() = static_cast<int>(std::ceil(canvas.h()));
-
-    // Compute the new area covered by a pixel.
-    computeCellDelta();
-
-    // Reallocate the cache.
-    m_data.resize(m_dims.x() * m_dims.y());
-    clear();
+    m_tiles.clear();
   }
 
   inline
   void
-  Fractal::setRenderingArea(const utils::Boxf& area) {
+  Fractal::realWorldResize(const utils::Boxf& area) {
+    // Check consistency.
+    if (!area.valid()) {
+      error(
+        std::string("Could not assign new rendering area to fractal"),
+        std::string("Invalid input size ") + area.toString()
+      );
+    }
+
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
-    // Assign the new rendering area and fill the data with invalid value.
     m_area = area;
+    m_tiles.clear();
+  }
 
-    // Recompute the new area covered by a single pixel.
-    computeCellDelta();
+  inline
+  void
+  Fractal::registerDataTile(RenderingTileShPtr tile) {
+    // Prevent invalid tiles.
+    if (tile == nullptr) {
+      error(
+        std::string("Could not register data tile for fractal"),
+        std::string("Invalid null tile")
+      );
+    }
 
-    clear();
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    m_tiles.push_back(tile);
   }
 
   inline
   float
   Fractal::getToleranceForCells() noexcept {
     return 0.000001f;
-  }
-
-  inline
-  void
-  Fractal::clear() {
-    std::fill(m_data.begin(), m_data.end(), 0.0f);
-  }
-
-  inline
-  void
-  Fractal::computeCellDelta() {
-    m_cellDelta.x() = m_area.w() / m_canvas.w();
-    m_cellDelta.y() = m_area.h() / m_canvas.h();
   }
 
 }

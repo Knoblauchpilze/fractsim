@@ -6,7 +6,6 @@
 # include <maths_utils/Vector2.hh>
 # include <core_utils/CoreObject.hh>
 # include "FractalOptions.hh"
-# include "Fractal.hh"
 
 namespace fractsim {
 
@@ -18,21 +17,16 @@ namespace fractsim {
        *          The tile also needs some options to be provided in order to be
        *          able to perform the computations.
        *          In case the area or the options are not valid an error is raised.
-       *          The tile also has to be aware of the fractal proxy which allows
-       *          to save the result of the computations.
        * @param area - the rendering area for which the computations should be done.
        * @param step - represents the real world area covered by a single pixel. Can
        *               be used as an indication of how many pixels are needed for
        *               this tile.
        * @param options - the options to use to compute the fractal (accuracy, actual
        *                  formula, etc.).
-       * @param proxy - the fractal proxy used to save the result of the computations
-       *                performed by the tile.
        */
       RenderingTile(const utils::Boxf& area,
                     const utils::Sizef& step,
-                    FractalOptionsShPtr options,
-                    FractalShPtr proxy);
+                    FractalOptionsShPtr options);
 
       ~RenderingTile() = default;
 
@@ -49,6 +43,31 @@ namespace fractsim {
        */
       utils::Boxf
       getArea() const noexcept;
+
+      /**
+       * @brief - Used to retrieve the confidence computed for the input point `p`. If the
+       *          point does not belong to the area of this tile the `inside` boolean is
+       *          set to `false` and a default color is returned (but should not be used or
+       *          relied upon).
+       * @param p - the point for which the confidence should be returned.
+       * @param inside - output value indicating whether the point is inside or outside of
+       *                 the area defined for this tile.
+       * @return - a value in the range `[0; 1]` indicating the level of confidence for the
+       *           input position.
+       */
+      float
+      getConfidenceAt(const utils::Vector2f& p,
+                      bool& inside);
+
+    private:
+
+      /**
+       * @brief - Used to initialize the tile in order to be ready to perform the rendering.
+       *          This includes allocating the internal data array along with pre-computing
+       *          some data needed to render.
+       */
+      void
+      initialize();
 
     private:
 
@@ -72,9 +91,19 @@ namespace fractsim {
       FractalOptionsShPtr m_computing;
 
       /**
-       * @brief - An object allowing to save the result of the computations.
+       * @brief - The dimensions of the internal data array. Computed from the area
+       *          and the discretization step, it is conservative in the sense that
+       *          each cell covers at most `m_discretization` real world area.
        */
-      FractalShPtr m_proxy;
+      utils::Sizei m_dims;
+
+      /**
+       * @brief - The internal data array which will contain the divergence values
+       *          for each cell of the tile. This array divides the `m_area` into
+       *          cells of at most `m_discretization` area, and compute the value
+       *          needed to diverge for each one of them.
+       */
+      std::vector<float> m_data;
   };
 
   using RenderingTileShPtr = std::shared_ptr<RenderingTile>;

@@ -42,7 +42,7 @@ namespace fractsim {
       // Reset the options to the initial viewing window.
       if (m_renderingOpt != nullptr) {
         utils::Boxf area = m_renderingOpt->reset();
-        m_fractalData->setRenderingArea(area);
+        m_fractalData->realWorldResize(area);
 
         // Schedule a rendering.
         scheduleRendering();

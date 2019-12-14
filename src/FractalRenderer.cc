@@ -56,7 +56,7 @@ namespace fractsim {
     }
     else {
       m_renderingOpt->setRenderingArea(options->getDefaultRenderingWindow());
-      m_fractalData->setRenderingArea(m_renderingOpt->getRenderingArea());
+      m_fractalData->realWorldResize(m_renderingOpt->getRenderingArea());
     }
 
     // Create fractal data if needed.
@@ -111,7 +111,7 @@ namespace fractsim {
     utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
 
     utils::Boxf newArea = m_renderingOpt->zoom(conv, factor);
-    m_fractalData->setRenderingArea(newArea);
+    m_fractalData->realWorldResize(newArea);
 
     // Schedule the rendering.
     scheduleRendering();
@@ -220,8 +220,7 @@ namespace fractsim {
               tileDims
             ),
             rwPixSize,
-            m_fractalOptions,
-            m_fractalData
+            m_fractalOptions
           )
         );
       }
@@ -258,6 +257,9 @@ namespace fractsim {
       if (local.valid()) {
         e->addUpdateRegion(mapToGlobal(local));
       }
+
+      // Also register this tile to the local fractal proxy.
+      m_fractalData->registerDataTile(tiles[id]);
     }
 
     postEvent(e);
