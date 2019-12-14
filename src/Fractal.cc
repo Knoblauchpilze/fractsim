@@ -91,9 +91,6 @@ namespace fractsim {
           }
         }
 
-        // TODO: It seems that there are some weird stuff going on at `0` (i.e. at the
-        // intersection of two tiles).
-
         // Check whether we could find some data for this point.
         if (count == 0u) {
           colors[offset + x] = def;

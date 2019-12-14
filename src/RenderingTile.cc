@@ -93,11 +93,11 @@ namespace fractsim {
     int yMin = static_cast<int>(std::floor(fCell.y()));
     int yMax = static_cast<int>(std::ceil(fCell.y()));
 
-    xMin = std::min(std::max(0, xMin), m_dims.w());
-    xMax = std::min(std::max(0, xMax), m_dims.w());
+    xMin = std::min(std::max(0, xMin), m_dims.w() - 1);
+    xMax = std::min(std::max(0, xMax), m_dims.w() - 1);
 
-    yMin = std::min(std::max(0, yMin), m_dims.h());
-    yMax = std::min(std::max(0, yMax), m_dims.h());
+    yMin = std::min(std::max(0, yMin), m_dims.h() - 1);
+    yMax = std::min(std::max(0, yMax), m_dims.h() - 1);
 
     // Retrieve the value at each cell surrounding the point.
     float a = m_data[yMin * m_dims.w() + xMin];
@@ -113,19 +113,6 @@ namespace fractsim {
     float cD = a + (c - a) * dx;
 
     float out = cD + (cU - cD) * dy;
-
-    // if (p.x() > 0.55f && p.y() < -0.75f) {
-    //   log(
-    //     std::string("p ") + p.toString() + ", local " + local.toString() + ", cell: " +
-    //     fCell.toString() + ", bounds: [" +
-    //     std::to_string(xMin) + ":" + std::to_string(xMax) + " " + std::to_string(yMin) + ":" + std::to_string(yMax) +
-    //     "] vals: [" +
-    //     std::to_string(a) + ", " + std::to_string(b) + ", " + std::to_string(c) + ", " + std::to_string(d) +
-    //     "] inter: [" + 
-    //     std::to_string(cU) + ", " + std::to_string(cD) + ", " + std::to_string(out) +
-    //     "] delta(" + std::to_string(dx) + ", " + std::to_string(dy) + ")"
-    //   );
-    // }
 
     return out;
   }
