@@ -37,40 +37,28 @@ namespace fractsim {
         std::string("Invalid fractal proxy")
       );
     }
+
+    setService("tile");
   }
 
   void
   RenderingTile::render() {
-    // The delta is given directly by the `m_discretization` interval.
-    // In order to define how many point we will pick to perform the
-    // computation, we just have to commensurate this to the size of
-    // the area assigned to this tile.
-    utils::Vector2f fCount(
-      m_area.w() / m_discretization.w(),
-      m_area.h() / m_discretization.h()
-    );
+    // Request the cells associated to this tile.
+    utils::Boxi cells = m_proxy->generateBoxFromArea(m_area);
 
-    // Convert to integer.
-    utils::Vector2i iCount(
-      static_cast<int>(std::ceil(fCount.x())),
-      static_cast<int>(std::ceil(fCount.y()))
-    );
-
-    log("Rendering tile with pix " + m_discretization.toString() + ", count is " + iCount.toString() + " (f: " + fCount.toString() + ")");
-
-    float xMin = m_area.getLeftBound();
-    float yMin = m_area.getBottomBound();
-
-    bool valid = true;
+    int xMin = cells.getLeftBound();
+    int xMax = cells.w();
+    int yMin = cells.getBottomBound();
+    int yMax = cells.h();
 
     // Compute all the area or stop when the area is not valid anymore,
     // meaning that some other batch of tiles have been issued.
-    for (int y = 0 ; y < iCount.y() && valid ; ++y) {
-      for (int x = 0 ; x < iCount.x() && valid ; ++x) {
+    for (int y = 0 ; y < yMax ; ++y) {
+      for (int x = 0 ; x < xMax ; ++x) {
         // Determine the coordinate of the point to compute.
         utils::Vector2f p(
-          xMin + x * m_discretization.w(),
-          yMin + y * m_discretization.h()
+          m_area.getLeftBound() + x * m_discretization.w(),
+          m_area.getBottomBound() + y * m_discretization.h()
         );
 
         // Determine whether the point still belongs to the area.
@@ -83,7 +71,9 @@ namespace fractsim {
         unsigned res = m_computing->compute(p);
 
         // Save the result in the proxy.
-        valid = m_proxy->assignValueForCoord(p, 1.0f * res / m_computing->getAccuracy());
+        // TODO: We should probably prevent writing coordinates when the job is not
+        // relevant anymore.
+        m_proxy->assignValueForCoord(xMin + x, yMin + y, 1.0f * res / m_computing->getAccuracy());
       }
     }
   }

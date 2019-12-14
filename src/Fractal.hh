@@ -35,6 +35,17 @@ namespace fractsim {
       ~Fractal();
 
       /**
+       * @brief - Used to generate the box representing the cells of the internal
+       *          data that corresponds to the input area. Note that the area is
+       *          to be included inside the general area defined for this object.
+       * @param part - a subarea of the general rendering area associated to this
+       *               object.
+       * @return - a box describing the cells covered by the input part.
+       */
+      utils::Boxi
+      generateBoxFromArea(const utils::Boxf& part);
+
+      /**
        * @brief - Used to assign the input point with the specified confidence. The
        *          confidence represents a value in the range `[0; 1]` (if this is not
        *          the case it is clamped) where `0` indicates that the point cannot
@@ -42,20 +53,18 @@ namespace fractsim {
        *          of confidence specified we cannot say that the point diverges. It is
        *          not a very good indication if the accuracy used during the computation
        *          is low but it gets better the higher this value is.
-       *          The input coordinate is interpreted internally in order to assign the
-       *          closest pixel with this value.
-       *          The return value indicates whether the coordinate could be set or not.
-       *          The only case where it can happen is when the `p` coordinate does not
-       *          lie inside the area defined for the fractal. So usually it is an info
-       *          for the caller that its own area might need some update.
-       * @param p - the coordinate for which the confidence should be updated.
+       *          The input coordinates ara interpreted internally against the array of
+       *          raw pixels used to store the fractal.
+       * @param x - the `x` coordinate of the point to update.
+       * @param y - the `y` coordinate of the point to update.
        * @param confidence - a value in the range `[0; 1]` indicating the level of
        *                     confidence we have for this point belonging to the fractal.
        * @return - `true` if the point lied inside the area defined for this fractal and
        *           `false` otherwise.
        */
-      bool
-      assignValueForCoord(const utils::Vector2f& p,
+      void
+      assignValueForCoord(int x,
+                          int y,
                           float confidence);
 
       /**
@@ -110,18 +119,6 @@ namespace fractsim {
        */
       void
       computeCellDelta();
-
-      /**
-       * @brief - Used to compute the cell to associate to the input coordinate. This coordinate
-       *          should belong to the rendering area for this fractal otherwise an error will be
-       *          raised.
-       *          In case the input coordinate is inside the rendering area, the closest cell in
-       *          the internal cache is returned.
-       * @param p - the real world coordinate for which the cell should be determined.
-       * @return - the coordinate of the cell corresponding to the input position.
-       */
-      utils::Vector2i
-      computeCellFromCoords(const utils::Vector2f& p);
 
       /**
        * @brief - Used to try to assign the `confidence` to the value described by the `cell` of

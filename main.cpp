@@ -20,10 +20,9 @@
 # include "StatusBar.hh"
 
 // TODO: Handle scrolling.
-// TODO: Allow customization of Palette (probably through the menu bar).
-// TODO: Check rounding error at high zoom levels: actually we reach the limit of the real-world
-// based system. Maybe we should compute from the cells themselves. Or maybe have some sort of
-// averaging of the pixels at very high order ?
+// TODO: Allow customization of Palette (probably through the menu bar). See in the link
+// https://codereview.stackexchange.com/questions/124358/mandelbrot-image-generator-and-viewer/124379
+// for more details on smoothing.
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
 // Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
 

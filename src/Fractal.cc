@@ -22,8 +22,54 @@ namespace fractsim {
     setRenderingArea(area);
   }
 
-  bool
-  Fractal::assignValueForCoord(const utils::Vector2f& p,
+  utils::Boxi
+  Fractal::generateBoxFromArea(const utils::Boxf& part) {
+    // Compute the distance to the left and bottom regions of the
+    // general area defined for this object.
+    float dToLeft = std::max(0.0f, part.getLeftBound() - m_area.getLeftBound());
+    float dToBottom = std::max(0.0f, part.getBottomBound() - m_area.getBottomBound());
+
+    // Compute the ratio between the dimensions of the input box
+    // and the internal box.
+    float wRatio = part.w() / m_area.w();
+    float hRatio = part.h() / m_area.h();
+
+    // Compute the dimensions and the starting position using the
+    // internal cells delta.
+    utils::Vector2f fStart(dToLeft / m_cellDelta.x(), dToBottom / m_cellDelta.y());
+    utils::Sizef fDims(wRatio * m_canvas.w(), hRatio * m_canvas.h());
+
+    // Convert to integer values.
+    utils::Vector2i iStart(
+      static_cast<int>(std::floor(fStart.x())),
+      static_cast<int>(std::floor(fStart.y()))
+    );
+
+    utils::Sizei iDims(
+      static_cast<int>(std::ceil(fDims.w())),
+      static_cast<int>(std::ceil(fDims.h()))
+    );
+
+    // Generate a box from this.
+    if (iDims.w() % 2 != 0) {
+      ++iDims.w();
+    }
+    if (iDims.h() % 2 != 0) {
+      ++iDims.h();
+    }
+
+    utils::Boxi cells(
+      iStart.x() + iDims.w() / 2,
+      iStart.y() + iDims.h() / 2,
+      iDims
+    );
+
+    return cells;
+  }
+
+  void
+  Fractal::assignValueForCoord(int x,
+                               int y,
                                float confidence)
   {
     // Clamp the confidence to a valid range.
@@ -32,19 +78,7 @@ namespace fractsim {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
-    // Check consistency.
-    if (!m_area.fuzzyContains(p, getToleranceForCells())) {
-      return false;
-    }
-
-    // Compute the coordinates of the input point so that we can fill
-    // in the internal cache. We should also check whether the cache
-    // is valid.
-    utils::Vector2i cell = computeCellFromCoords(p);
-
-    setOrThrow(cell, clamped);
-
-    return true;
+    setOrThrow(utils::Vector2i(x, y), clamped);
   }
 
   sdl::core::engine::BrushShPtr
@@ -77,37 +111,6 @@ namespace fractsim {
     brush->createFromRaw(utils::Sizei::fromVector(m_dims), colors);
 
     return brush;
-  }
-
-  utils::Vector2i
-  Fractal::computeCellFromCoords(const utils::Vector2f& p) {
-    // Compute the expected cell using the delta. We protect
-    // ourselves against rounding errors: the distance *must*
-    // always be positive (see `RenderingTile::render` method
-    // for more info).
-    float dToLeft = std::max(0.0f, p.x() - m_area.getLeftBound());
-    float dToBottom = std::max(0.0f, p.y() - m_area.getBottomBound());
-
-    if (p.y() < -0.75f && p.x() > 0.598f) {
-      log(
-        "p: " + p.toString() + ", area: " + m_area.toString() +
-        ", dist: " + std::to_string(dToLeft) + "x" + std::to_string(dToBottom) +
-        ", delta: " + m_cellDelta.toString() +
-        ", cell " + utils::Vector2i(
-          static_cast<int>(std::floor(dToLeft / m_cellDelta.x())),
-          static_cast<int>(std::floor(dToBottom / m_cellDelta.y()))
-        ).toString() +
-        ", fCell " + utils::Vector2f(dToLeft / m_cellDelta.x(), dToBottom / m_cellDelta.y()).toString()
-      );
-    }
-
-    // We want to round down the coordinates: we consider that
-    // the pixel is stored in the smallest cell that contains
-    // part of it, both along the `x` and `y` axis.
-    return utils::Vector2i(
-      static_cast<int>(std::round(dToLeft / m_cellDelta.x())),
-      static_cast<int>(std::round(dToBottom / m_cellDelta.y()))
-    );
   }
 
   void
