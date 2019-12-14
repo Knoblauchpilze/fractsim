@@ -21,7 +21,12 @@ namespace fractsim {
   inline
   unsigned
   NewtonRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
-    // TODO: Implementation.
+    // TODO: Implementation. We should keep an internal array of roots for the polynom.
+    // And we should also change the accuracy so that it does not modify the value of
+    // the pixel in `RenderinTile.cc:45`.
+    // Basically what we could do is create a palette which has as many colors as there
+    // are roots for the polynom (i.e. the max degree) and change the accuracy to be `1`
+    // for the outside world and the specified value for internal use.
     return p.length() < 3.0f ? 0u : getAccuracy();
   }
 
