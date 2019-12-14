@@ -25,6 +25,7 @@
 // for more details on smoothing.
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
 // Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
+// TODO: Optimize newton a bit ?
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.

@@ -59,6 +59,7 @@ namespace fractsim {
         // confidence.
         unsigned div = m_computing->compute(p);
         float clamped = std::min(1.0f, std::max(0.0f, div * normalization));
+
         m_data[offset + x] = clamped;
       }
     }

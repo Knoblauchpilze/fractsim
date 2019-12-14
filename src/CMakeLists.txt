@@ -16,6 +16,7 @@ set (SOURCES
   RenderingTile.cc
   Fractal.cc
   StatusBar.cc
+  NewtonRenderingOptions.cc
   )
 
 add_library (fractsim_lib SHARED
