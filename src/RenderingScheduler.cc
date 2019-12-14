@@ -246,8 +246,6 @@ namespace fractsim {
 
   void
   RenderingScheduler::resultsHandlingLoop() {
-    log("Creating results thread for scheduler pool", utils::Level::Notice);
-
     // Create the locker to use to wait for results to be processed.
     UniqueGuard rLock(m_resultsLocker);
 
@@ -295,8 +293,6 @@ namespace fractsim {
       );
       rLock.lock();
     }
-
-    log("Terminating results thread for scheduler pool", utils::Level::Notice);
   }
 
 }

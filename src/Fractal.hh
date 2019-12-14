@@ -1,6 +1,7 @@
 #ifndef    FRACTAL_HH
 # define   FRACTAL_HH
 
+# include <mutex>
 # include <vector>
 # include <memory>
 # include <core_utils/CoreObject.hh>
@@ -43,11 +44,17 @@ namespace fractsim {
        *          is low but it gets better the higher this value is.
        *          The input coordinate is interpreted internally in order to assign the
        *          closest pixel with this value.
+       *          The return value indicates whether the coordinate could be set or not.
+       *          The only case where it can happen is when the `p` coordinate does not
+       *          lie inside the area defined for the fractal. So usually it is an info
+       *          for the caller that its own area might need some update.
        * @param p - the coordinate for which the confidence should be updated.
        * @param confidence - a value in the range `[0; 1]` indicating the level of
        *                     confidence we have for this point belonging to the fractal.
+       * @return - `true` if the point lied inside the area defined for this fractal and
+       *           `false` otherwise.
        */
-      void
+      bool
       assignValueForCoord(const utils::Vector2f& p,
                           float confidence);
 
@@ -128,6 +135,11 @@ namespace fractsim {
                  float value);
 
     private:
+
+      /**
+       * @brief - Used to protect this object from concurrent accesses.
+       */
+      std::mutex m_propsLocker;
 
       /**
        * @brief - The size of the canvas associated to this fractal.

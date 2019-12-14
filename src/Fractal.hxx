@@ -19,6 +19,9 @@ namespace fractsim {
       );
     }
 
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
     m_canvas = canvas;
 
     // We need to convert the canvas to the nearest integer.
@@ -36,6 +39,9 @@ namespace fractsim {
   inline
   void
   Fractal::setRenderingArea(const utils::Boxf& area) {
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
     // Assign the new rendering area and fill the data with invalid value.
     m_area = area;
 

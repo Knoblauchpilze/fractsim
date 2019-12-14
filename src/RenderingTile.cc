@@ -61,8 +61,12 @@ namespace fractsim {
     float xMin = m_area.getLeftBound();
     float yMin = m_area.getBottomBound();
 
-    for (int y = 0 ; y < iCount.y() ; ++y) {
-      for (int x = 0 ; x < iCount.x() ; ++x) {
+    bool valid = true;
+
+    // Compute all the area or stop when the area is not valid anymore,
+    // meaning that some other batch of tiles have been issued.
+    for (int y = 0 ; y < iCount.y() && valid ; ++y) {
+      for (int x = 0 ; x < iCount.x() && valid ; ++x) {
         // Determine the coordinate of the point to compute.
         utils::Vector2f p(
           xMin + x * m_discretization.w(),
@@ -79,7 +83,7 @@ namespace fractsim {
         unsigned res = m_computing->compute(p);
 
         // Save the result in the proxy.
-        m_proxy->assignValueForCoord(p, 1.0f * res / m_computing->getAccuracy());
+        valid = m_proxy->assignValueForCoord(p, 1.0f * res / m_computing->getAccuracy());
       }
     }
   }

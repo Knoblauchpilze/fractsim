@@ -1,14 +1,13 @@
 
 # include "Fractal.hh"
 
-# include <iostream>
-# include <iomanip>
-
 namespace fractsim {
 
   Fractal::Fractal(const utils::Sizef& canvas,
                    const utils::Boxf& area):
     utils::CoreObject(std::string("fractal_proxy")),
+
+    m_propsLocker(),
 
     m_canvas(),
     m_dims(),
@@ -23,12 +22,20 @@ namespace fractsim {
     setRenderingArea(area);
   }
 
-  void
+  bool
   Fractal::assignValueForCoord(const utils::Vector2f& p,
                                float confidence)
   {
     // Clamp the confidence to a valid range.
     float clamped = std::min(1.0f, std::max(0.0f, confidence));
+
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
+
+    // Check consistency.
+    if (!m_area.fuzzyContains(p, getToleranceForCells())) {
+      return false;
+    }
 
     // Compute the coordinates of the input point so that we can fill
     // in the internal cache. We should also check whether the cache
@@ -36,6 +43,8 @@ namespace fractsim {
     utils::Vector2i cell = computeCellFromCoords(p);
 
     setOrThrow(cell, clamped);
+
+    return true;
   }
 
   sdl::core::engine::BrushShPtr
@@ -47,6 +56,9 @@ namespace fractsim {
         std::string("Invalid null gradient")
       );
     }
+
+    // Protect from concurrent accesses.
+    Guard guard(m_propsLocker);
 
     // Create the colors representing the brush.
     unsigned total = m_dims.x() * m_dims.y();
@@ -69,14 +81,6 @@ namespace fractsim {
 
   utils::Vector2i
   Fractal::computeCellFromCoords(const utils::Vector2f& p) {
-    // Check consistency.
-    if (!m_area.fuzzyContains(p, getToleranceForCells())) {
-      error(
-        std::string("Could not find cell coordinates for ") + p.toString(),
-        std::string("Position is not in the area ") + m_area.toString()
-      );
-    }
-
     // Compute the expected cell using the delta. We protect
     // ourselves against rounding errors: the distance *must*
     // always be positive (see `RenderingTile::render` method
