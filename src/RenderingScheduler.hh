@@ -41,10 +41,19 @@ namespace fractsim {
        *          batch of jobs).
        *          The user should call the `notifyRenderingJobs` method to actually
        *          start the processing.
+       *          One can choose whether these jobs invalidate the work that is being
+       *          processes right now or on the other hand if it does not impact it.
+       *          The second boolean, if set to `true` will prevent the notification of
+       *          jobs from previous batches through the `onTilesRendered` signal. If
+       *          the value is set to `false`, the user will still be able to get some
+       *          notifications about previously submitted jobs.
        * @param jobs - the list of jobs to enqueue.
+       * @param invalidate - prevent notification of jobs from previous batches if set
+       *                     to `true`.
        */
       void
-      enqueueJobs(const std::vector<RenderingTileShPtr>& jobs);
+      enqueueJobs(const std::vector<RenderingTileShPtr>& jobs,
+                  bool invalidate);
 
       /**
        * @brief - Used to cancel any existing jobs being processed for this scheduler.
@@ -201,6 +210,12 @@ namespace fractsim {
        * @brief - The list of tiles already computed, available for analysis.
        */
       std::vector<Job> m_results;
+
+      /**
+       * @brief - Defines whether the job related to an old batch should be considered valid
+       *          or if no notification should be produced for them.
+       */
+      bool m_invalidateOld;
 
       /**
        * @brief - Waiting condition to communicate results to the dedicated thread.

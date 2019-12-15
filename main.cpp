@@ -19,7 +19,6 @@
 # include "RenderingStatus.hh"
 # include "StatusBar.hh"
 
-// TODO: Handle scrolling.
 // TODO: Allow customization of Palette (probably through the menu bar). See in the link
 // https://codereview.stackexchange.com/questions/124358/mandelbrot-image-generator-and-viewer/124379
 // for more details on smoothing.

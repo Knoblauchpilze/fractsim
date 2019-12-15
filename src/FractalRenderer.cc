@@ -56,7 +56,7 @@ namespace fractsim {
       );
     }
     else {
-      m_renderingOpt->setRenderingArea(options->getDefaultRenderingWindow());
+      m_renderingOpt->setRenderingArea(options->getDefaultRenderingWindow(), true);
       m_fractalData->realWorldResize(m_renderingOpt->getRenderingArea(), true);
     }
 
@@ -71,7 +71,7 @@ namespace fractsim {
     m_fractalOptions = options;
 
     // Schedule a rendering.
-    scheduleRendering();
+    scheduleRendering(true);
 
     // Notify listeners of the new area.
     onRenderingAreaChanged.safeEmit(
@@ -106,14 +106,14 @@ namespace fractsim {
       area.toSize()
     );
 
-    log("Moving from " + area.toString() + " to " + newArea.toString() + " (motion: " + motion.toString() + ", real: " + realWorldMotion.toString() + ")");
+    log("Moving from " + area.toString() + " to " + newArea.toString() + " (motion: " + motion.toString() + ", real: " + realWorldMotion.toString() + ")", utils::Level::Verbose);
 
     // Update the rendering area.
-    m_renderingOpt->setRenderingArea(newArea);
+    m_renderingOpt->setRenderingArea(newArea, false);
     m_fractalData->realWorldResize(newArea, false);
 
     // Schedule a rendering.
-    scheduleRendering();
+    scheduleRendering(false);
 
     // Trigger new signals to notify listeners.
     onRenderingAreaChanged.safeEmit(
@@ -160,7 +160,7 @@ namespace fractsim {
     m_fractalData->realWorldResize(newArea, true);
 
     // Schedule the rendering.
-    scheduleRendering();
+    scheduleRendering(true);
 
     // Trigger new signals to notify listeners.
     onZoomChanged.safeEmit(
@@ -225,7 +225,7 @@ namespace fractsim {
   }
 
   void
-  FractalRenderer::scheduleRendering() {
+  FractalRenderer::scheduleRendering(bool invalidate) {
     // Check consistency.
     if (m_fractalOptions == nullptr) {
       log(
@@ -244,8 +244,10 @@ namespace fractsim {
       return;
     }
 
-    // Cancel existing rendering operations.
-    m_scheduler->cancelJobs();
+    // Cancel existing rendering operations if needed.
+    if (invalidate) {
+      m_scheduler->cancelJobs();
+    }
 
     // Generate the launch schedule.
     std::vector<RenderingTileShPtr> tiles = m_fractalData->generateRenderingTiles(m_fractalOptions);
@@ -258,7 +260,7 @@ namespace fractsim {
       return;
     }
 
-    m_scheduler->enqueueJobs(tiles);
+    m_scheduler->enqueueJobs(tiles, invalidate);
 
     // Notify listeners that the progression is no `0`.
     m_taskProgress = 0u;

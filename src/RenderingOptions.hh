@@ -34,14 +34,19 @@ namespace fractsim {
       getRenderingArea() const noexcept;
 
       /**
-       * @brief - Assigns a new rendering area for these options. Note that both
-       *          the current and the initial area are modified by this method
-       *          which means that no zoom information is persisted.
+       * @brief - Assigns a new rendering area for these options. Note that if the
+       *          user sets the `considerInit` boolean to `true`, both the current
+       *          *and* the initial area are modified by this method which means
+       *          that any zoom information will be lost.
        *          In case the new area is not valid an error is raised.
        * @param area - the new area to assign.
+       * @param considerInit - `ŧrue` if the input area should also be assigned as
+       *                       the initial area (i.e. the area used when a reset
+       *                       is requested).
        */
       void
-      setRenderingArea(const utils::Boxf& area);
+      setRenderingArea(const utils::Boxf& area,
+                       bool considerInit);
 
       /**
        * @brief - Used to retrieve the zoom factor along each axis.

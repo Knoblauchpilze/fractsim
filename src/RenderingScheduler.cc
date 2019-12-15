@@ -21,6 +21,7 @@ namespace fractsim {
     m_resultsLocker(),
     m_resultsHandling(false),
     m_results(),
+    m_invalidateOld(true),
     m_resWaiter(),
     m_resultsThreadLocker(),
     m_resultsHandlingThread(),
@@ -56,18 +57,22 @@ namespace fractsim {
   }
 
   void
-  RenderingScheduler::enqueueJobs(const std::vector<RenderingTileShPtr>& jobs) {
+  RenderingScheduler::enqueueJobs(const std::vector<RenderingTileShPtr>& jobs,
+                                  bool invalidate)
+  {
     // Protect from concurrent accesses.
     Guard guard(m_jobsLocker);
 
-    if (!m_jobs.empty()) {
-      error(
-        std::string("Could not enqueue ") + std::to_string(jobs.size()) + "(s)",
-        std::string("Still ") + std::to_string(m_jobs.size()) + " job(s) to process"
-      );
+    // Invalidate jobs if needed: this include all the remaining jobs to process
+    // but also notification about the ones currently being processed.
+    if (invalidate) {
+      m_jobs.clear();
     }
 
-    m_jobs.clear();
+    {
+      Guard guard(m_resultsLocker);
+      m_invalidateOld = invalidate;
+    }
 
     // Build the job by providing the batch index for these jobs.
     for (unsigned id = 0u ; id < jobs.size() ; ++id) {
@@ -277,7 +282,7 @@ namespace fractsim {
       // current one.
       std::vector<RenderingTileShPtr> res;
       for (unsigned id = 0u ; id < local.size() ; ++id) {
-        if (local[id].batch != m_batchIndex) {
+        if (local[id].batch != m_batchIndex && m_invalidateOld) {
           log(std::string("Discarding job for old batch ") + std::to_string(local[id].batch) + " (current is " + std::to_string(m_batchIndex) + ")");
           continue;
         }

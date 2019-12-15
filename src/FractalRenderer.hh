@@ -173,11 +173,17 @@ namespace fractsim {
        * @brief - Used to schedule a rendering with the specified options. This
        *          method issues a request to the threads pool used by this object
        *          to handle the computations.
+       *          The user can specify whether this new rendering operation is
+       *          meant to invalidate previous results or not. This is useful
+       *          for example to process scrolling where we want to keep old tiles
+       *          coming as we may scroll faster than the computations can be made.
        *          Note that this function assumes that the locker on the options
        *          is already acquired before calling the method.
+       * @param invalidate - `true` if the old jobs should be invalidated (i.e.
+       *                     prevented from being notified).
        */
       void
-      scheduleRendering();
+      scheduleRendering(bool invalidate);
 
       /**
        * @brief - Internal slot used to handle the tiles computed by the thread

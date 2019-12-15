@@ -27,7 +27,7 @@ namespace fractsim {
       m_renderingOpt->setCanvasSize(window.toSize());
       m_fractalData->resize(window.toSize());
 
-      scheduleRendering();
+      scheduleRendering(true);
     }
   }
 
@@ -45,7 +45,7 @@ namespace fractsim {
         m_fractalData->realWorldResize(area, false);
 
         // Schedule a rendering.
-        scheduleRendering();
+        scheduleRendering(true);
 
         // Notify listeners.
         onRenderingAreaChanged.safeEmit(

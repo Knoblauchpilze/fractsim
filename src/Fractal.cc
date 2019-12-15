@@ -78,7 +78,7 @@ namespace fractsim {
     int tilesToTheBottom = toBottom < 0.0f ? 0u : static_cast<int>(std::ceil(toBottom / tileDims.h()));
     int tilesToTheTop = toTop < 0.0f ? 0u : static_cast<int>(std::ceil(toTop / tileDims.h()));
 
-    log("Expanding rendered area by [" + std::to_string(toLeft) + ", " + std::to_string(toRight) + ", " + std::to_string(toBottom) + ", " + std::to_string(toTop) + "]");
+    log("Expanding rendered area by [" + std::to_string(tilesToTheLeft) + ", " + std::to_string(tilesToTheRight) + ", " + std::to_string(tilesToTheBottom) + ", " + std::to_string(tilesToTheTop) + "] (cache: " + std::to_string(m_tiles.size()) + ")", utils::Level::Verbose);
 
     // Create all the tiles. We will skip the one from the central area as they have
     // already been rendered and saved into the cache.
@@ -130,9 +130,6 @@ namespace fractsim {
     m_tilesCount.x() = xMax;
     m_tilesCount.y() = yMax;
 
-    // TODO What happens when the tiles are not compute and a scroll is requested ?
-    // We could refine the notion of batch and detect whether the result of previous
-    // batches should be discarded or not.
     return tiles;
   }
 

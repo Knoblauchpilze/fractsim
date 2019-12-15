@@ -13,7 +13,9 @@ namespace fractsim {
 
   inline
   void
-  RenderingOptions::setRenderingArea(const utils::Boxf& area) {
+  RenderingOptions::setRenderingArea(const utils::Boxf& area,
+                                     bool considerInit)
+  {
     // Check consistency.
     if (!area.valid()) {
       error(
@@ -22,9 +24,15 @@ namespace fractsim {
       );
     }
 
-    // Update both the current and initial area.
-    m_initial = area;
-    reset();
+    // Update the current area and set the initial one if needed.
+    if (considerInit) {
+      m_initial = area;
+      reset();
+
+      return;
+    }
+
+    m_area = area;
   }
 
   inline
