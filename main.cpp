@@ -8,7 +8,6 @@
 
 # include <core_utils/StdLogger.hh>
 # include <core_utils/LoggerLocator.hh>
-
 # include <sdl_app_core/SdlApplication.hh>
 # include <core_utils/CoreException.hh>
 # include <sdl_core/SdlWidget.hh>
@@ -24,7 +23,6 @@
 // for more details on smoothing.
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
 // Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
-// TODO: Optimize newton a bit ?
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
