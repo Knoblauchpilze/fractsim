@@ -28,11 +28,14 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     m_canvas = canvas;
+    m_tiles.clear();
   }
 
   inline
   void
-  Fractal::realWorldResize(const utils::Boxf& area) {
+  Fractal::realWorldResize(const utils::Boxf& area,
+                           bool zoom)
+  {
     // Check consistency.
     if (!area.valid()) {
       error(
@@ -45,6 +48,11 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     m_area = area;
+    // We want to perform a clean of the cache in case the zoom
+    // parameter indicates it.
+    if (zoom) {
+      m_tiles.clear();
+    }
   }
 
   inline

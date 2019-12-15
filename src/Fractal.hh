@@ -60,10 +60,15 @@ namespace fractsim {
       /**
        * @brief - Assigns a new rendering area for this fractal. Offsets the rendering
        *          area represented by the canvases produced by this object.
+       *          The user needs to indicate whether the resize include a zooming part
+       *          or if it doesn't (in which case it probably just indicate a shift of
+       *          the area).
        * @param area - the rendering area associated to this fractal.
+       * @param zoom - `true` if the resize includes a zooming part, `false` otherwise.
        */
       void
-      realWorldResize(const utils::Boxf& area);
+      realWorldResize(const utils::Boxf& area,
+                      bool zoom);
 
       /**
        * @brief - Used to register a new data tile to be used when producing images for

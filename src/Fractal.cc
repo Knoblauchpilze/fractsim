@@ -18,7 +18,7 @@ namespace fractsim {
     setService(std::string("fractal"));
 
     resize(canvas);
-    realWorldResize(area);
+    realWorldResize(area, false);
   }
 
   std::vector<RenderingTileShPtr>

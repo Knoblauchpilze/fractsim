@@ -57,7 +57,7 @@ namespace fractsim {
     }
     else {
       m_renderingOpt->setRenderingArea(options->getDefaultRenderingWindow());
-      m_fractalData->realWorldResize(m_renderingOpt->getRenderingArea());
+      m_fractalData->realWorldResize(m_renderingOpt->getRenderingArea(), true);
     }
 
     // Create fractal data if needed.
@@ -109,7 +109,7 @@ namespace fractsim {
 
     // Update the rendering area.
     m_renderingOpt->setRenderingArea(newArea);
-    m_fractalData->realWorldResize(newArea);
+    m_fractalData->realWorldResize(newArea, false);
 
     // Schedule a rendering.
     scheduleRendering();
@@ -156,7 +156,7 @@ namespace fractsim {
     utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
 
     utils::Boxf newArea = m_renderingOpt->zoom(conv, factor);
-    m_fractalData->realWorldResize(newArea);
+    m_fractalData->realWorldResize(newArea, true);
 
     // Schedule the rendering.
     scheduleRendering();
@@ -250,7 +250,6 @@ namespace fractsim {
     std::vector<RenderingTileShPtr> tiles = m_fractalData->generateRenderingTiles(m_fractalOptions);
 
     // Return early if nothing needs to be scheduled.
-    // TODO: We should probably still request a repaint ?
     if (tiles.empty()) {
       return;
     }
