@@ -24,6 +24,18 @@ namespace fractsim {
   }
 
   inline
+  float
+  NewtonRenderingOptions::getConvergenceThreshold() noexcept {
+    return 0.0001f;
+  }
+
+  inline
+  unsigned
+  NewtonRenderingOptions::getConvergenceDuration() noexcept {
+    return 5u;
+  }
+
+  inline
   sdl::core::engine::Color
   NewtonRenderingOptions::generateRandomColor(float val,
                                               float count) noexcept

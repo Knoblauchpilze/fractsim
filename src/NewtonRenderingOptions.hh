@@ -94,6 +94,28 @@ namespace fractsim {
       getRootEqualityThreshold() noexcept;
 
       /**
+       * @brief - Used to return a value that can be used when two successive iterations
+       *          of the Newton series are close enough to be considered converged. This
+       *          usually means that the series has converged to the root it is supposed
+       *          to reach and thus that there is no need to continue the computations.
+       * @return - the threshold value allowing to determine when a series has converged.
+       */
+      static
+      float
+      getConvergenceThreshold() noexcept;
+
+      /**
+       * @brief - Allow to determine when a series is considered to have converged. This
+       *          means that for a certain number of successive terms the series reached
+       *          values close enough to each other.
+       * @return - the number of `close enough` terms that a series should produce to be
+       *           considered converged.
+       */
+      static
+      unsigned
+      getConvergenceDuration() noexcept;
+
+      /**
        * @brief - Used to generate the `val` pseudo-random color out of `count` and
        *          return it as a valid color.
        * @param val - the index of the color to generate.

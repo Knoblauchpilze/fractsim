@@ -32,6 +32,8 @@ namespace fractsim {
 
     // Iterate the function
     unsigned acc = getAccuracy();
+    unsigned conv = getConvergenceDuration();
+    float thresh = getConvergenceThreshold();
     unsigned terms = 0u;
     std::complex<float> cur(c.x(), c.y());
     std::complex<float> p, pp;
@@ -39,7 +41,8 @@ namespace fractsim {
     bool optimum = false;
     unsigned close = 0u;
 
-    while (terms < acc && !optimum && close <= 5u) {
+
+    while (terms < acc && !optimum && close <= conv) {
       evaluate(cur, p, pp);
       optimum = std::norm(pp) < getNullThreshold();
 
@@ -47,7 +50,7 @@ namespace fractsim {
         std::complex<float> tmp = p / pp;
         cur -= tmp;
 
-        if (std::norm(tmp) <= getRootEqualityThreshold()) {
+        if (std::norm(tmp) <= thresh) {
           ++close;
         }
         else {
@@ -56,7 +59,6 @@ namespace fractsim {
       }
 
       // TODO: Improve mechanism for coloring: add some sort of convergence measurement.
-      // TODO: Proprify this piece of code.
       ++terms;
     }
 
@@ -72,8 +74,8 @@ namespace fractsim {
 
     while (idRoot < m_roots.size() && !found) {
       found = (
-        std::abs(cur.real() - m_roots[idRoot].real()) < getRootEqualityThreshold() &&
-        std::abs(cur.imag() - m_roots[idRoot].imag()) < getRootEqualityThreshold()
+        utils::fuzzyEqual(cur.real(), m_roots[idRoot].real(), getRootEqualityThreshold()) &&
+        utils::fuzzyEqual(cur.imag(), m_roots[idRoot].imag(), getRootEqualityThreshold())
       );
 
       ++idRoot;
