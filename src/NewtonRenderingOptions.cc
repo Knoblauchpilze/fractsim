@@ -18,7 +18,7 @@ namespace fractsim {
     initialize(coeffs);
   }
 
-  unsigned
+  float
   NewtonRenderingOptions::compute(const utils::Vector2f& c) const noexcept {
     // We want to iterate the series of Newton for the polynom defined
     // through the coefficients of this object by the following expression:
@@ -59,8 +59,6 @@ namespace fractsim {
         }
       }
 
-      // TODO: Improve mechanism for coloring: add some sort of convergence measurement.
-      // TODO: Assign distinct values for areas that don't converge.
       ++terms;
     }
 
@@ -83,6 +81,12 @@ namespace fractsim {
       ++idRoot;
     }
 
+    // Account for the fact that even when we find the root we actually also
+    // increment the root index.
+    if (found) {
+      --idRoot;
+    }
+
     // In any case, we want the value to be assigned to the palette entry
     // matching the index of the root in the internal array. This can be
     // done by setting a value of `rootStep * accuracy` where the `rootStep`
@@ -92,6 +96,8 @@ namespace fractsim {
     // this value and otherwise add the root to the list and set the value.
     // Without loss of generality we can assign the root and then use the
     // `idRoot` as a valid value.
+    float perc = 0.0f;
+
     if (!found) {
       // This is a fair attempt at finding a root. We have to evaluate that
       // it is indeed a root. There are points which do not converge to any
@@ -99,13 +105,19 @@ namespace fractsim {
       // `null` but the polynom itself is not null: in such cases the method
       // is stuck at this point forever).
       if (std::norm(p) < getNullThreshold()) {
+        log("Found root " + std::to_string(m_roots.size()) + ": " + std::to_string(cur.real()) + "+" + std::to_string(cur.imag()) + "i");
         m_roots.push_back(cur);
       }
     }
 
-    float perc = std::round(acc * idRoot / m_maxDegree);
+    if (found) {
+      // We have the index of the root that the series converged to. We know
+      // need to position the value in the interval based on the convergence
+      // speed.
+      perc = getColorPosFromRoot(idRoot, terms);
+    }
 
-    return static_cast<int>(perc);
+    return perc;
   }
 
   void
@@ -125,31 +137,50 @@ namespace fractsim {
       }
     }
 
-    // Populate the palette.
+    // Create the palette.
     sdl::core::engine::GradientShPtr gradient = std::make_shared<sdl::core::engine::Gradient>(
       std::string("newton_rendering_gradient"),
       sdl::core::engine::gradient::Mode::Linear
     );
 
+    // Populate the default value (used for the cases where a series does not converge to
+    // a root of the polynom).
+    gradient->setColorAt(0.0f, sdl::core::engine::Color::NamedColor::Red);
+
     // Handle trivial case of a polynom with no degree.
     if (m_maxDegree < getNullThreshold()) {
-      gradient->setColorAt(0.0f, sdl::core::engine::Color::NamedColor::Red);
-
       setPalette(gradient);
 
       return;
     }
 
-    // Generate a palette assuming integer degress.
+    // Create a palette based on the expected number of roots.
     unsigned maxDeg = std::round(m_maxDegree);
-
     ColorPalette pal(maxDeg, ColorPalette::Mode::GoldenAngle);
 
     const std::vector<sdl::core::engine::Color>& colors = pal.getColors();
-    for (unsigned id = 0u ; id <= maxDeg ; ++id) {
-      float perc = 1.0f * id / std::max(1.0f, maxDeg - 1.0f);
 
-      gradient->setColorAt(perc, colors[id]);
+    // Each root goes from a given color to reach black over the course of the convergence
+    // interval (given by accuracy). We have `getRootGradientInterval()` available space to
+    // display all `maxDeg` roots with `maxDeg - 1` intervals with `getRootGradientSeparation`
+    // length so we can compute the `delta` as shown below.
+    float cur = 1.0f - getRootGradientInterval();
+    float delta = (getRootGradientInterval() - (maxDeg - 1.0f) * getRootGradientSeparation()) / maxDeg;
+
+    for (unsigned id = 0u ; id < maxDeg ; ++id) {
+      gradient->setColorAt(cur, colors[id]);
+
+      // Transition either to black or to white based on the brightness of the input color.
+      if (colors[id].brightness() > 0.5f) {
+        gradient->setColorAt(cur + delta, sdl::core::engine::Color::NamedColor::Black);
+      }
+      else {
+        gradient->setColorAt(cur + delta, sdl::core::engine::Color::NamedColor::White);
+      }
+
+      log("Setting gradient from " + std::to_string(cur) + " to " + std::to_string(cur + delta));
+
+      cur += (delta + getRootGradientSeparation());
     }
 
     setPalette(gradient);
@@ -186,6 +217,29 @@ namespace fractsim {
     for (unsigned id = 0u ; id < m_derivative.size() ; ++id) {
       pp += (m_derivative[id].coeff * std::pow(x, m_derivative[id].degree));
     }
+  }
+
+  float
+  NewtonRenderingOptions::getColorPosFromRoot(unsigned root,
+                                              unsigned terms) const
+  {
+    // Retrieve the starting position of the interval defining the root.
+    float sRoot = (1.0f - getRootGradientInterval());
+    sRoot += (root * (getRootGradientInterval() / m_maxDegree));
+
+    // Now account for the number of terms it took to converge.
+    float delta = (getRootGradientInterval() - (m_maxDegree - 1.0f) * getRootGradientSeparation()) / m_maxDegree;
+
+    sRoot += (delta * terms / getAccuracy());
+
+    if (sRoot > 1.0f) {
+      log("HUHO " + std::to_string(root) + ", terms: " + std::to_string(terms));
+    }
+    if (sRoot < 0.0f) {
+      log("HOHU");
+    }
+
+    return sRoot;
   }
 
 }

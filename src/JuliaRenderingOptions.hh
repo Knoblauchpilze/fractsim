@@ -36,10 +36,10 @@ namespace fractsim {
        * @brief - Specialization of the base class to provide an answer to whether
        *          the input point belongs to the Julia set or not.
        * @param p - the point to determine whether it belongs to the fractal.
-       * @return - a value smaller than the accuracy if the point does *not* belong
-       *           to the fractal.
+       * @return - a value indicating the level of confidence that this point is
+       *           part of the fractal.
        */
-      unsigned
+      float
       compute(const utils::Vector2f& p) const noexcept override;
 
       utils::Vector2f

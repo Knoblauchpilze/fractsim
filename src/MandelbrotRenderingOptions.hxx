@@ -20,7 +20,7 @@ namespace fractsim {
   }
 
   inline
-  unsigned
+  float
   MandelbrotRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
     // Compute terms of the series until it diverges.
     unsigned acc = getAccuracy();
@@ -40,7 +40,7 @@ namespace fractsim {
       }
     }
 
-    return terms;
+    return 1.0f * terms / acc;
   }
 
   inline

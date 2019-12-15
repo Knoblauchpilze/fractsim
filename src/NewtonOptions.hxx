@@ -49,9 +49,15 @@ namespace fractsim {
 
   inline
   float
-  NewtonOptions::getDefaultRealPartCoefficient(unsigned /*degree*/) noexcept {
-    // The degree is not used.
-    return 1.0f;
+  NewtonOptions::getDefaultRealPartCoefficient(unsigned degree) noexcept {
+    if (degree == 5u) {
+      return 1.0f;
+    }
+    if (degree == 0u) {
+      return -1.0f;
+    }
+
+    return 0.0f;
   }
 
   inline

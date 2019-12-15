@@ -36,6 +36,18 @@ namespace fractsim {
   }
 
   inline
+  float
+  NewtonRenderingOptions::getRootGradientInterval() noexcept {
+    return 0.99f;
+  }
+
+  inline
+  float
+  NewtonRenderingOptions::getRootGradientSeparation() noexcept {
+    return 0.001f;
+  }
+
+  inline
   void
   NewtonRenderingOptions::setCoefficients(const std::vector<Coefficient>& coeffs) noexcept {
     Guard guard(m_propsLocker);

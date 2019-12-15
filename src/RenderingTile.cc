@@ -42,8 +42,6 @@ namespace fractsim {
     float xMin = m_area.getLeftBound();
     float yMin = m_area.getBottomBound();
 
-    float normalization =  1.0f / m_computing->getAccuracy();
-
     for (int y = 0 ; y < m_dims.h() ; ++y) {
       unsigned offset = y * m_dims.w();
 
@@ -57,8 +55,8 @@ namespace fractsim {
         // Compute the divergence count for this point.
         // Normalize the contribution with the maximum
         // confidence.
-        unsigned div = m_computing->compute(p);
-        float clamped = std::min(1.0f, std::max(0.0f, div * normalization));
+        float div = m_computing->compute(p);
+        float clamped = std::min(1.0f, std::max(0.0f, div));
 
         m_data[offset + x] = clamped;
       }

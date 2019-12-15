@@ -54,10 +54,10 @@ namespace fractsim {
        *          does handle the creation of roots in a thread-safe manner though
        *          and can be used concurrently.
        * @param c - the point to determine whether it belongs to the fractal.
-       * @return - a value smaller than the accuracy if the point does *not* belong
-       *           to the fractal.
+       * @return - a value indicating the level of confidence that this point is
+       *           part of the fractal.
        */
-      unsigned
+      float
       compute(const utils::Vector2f& c) const noexcept override;
 
       void
@@ -116,6 +116,26 @@ namespace fractsim {
       getConvergenceDuration() noexcept;
 
       /**
+       * @brief - Return a value representing the available interval from the range `[0; 1]`
+       *          is available to represent the roots colors.
+       * @return - a value in the range `[0; 1[` representing the interval available for the
+       *           roots colors in the palette used by this object.
+       */
+      static
+      float
+      getRootGradientInterval() noexcept;
+
+      /**
+       * @brief - Return a value representing the separation interval between two consecutive
+       *          roots colors section. Basically it means that two consecutive root will be
+       *          separated by a useless area of this length in the output gradient.
+       * @return - the separation between two roots areas.
+       */
+      static
+      float
+      getRootGradientSeparation() noexcept;
+
+      /**
        * @brief - Used when building a new options object to initialie the coefficients
        *          the derivative but also the palette to reflect the possible roots of
        *          a polynom and be able to color it correctly.
@@ -144,6 +164,20 @@ namespace fractsim {
       evaluate(const std::complex<float>& x,
                std::complex<float>& p,
                std::complex<float>& pp) const noexcept;
+
+      /**
+       * @brief - Used to compute a valid position that can be used in the gradient defined
+       *          for this object given the series converged to the `root`-th root within a
+       *          number of iterations represented by `terms`.
+       *          This method assumes that the locker is already locked.
+       * @param root - the index of the root the series converged to.
+       * @param terms - the number of temrs it took to consider that the series converged.
+       * @return - a value that can be used in the internal gradient to retrieve the color
+       *           associated to this object.
+       */
+      float
+      getColorPosFromRoot(unsigned root,
+                          unsigned terms) const;
 
     private:
 

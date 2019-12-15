@@ -67,10 +67,11 @@ namespace fractsim {
        *          this object and the additional ones provided by the class to check
        *          whether the input point belongs to the fractal or not.
        * @param p - the point to determine whether it belongs to the fractal.
-       * @return - a value smaller than the `getAccuracy()` if the point does *not*
-       *           belong to the fractal, at least `getAccuracy()` otherwise.
+       * @return - a value representing the confidence that this point belongs to
+       *           the fractal given the degree of accuracy provided by the internal
+       *           value (i.e. `getAccuracy()`).
        */
-      virtual unsigned
+      virtual float
       compute(const utils::Vector2f& p) const noexcept = 0;
 
     protected:
