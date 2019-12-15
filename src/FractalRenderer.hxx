@@ -35,7 +35,7 @@ namespace fractsim {
   bool
   FractalRenderer::keyPressEvent(const sdl::core::engine::KeyEvent& e) {
     // Check whether the key corresponds to the reset key.
-    if (e.getRawKey() == sdl::core::engine::RawKey::R) {
+    if (e.getRawKey() == getDefaultResetKey()) {
       // Protect from concurrent accesses.
       Guard guard(m_propsLocker);
 
@@ -52,6 +52,44 @@ namespace fractsim {
           std::string("onRenderingAreaChanged(") + area.toString() + ")",
           area
         );
+      }
+    }
+
+    // Check for arrow keys.
+    bool move = false;
+    utils::Vector2f motion;
+    float delta = getArrowKeyMotion();
+
+    if (e.getRawKey() == sdl::core::engine::RawKey::Left) {
+      move = true;
+      motion.x() -= delta;
+    }
+    if (e.getRawKey() == sdl::core::engine::RawKey::Right) {
+      move = true;
+      motion.x() += delta;
+    }
+    if (e.getRawKey() == sdl::core::engine::RawKey::Down) {
+      move = true;
+      motion.y() -= delta;
+    }
+    if (e.getRawKey() == sdl::core::engine::RawKey::Up) {
+      move = true;
+      motion.y() += delta;
+    }
+
+    // Schedule a scrolling if some motion has been detected.
+    if (move) {
+      utils::Vector2f center, newCenter;
+
+      {
+        Guard guard(m_propsLocker);
+
+        center = m_renderingOpt->getRenderingArea().getCenter();
+        newCenter = center + motion;
+      }
+
+      if (handleContentScrolling(center, newCenter, motion, false)) {
+        requestRepaint();
       }
     }
 
@@ -92,15 +130,9 @@ namespace fractsim {
   }
 
   inline
-  unsigned
-  FractalRenderer::getHorizontalTileCount() noexcept {
-    return 4u;
-  }
-
-  inline
-  unsigned
-  FractalRenderer::getVerticalTileCount() noexcept {
-    return 4u;
+  float
+  FractalRenderer::getArrowKeyMotion() noexcept {
+    return 15.0f;
   }
 
   inline

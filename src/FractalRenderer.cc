@@ -18,6 +18,7 @@ namespace fractsim {
 
     m_scheduler(std::make_shared<RenderingScheduler>()),
     m_taskProgress(0u),
+    m_taskTotal(1u),
 
     m_tex(),
     m_tilesRendered(true),
@@ -77,6 +78,50 @@ namespace fractsim {
       std::string("onRenderingAreaChanged(") + m_renderingOpt->getRenderingArea().toString() + ")",
       m_renderingOpt->getRenderingArea()
     );
+  }
+
+  bool
+  FractalRenderer::handleContentScrolling(const utils::Vector2f& /*posToFix*/,
+                                          const utils::Vector2f& /*whereTo*/,
+                                          const utils::Vector2f& motion,
+                                          bool /*notify*/)
+  {
+    // We want to apply a motion of `motion` in local coordinate frame to the
+    // underlying support area. In order to do that we need to convert the
+    // motion into a real world coordinate frame.
+    Guard guard(m_propsLocker);
+
+    utils::Sizef pixSize = m_fractalData->getPixelSize();
+    utils::Vector2f realWorldMotion(
+      motion.x() * pixSize.w(),
+      motion.y() * pixSize.h()
+    );
+
+    // Compute the new rendering area by offseting the old one with the motion.
+    utils::Boxf area = m_renderingOpt->getRenderingArea();
+    utils::Boxf newArea(
+      area.x() + realWorldMotion.x(),
+      area.y() + realWorldMotion.y(),
+      area.toSize()
+    );
+
+    log("Moving from " + area.toString() + " to " + newArea.toString() + " (motion: " + motion.toString() + ", real: " + realWorldMotion.toString() + ")");
+
+    // Update the rendering area.
+    m_renderingOpt->setRenderingArea(newArea);
+    m_fractalData->realWorldResize(newArea);
+
+    // Schedule a rendering.
+    scheduleRendering();
+
+    // Trigger new signals to notify listeners.
+    onRenderingAreaChanged.safeEmit(
+      std::string("onRenderingAreaChanged(") + newArea.toString() + ")",
+      newArea
+    );
+
+    // Notify the caller that we changed the area.
+    return true;
   }
 
   bool
@@ -201,35 +246,21 @@ namespace fractsim {
     // Cancel existing rendering operations.
     m_scheduler->cancelJobs();
 
-    // Divide the input window into several tiles and enqueue each job into
-    // the scheduler.
-    utils::Boxf area = m_renderingOpt->getRenderingArea();
-    utils::Sizef canvas = m_renderingOpt->getCanvasSize();
+    // Generate the launch schedule.
+    std::vector<RenderingTileShPtr> tiles = m_fractalData->generateRenderingTiles(m_fractalOptions);
 
-    utils::Sizef tileDims(area.w() / getHorizontalTileCount(), area.h() / getVerticalTileCount());
-    utils::Sizef rwPixSize(area.w() / canvas.w(), area.h() / canvas.h());
-
-    std::vector<RenderingTileShPtr> tiles;
-    for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
-      for (unsigned x = 0u ; x < getHorizontalTileCount() ; ++x) {
-        tiles.push_back(
-          std::make_shared<RenderingTile>(
-            utils::Boxf(
-              area.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
-              area.getTopBound() - 1.0f * y * tileDims.h() - tileDims.h() / 2.0f,
-              tileDims
-            ),
-            rwPixSize,
-            m_fractalOptions
-          )
-        );
-      }
+    // Return early if nothing needs to be scheduled.
+    // TODO: We should probably still request a repaint ?
+    if (tiles.empty()) {
+      return;
     }
 
     m_scheduler->enqueueJobs(tiles);
 
     // Notify listeners that the progression is no `0`.
     m_taskProgress = 0u;
+    m_taskTotal = tiles.size();
+
     onTileCompleted.safeEmit(
       std::string("onTileCompleted(0.0)"),
       0.0f
@@ -259,7 +290,7 @@ namespace fractsim {
       }
 
       // Also register this tile to the local fractal proxy.
-      m_fractalData->registerDataTile(tiles[id]);
+      m_fractalData->registerDataTile(m_renderingOpt->getMeanZoom(), tiles[id]);
     }
 
     postEvent(e);
@@ -270,7 +301,9 @@ namespace fractsim {
     // Some more tiles have been processed.
     m_taskProgress += tiles.size();
 
-    float perc = 1.0f * m_taskProgress / (getHorizontalTileCount() * getVerticalTileCount());
+    float perc = 1.0f * m_taskProgress / m_taskTotal;
+
+    log("Completed tile " + std::to_string(m_taskProgress) + "/" + std::to_string(m_taskTotal));
 
     onTileCompleted.safeEmit(
       std::string("onTileCompleted(") + std::to_string(perc) + ")",

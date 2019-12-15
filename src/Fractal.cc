@@ -12,12 +12,45 @@ namespace fractsim {
     m_canvas(),
     m_area(),
 
+    m_zoomLevel(),
     m_tiles()
   {
     setService(std::string("fractal"));
 
     resize(canvas);
     realWorldResize(area);
+  }
+
+  std::vector<RenderingTileShPtr>
+  Fractal::generateRenderingTiles(FractalOptionsShPtr opt) {
+    // In order to render the fractal, we need to perform some computations. In order
+    // to speed things up we divide the workload into small tiles representing some
+    // portion of the total area.
+    // When some tiles are already available, we would ideally not want to recompute
+    // everything and produce only the missing tiles.
+    // TODO: Divide into several tiles based on the cache.
+    utils::Sizef tileDims(m_area.w() / getHorizontalTileCount(), m_area.h() / getVerticalTileCount());
+    utils::Sizef pixSize = getPixelSizePrivate();
+
+    std::vector<RenderingTileShPtr> tiles;
+
+    for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
+      for (unsigned x = 0u ; x < getHorizontalTileCount() ; ++x) {
+        tiles.push_back(
+          std::make_shared<RenderingTile>(
+            utils::Boxf(
+              m_area.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
+              m_area.getTopBound() - 1.0f * y * tileDims.h() - tileDims.h() / 2.0f,
+              tileDims
+            ),
+            pixSize,
+            opt
+          )
+        );
+      }
+    }
+
+    return tiles;
   }
 
   sdl::core::engine::BrushShPtr

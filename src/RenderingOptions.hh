@@ -51,6 +51,13 @@ namespace fractsim {
       getZoom() const noexcept;
 
       /**
+       * @brief - Returns the zoom as a mean value averaging the zoom along each axis.
+       * @return - the average of the zoom along both axos.
+       */
+      float
+      getMeanZoom() const noexcept;
+
+      /**
        * @brief - Perform a zoom which keeps the `center` at the specified location and
        *          with the specified factor. Note that theoretically the center could be
        *          outside of the visible range.

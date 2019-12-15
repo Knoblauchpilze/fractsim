@@ -6,6 +6,14 @@
 namespace fractsim {
 
   inline
+  utils::Sizef
+  Fractal::getPixelSize() const noexcept {
+    Guard guard(m_propsLocker);
+
+    return getPixelSizePrivate();
+  }
+
+  inline
   void
   Fractal::resize(const utils::Sizef& canvas) {
     // Check consistency.
@@ -20,7 +28,6 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     m_canvas = canvas;
-    m_tiles.clear();
   }
 
   inline
@@ -38,12 +45,13 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     m_area = area;
-    m_tiles.clear();
   }
 
   inline
   void
-  Fractal::registerDataTile(RenderingTileShPtr tile) {
+  Fractal::registerDataTile(float zoom,
+                            RenderingTileShPtr tile)
+  {
     // Prevent invalid tiles.
     if (tile == nullptr) {
       error(
@@ -55,13 +63,40 @@ namespace fractsim {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
+    // Check whether the zoom level is still consistent with what we
+    // are keeping internally. If this is the case the tile can be
+    // appended to the cache, otherwise we need to reset it.
+    if (!utils::fuzzyEqual(m_zoomLevel, zoom, getZoomComparisonThreshold())) {
+      m_tiles.clear();
+
+      m_zoomLevel = zoom;
+    }
+
     m_tiles.push_back(tile);
   }
 
   inline
   float
-  Fractal::getToleranceForCells() noexcept {
+  Fractal::getZoomComparisonThreshold() noexcept {
     return 0.000001f;
+  }
+
+  inline
+  unsigned
+  Fractal::getHorizontalTileCount() noexcept {
+    return 4u;
+  }
+
+  inline
+  unsigned
+  Fractal::getVerticalTileCount() noexcept {
+    return 4u;
+  }
+
+  inline
+  utils::Sizef
+  Fractal::getPixelSizePrivate() const noexcept {
+    return utils::Sizef(m_area.w() / m_canvas.w(), m_area.h() / m_canvas.h());
   }
 
 }

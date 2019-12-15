@@ -46,6 +46,30 @@ namespace fractsim {
       updatePrivate(const utils::Boxf& window) override;
 
       /**
+       * @brief - Specialziation of the parent method in order to perform the
+       *          scrolling on this object. What we want is to move the real
+       *          world area associated to the visual representation so that
+       *          we get another perspective on the fractal.
+       *          The interface is similar to what is expected by the parent
+       *          class (see `ScrollableWidget` for more details).
+       * @param posToFix - the position in local coordinate frame corresponding
+       *                   to the position that should be fixed during the
+       *                   scroll operation.
+       * @param whereTo - the new position of the `posToFix`. Corresponds to
+       *                  the `posToFix` where the `motion` has been applied.
+       * @param motion - the motion to apply.
+       * @param notify - indication as to this method should emit some signals
+       *                 like `onHorizontalAxisChanged`.
+       * @return - `true` if the actual rendering area has been changed, and
+       *           `false` otherwise.
+       */
+      bool
+      handleContentScrolling(const utils::Vector2f& posToFix,
+                             const utils::Vector2f& whereTo,
+                             const utils::Vector2f& motion,
+                             bool notify = true) override;
+
+      /**
        * @brief - Reimplementation of the base class method to detect whenever the
        *          reset key is pressed, allowing to set the rendering window to its
        *          default value and thus regain a nice viewpoint.
@@ -103,22 +127,17 @@ namespace fractsim {
       getDefaultZoomOutFactor() noexcept;
 
       /**
-       * @brief - Provide a value describing how many tiles should be used to
-       *          divide the workload along the horizontal axis. This allows
-       *          to perform some sort of parallelization.
-       * @return - the number of tiles to create horizontally.
+       * @brief - Used to retrieve the number of *pixel(s)* corresponding to a press
+       *          of an arrow key. The large this value the more a single key stroke
+       *          will shift the rendering area.
+       *          Note that the value is expressed in pixels so that it stays relevant
+       *          no matter the zoom level.
+       * @return - a value indicating the number of pixels moved when an arrow key is
+       *           pressed.
        */
       static
-      unsigned
-      getHorizontalTileCount() noexcept;
-
-      /**
-       * @brief - Similar to `getHorizontalTileCount` but for the vertical axis.
-       * @return - the number of tiles to create vertically.
-       */
-      static
-      unsigned
-      getVerticalTileCount() noexcept;
+      float
+      getArrowKeyMotion() noexcept;
 
       /**
        * @brief - Used to retrieve the default key to use to reset the rendering
@@ -274,6 +293,14 @@ namespace fractsim {
        *          completion of the task.
        */
       unsigned m_taskProgress;
+
+      /**
+       * @brief - Keep track of the total size of the batch of tasks that were generated
+       *          to be scheduled.
+       *          Useful in conjunction with the `m_taskProgress` to provide some sort of
+       *          completion percentage.
+       */
+      unsigned m_taskTotal;
 
       /**
        * @brief - The index returned by the engine for the texture representing the fractal

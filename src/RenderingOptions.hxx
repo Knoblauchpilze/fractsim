@@ -34,6 +34,13 @@ namespace fractsim {
   }
 
   inline
+  float
+  RenderingOptions::getMeanZoom() const noexcept {
+    utils::Vector2f zoom = getZoom();
+    return (zoom.x() + zoom.y()) / 2.0f;
+  }
+
+  inline
   utils::Boxf
   RenderingOptions::reset() {
     m_area = m_initial;
