@@ -145,6 +145,19 @@ namespace fractsim {
       utils::Sizef
       getPixelSizePrivate() const noexcept;
 
+      /**
+       * @brief - Internal method used to generate the tiles to render when there's no cache
+       *          available. It indicates a state where the rendering area has probably been
+       *          modified (through a zoom for example).
+       *          The goal of the method is to perform the definition of a tiling that can
+       *          then be extended through the cache mechanism.
+       * @param opt - the fractal options to associate to each produced tile.
+       * @return - the list of tiles to render to obtain a good visualization of the rendering
+       *           area associated to this object.
+       */
+      std::vector<RenderingTileShPtr>
+      generateDefaultTiling(FractalOptionsShPtr opt);
+
     private:
 
       /**
@@ -169,6 +182,20 @@ namespace fractsim {
        *          zoom level is changed, the cache is reset.
        */
       float m_zoomLevel;
+
+      /**
+       * @brief - The area that has currently been rendered. Note that this is a projection
+       *          computed when the tiling division is computed (through the interface method
+       *          `generateRenderingTiles`): depending on the completion of the rendering it
+       *          might not be actually the case that all tiles have been rendered.
+       */
+      utils::Boxf m_renderedArea;
+
+      /**
+       * @brief - This value holds the number of tiles contained in the `m_renderedArea` along
+       *          each axis. It helps to build the area assigned to new tile when needed.
+       */
+      utils::Vector2i m_tilesCount;
 
       /**
        * @brief - Contains all the tiles registered for this fractal so far. These tiles are

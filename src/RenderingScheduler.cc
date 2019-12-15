@@ -175,7 +175,7 @@ namespace fractsim {
 
   void
   RenderingScheduler::jobFetchingLoop(unsigned threadID) {
-    log("Creating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Notice);
+    log("Creating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Verbose);
 
     // Create the locker to use to wait for job to do.
     UniqueGuard tLock(m_poolLocker);
@@ -224,7 +224,7 @@ namespace fractsim {
       if (job.tile != nullptr) {
         log(
           "Processing job for batch " + std::to_string(batch) + " in thread " + std::to_string(threadID) + " (remaining: " + std::to_string(remaining) + ")",
-          utils::Level::Info
+          utils::Level::Verbose
         );
 
         job.tile->render();
@@ -241,7 +241,7 @@ namespace fractsim {
       tLock.lock();
     }
 
-    log("Terminating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Notice);
+    log("Terminating thread " + std::to_string(threadID) + " for scheduler pool", utils::Level::Verbose);
   }
 
   void

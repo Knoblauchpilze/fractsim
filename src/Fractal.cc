@@ -13,6 +13,8 @@ namespace fractsim {
     m_area(),
 
     m_zoomLevel(),
+    m_renderedArea(),
+    m_tilesCount(),
     m_tiles()
   {
     setService(std::string("fractal"));
@@ -28,19 +30,92 @@ namespace fractsim {
     // portion of the total area.
     // When some tiles are already available, we would ideally not want to recompute
     // everything and produce only the missing tiles.
-    // TODO: Divide into several tiles based on the cache.
-    utils::Sizef tileDims(m_area.w() / getHorizontalTileCount(), m_area.h() / getVerticalTileCount());
-    utils::Sizef pixSize = getPixelSizePrivate();
+    // To do that we will distinguish between two main cases:
+    //   - when there's already a cache.
+    //   - when there's no cache.
+    //
+    // In case there's no cache available, it probably mean that either no rendering
+    // has ever been performed for this fractal or a resize of the canvas has occurred
+    // not long ago or that the zoom level has changed. In any case it means that we
+    // should start fresh and we can just go ahead (Office Space TM) and compute a
+    // regular tiling for the area to render.
+    //
+    // When we have some caching on the other hand, we already defined a tiling when
+    // the first rendering was performed. This tiling should be kept and extended if
+    // possible. To do that, we will work in terms of layers. Basically we will check
+    // for corners of the new rendering area and see which ones lie outside of the
+    // already computed area. We will extend the area until we have a new tiling that
+    // encompasses all four corners of the desired rendering area.
+    // This approach guarantees that:
+    //   - we keep the initial tiling and only recompute what's needed
+    //   - we keep a rendered area that is rectangular and thus can easily be checked
+    //     for intersections.
 
+    // Check whether some cache is available.
+    if (m_tiles.empty()) {
+      return generateDefaultTiling(opt);
+    }
+
+    // We already have some cache available. We we have to do is to determine the
+    // size of a tile, and add some until all four corners of the new rendering area
+    // fit in the `m_renderedArea`.
+    utils::Sizef tileDims(
+      m_area.w() / getHorizontalTileCount(),
+      m_area.h() / getVerticalTileCount()
+    );
+
+    // We need to compute how many tiles we need to add along each direction.
+    // This can be computed by determining the distance from the boundary of
+    // the rendered area to the boundary of the requested area and dividing
+    // this distance by the size of a tile.
+    float toLeft = m_renderedArea.getLeftBound() - m_area.getLeftBound();
+    float toRight = m_area.getRightBound() - m_renderedArea.getRightBound();
+    float toBottom = m_renderedArea.getBottomBound() - m_area.getBottomBound();
+    float toTop = m_area.getTopBound() - m_renderedArea.getTopBound();
+
+    int tilesToTheLeft = toLeft < 0.0f ? 0u : static_cast<int>(std::ceil(toLeft / tileDims.w()));
+    int tilesToTheRight = toRight < 0.0f ? 0u : static_cast<int>(std::ceil(toRight / tileDims.w()));
+    int tilesToTheBottom = toBottom < 0.0f ? 0u : static_cast<int>(std::ceil(toBottom / tileDims.h()));
+    int tilesToTheTop = toTop < 0.0f ? 0u : static_cast<int>(std::ceil(toTop / tileDims.h()));
+
+    log("Expanding rendered area by [" + std::to_string(toLeft) + ", " + std::to_string(toRight) + ", " + std::to_string(toBottom) + ", " + std::to_string(toTop) + "]");
+
+    // Create all the tiles. We will skip the one from the central area as they have
+    // already been rendered and saved into the cache.
     std::vector<RenderingTileShPtr> tiles;
 
-    for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
-      for (unsigned x = 0u ; x < getHorizontalTileCount() ; ++x) {
+    utils::Sizef pixSize = getPixelSizePrivate();
+
+    int xInter = tilesToTheLeft + m_tilesCount.x();
+    int yInter = tilesToTheBottom + m_tilesCount.y();
+
+    int xMax = xInter + tilesToTheRight;
+    int yMax = yInter + tilesToTheTop;
+
+    // Compute the expected rendered area: this is basically the current rendering area
+    // with all the tiles that need to be added.
+    utils::Boxf expectedRendered(
+      m_renderedArea.x() + (tilesToTheRight - tilesToTheLeft) * tileDims.w() / 2.0f,
+      m_renderedArea.y() + (tilesToTheTop - tilesToTheBottom) * tileDims.h() / 2.0f,
+      xMax * tileDims.w(),
+      yMax * tileDims.h()
+    );
+
+    for (int y = 0 ; y < yMax ; ++y) {
+      for (int x = 0 ; x < xMax ; ++x) {
+        // Skip the tiles that belong to the rendered area.
+        if (x >= tilesToTheLeft && x < xInter &&
+            y >= tilesToTheBottom && y < yInter)
+        {
+          continue;
+        }
+
+        // This is a new tile, add it to the tiling to render.
         tiles.push_back(
           std::make_shared<RenderingTile>(
             utils::Boxf(
-              m_area.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
-              m_area.getTopBound() - 1.0f * y * tileDims.h() - tileDims.h() / 2.0f,
+              expectedRendered.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
+              expectedRendered.getBottomBound() + 1.0f * y * tileDims.h() + tileDims.h() / 2.0f,
               tileDims
             ),
             pixSize,
@@ -50,6 +125,14 @@ namespace fractsim {
       }
     }
 
+    // Update expected rendered area and tiles count.
+    m_renderedArea = expectedRendered;
+    m_tilesCount.x() = xMax;
+    m_tilesCount.y() = yMax;
+
+    // TODO What happens when the tiles are not compute and a scroll is requested ?
+    // We could refine the notion of batch and detect whether the result of previous
+    // batches should be discarded or not.
     return tiles;
   }
 
@@ -143,6 +226,45 @@ namespace fractsim {
     brush->createFromRaw(iCanvasSize, colors);
 
     return brush;
+  }
+
+  std::vector<RenderingTileShPtr>
+  Fractal::generateDefaultTiling(FractalOptionsShPtr opt) {
+    // We know that the `m_area` should be divided into a certain amount of tiles.
+    // We also know the size of the canvas so we can estimate the pixel size.
+    // Once this is done, we just divide the area into tiles and associate the right
+    // part to each one.
+    utils::Sizef tileDims(
+      m_area.w() / getHorizontalTileCount(),
+      m_area.h() / getVerticalTileCount()
+    );
+    utils::Sizef pixSize = getPixelSizePrivate();
+
+    std::vector<RenderingTileShPtr> tiles;
+
+    for (unsigned y = 0u ; y < getVerticalTileCount() ; ++y) {
+      for (unsigned x = 0u ; x < getHorizontalTileCount() ; ++x) {
+        tiles.push_back(
+          std::make_shared<RenderingTile>(
+            utils::Boxf(
+              m_area.getLeftBound() + 1.0f * x * tileDims.w() + tileDims.w() / 2.0f,
+              m_area.getBottomBound() + 1.0f * y * tileDims.h() + tileDims.h() / 2.0f,
+              tileDims
+            ),
+            pixSize,
+            opt
+          )
+        );
+      }
+    }
+
+    // The rendered area corresponds to the entirety of the area. We can also assign
+    // the dimensions of the tiling.
+    m_renderedArea = m_area;
+    m_tilesCount.x() = getHorizontalTileCount();
+    m_tilesCount.y() = getVerticalTileCount();
+
+    return tiles;
   }
 
 }

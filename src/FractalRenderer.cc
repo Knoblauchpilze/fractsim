@@ -91,10 +91,11 @@ namespace fractsim {
     // motion into a real world coordinate frame.
     Guard guard(m_propsLocker);
 
+    // Note: we need to invert the motion's direction for some reasons.
     utils::Sizef pixSize = m_fractalData->getPixelSize();
     utils::Vector2f realWorldMotion(
-      motion.x() * pixSize.w(),
-      motion.y() * pixSize.h()
+      -motion.x() * pixSize.w(),
+      -motion.y() * pixSize.h()
     );
 
     // Compute the new rendering area by offseting the old one with the motion.
@@ -249,8 +250,11 @@ namespace fractsim {
     // Generate the launch schedule.
     std::vector<RenderingTileShPtr> tiles = m_fractalData->generateRenderingTiles(m_fractalOptions);
 
-    // Return early if nothing needs to be scheduled.
+    // Return early if nothing needs to be scheduled. We still want to trigger a repaint
+    // though so we need to mark the tiles as dirty.
     if (tiles.empty()) {
+      setTilesChanged();
+
       return;
     }
 
@@ -301,8 +305,6 @@ namespace fractsim {
     m_taskProgress += tiles.size();
 
     float perc = 1.0f * m_taskProgress / m_taskTotal;
-
-    log("Completed tile " + std::to_string(m_taskProgress) + "/" + std::to_string(m_taskTotal));
 
     onTileCompleted.safeEmit(
       std::string("onTileCompleted(") + std::to_string(perc) + ")",
