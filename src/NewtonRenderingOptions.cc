@@ -1,5 +1,6 @@
 
 # include "NewtonRenderingOptions.hh"
+# include "ColorPalette.hh"
 
 namespace fractsim {
 
@@ -59,6 +60,7 @@ namespace fractsim {
       }
 
       // TODO: Improve mechanism for coloring: add some sort of convergence measurement.
+      // TODO: Assign distinct values for areas that don't converge.
       ++terms;
     }
 
@@ -91,7 +93,14 @@ namespace fractsim {
     // Without loss of generality we can assign the root and then use the
     // `idRoot` as a valid value.
     if (!found) {
-      m_roots.push_back(cur);
+      // This is a fair attempt at finding a root. We have to evaluate that
+      // it is indeed a root. There are points which do not converge to any
+      // root of the polynom (for example points where the derivative is
+      // `null` but the polynom itself is not null: in such cases the method
+      // is stuck at this point forever).
+      if (std::norm(p) < getNullThreshold()) {
+        m_roots.push_back(cur);
+      }
     }
 
     float perc = std::round(acc * idRoot / m_maxDegree);
@@ -131,20 +140,17 @@ namespace fractsim {
       return;
     }
 
-    // Assume integer degrees for now.
-    float step = 1.0f / m_maxDegree;
+    // Generate a palette assuming integer degress.
+    unsigned maxDeg = std::round(m_maxDegree);
 
-    // Populate the palette with random values.
-    gradient->setColorAt(0.0f, sdl::core::engine::Color::NamedColor::Black);
+    ColorPalette pal(maxDeg, ColorPalette::Mode::GoldenAngle);
 
-    float p = step;
-    while (p < 1.0f) {
-      sdl::core::engine::Color c = generateRandomColor(p, 1.0f);
-      gradient->setColorAt(p, c);
-      p += step;
+    const std::vector<sdl::core::engine::Color>& colors = pal.getColors();
+    for (unsigned id = 0u ; id <= maxDeg ; ++id) {
+      float perc = 1.0f * id / std::max(1.0f, maxDeg - 1.0f);
+
+      gradient->setColorAt(perc, colors[id]);
     }
-
-    gradient->setColorAt(1.0f, sdl::core::engine::Color::NamedColor::White);
 
     setPalette(gradient);
   }

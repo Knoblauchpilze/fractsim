@@ -116,18 +116,6 @@ namespace fractsim {
       getConvergenceDuration() noexcept;
 
       /**
-       * @brief - Used to generate the `val` pseudo-random color out of `count` and
-       *          return it as a valid color.
-       * @param val - the index of the color to generate.
-       * @param count - the size of the palette.
-       * @return - the `val`-th color in a palette of `count`.
-       */
-      static
-      sdl::core::engine::Color
-      generateRandomColor(float val,
-                          float count) noexcept;
-
-      /**
        * @brief - Used when building a new options object to initialie the coefficients
        *          the derivative but also the palette to reflect the possible roots of
        *          a polynom and be able to color it correctly.
