@@ -6,7 +6,7 @@ namespace fractsim {
 
   NewtonRenderingOptions::NewtonRenderingOptions(const std::vector<Coefficient>& coeffs):
     FractalOptions(getDefaultAccuracy(),
-                   getDefaultPaletteWrapping(),
+                   30u,
                    getDefaultPalette()),
 
     m_propsLocker(),
@@ -231,14 +231,13 @@ namespace fractsim {
     // Now account for the number of terms it took to converge.
     float delta = (getRootGradientInterval() - (m_maxDegree - 1.0f) * getRootGradientSeparation()) / m_maxDegree;
 
-    sRoot += (delta * terms / getAccuracy());
+    // We now know that the `delta` is supposed to represent a palette for
+    // this root. We can compute the wrapping using the base class, which
+    // will return a value in the range `[0; 1]` given the number of steps
+    // and apply that to the `delta` interval.
+    float wrapped = performWrapping(terms);
 
-    if (sRoot > 1.0f) {
-      log("HUHO " + std::to_string(root) + ", terms: " + std::to_string(terms));
-    }
-    if (sRoot < 0.0f) {
-      log("HOHU");
-    }
+    sRoot += (delta * wrapped);
 
     return sRoot;
   }
