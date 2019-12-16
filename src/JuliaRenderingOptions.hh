@@ -59,6 +59,28 @@ namespace fractsim {
       float
       getDivergenceThreshold() noexcept;
 
+      /**
+       * @brief - Used to retrieve a value that can be used to overshoot each
+       *          computation for a point when it diverged. Computing some more
+       *          steps usually allow to get larger `z` values and thus improve
+       *          the effect of the smoothing algorithm.
+       * @return - a value allowing to describe how many additional steps should
+       *           be performed to reach acceptable performance of the smoothing
+       *           algorithm.
+       */
+      static
+      unsigned
+      getSmoothingOvershoot() noexcept;
+
+      /**
+       * @brief - Provide a default exponent used in when computing the terms of the
+       *          series. This value could be made configurable later on.
+       * @return - the default exponent to attach to Julia sets.
+       */
+      static
+      float
+      getDefaultExponent() noexcept;
+
     private:
 
       /**

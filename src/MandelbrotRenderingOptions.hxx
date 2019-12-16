@@ -28,8 +28,7 @@ namespace fractsim {
     float n = getExponent();
     float thresh = getDivergenceThreshold();
     float len = 0.0f;
-    unsigned terms = 0u;
-    unsigned conv = 0u;
+    unsigned terms = 0u, conv = 0u;
     std::complex<float> cur(0.0f, 0.0f);
     std::complex<float> c(p.x(), p.y());
 
@@ -44,8 +43,8 @@ namespace fractsim {
     }
 
     // Smooth the iterations count with some mathematical magic.
+    // More resources can be found here: http://linas.org/art-gallery/escape/smooth.html
     float sTerms = 1.0f * terms;
-
     if (terms < acc) {
       sTerms = terms + 1.0f - std::log(std::log(std::sqrt(len))) / std::log(n);
     }
