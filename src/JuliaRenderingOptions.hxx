@@ -8,7 +8,9 @@ namespace fractsim {
 
   inline
   JuliaRenderingOptions::JuliaRenderingOptions(const utils::Vector2f& constant):
-    FractalOptions(getDefaultAccuracy(), getDefaultPalette()),
+    FractalOptions(getDefaultAccuracy(),
+                   getDefaultPaletteWrapping(),
+                   getDefaultPalette()),
 
     m_constant(constant)
   {}
@@ -52,10 +54,14 @@ namespace fractsim {
     // case.
     float sTerms = 1.0f * terms;
     if (terms < acc) {
+      // Compute the smoothed iteration count.
       sTerms = terms + 1.0f - std::log(std::log(std::sqrt(len))) / std::log(getDefaultExponent());
+
+      // Apply palette wrapping.
+      sTerms = performWrapping(sTerms);
     }
 
-    return sTerms / acc;
+    return sTerms;
   }
 
   inline

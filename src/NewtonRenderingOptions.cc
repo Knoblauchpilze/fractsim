@@ -5,7 +5,9 @@
 namespace fractsim {
 
   NewtonRenderingOptions::NewtonRenderingOptions(const std::vector<Coefficient>& coeffs):
-    FractalOptions(getDefaultAccuracy(), getDefaultPalette()),
+    FractalOptions(getDefaultAccuracy(),
+                   getDefaultPaletteWrapping(),
+                   getDefaultPalette()),
 
     m_propsLocker(),
 

@@ -8,7 +8,9 @@ namespace fractsim {
 
   inline
   MandelbrotRenderingOptions::MandelbrotRenderingOptions(float exponent):
-    FractalOptions(getDefaultAccuracy(), getDefaultPalette()),
+    FractalOptions(getDefaultAccuracy(),
+                   getDefaultPaletteWrapping(),
+                   getDefaultPalette()),
 
     m_exponent(exponent)
   {}
@@ -46,10 +48,14 @@ namespace fractsim {
     // More resources can be found here: http://linas.org/art-gallery/escape/smooth.html
     float sTerms = 1.0f * terms;
     if (terms < acc) {
+      // Compute the smoothed iteration count.
       sTerms = terms + 1.0f - std::log(std::log(std::sqrt(len))) / std::log(n);
+
+      // Apply palette wrapping.
+      sTerms = performWrapping(sTerms);
     }
 
-    return sTerms / acc;
+    return sTerms;
   }
 
   inline

@@ -16,16 +16,37 @@ namespace fractsim {
        *          use to consider that a point is part of a fractal and
        *          some visual options like the gradient to use to represent
        *          the fractal.
+       *          The `wrapping` argument allows to make the palette repeat
+       *          after some fixed number of iterations. Basically one big
+       *          problem of setting a fixed palette is that when larger
+       *          values are provided for the accuracy, the low zooms level
+       *          display only a single color because the accuracy is so high.
+       *          One way to work around this is to provide palette wrapping.
+       *          Basically it will tell the number of iterations needed to
+       *          apply a full palette. If this value is equal to the input
+       *          `accuracy` it changes nothing compared to the base idea.
+       *          But if the value is smaller (say `accuracy / 2`) it means
+       *          that over the course of the `accuracy` the palette will be
+       *          applied twice. This means that we will actually see more
+       *          iterations of the palette at low zoom levels. Note that in
+       *          this case a color is no longer unique and cannot be used to
+       *          determine the convergence speed of a point. But most of the
+       *          time it is not what we want anyway so we can live with that.
        * @param accuracy - an integer representing the number of iterations
        *                   to compute to consider that the point is part of
        *                   the fractal.
        *                   Note that in general the more we zoom in the more
        *                   accuracy is needed to keep a sufficient level of
        *                   detail.
+       * @param wrapping - the number of iterations needed to wrap the palette
+       *                   around. Basically the number of convergence steps
+       *                   required to loop through all the colors of the input
+       *                   palette.
        * @param palette - the gradient to use to color the regions of the
        *                  rendering window which don't belong to the fractal.
        */
       FractalOptions(unsigned accuracy,
+                     unsigned wrapping,
                      sdl::core::engine::GradientShPtr palette);
 
       /**
@@ -94,6 +115,34 @@ namespace fractsim {
       sdl::core::engine::GradientShPtr
       getDefaultPalette() noexcept;
 
+      /**
+       * @brief - Used to retrieve a default suitable palette wrapping count. More
+       *          details about the precise role of the wrapping can be found in the
+       *          constructor documentation.
+       * @return - a valid palette wrapping count.
+       */
+      static
+      unsigned
+      getDefaultPaletteWrapping() noexcept;
+
+      /**
+       * @brief - Used to retrieve the palette wrapping applied to this object.
+       * @return - the current palette wrapping.
+       */
+      unsigned
+      getPaletteWrapping() const noexcept;
+
+      /**
+       * @brief - Can be used by inheriting classes to perform some palette wrapping on
+       *          the input element. The value is supposed to be in the range `[0; acc]`
+       *          and is wrapped so that a value in the range `[0; 1]` is produced with
+       *          an adequate wrapping.
+       * @param val - the value to wrap.
+       * @return - a wrapped value of the input iterations count.
+       */
+      float
+      performWrapping(float val) const noexcept;
+
     private:
 
       /**
@@ -104,6 +153,14 @@ namespace fractsim {
        *          details will be.
        */
       unsigned m_accuracy;
+
+      /**
+       * @brief- The number of steps to loop through all the colors of the palette used
+       *         by this object. If this value is smaller than the accuracy it allows to
+       *         display some more iterations of the palette at low zoom levels and thus
+       *         allow for higher accuracy to be prettier in these cases.
+       */
+      unsigned m_wrapping;
 
       /**
        * @brief - The palette to use to render visually the fractal. Usually the points
