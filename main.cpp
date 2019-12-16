@@ -18,11 +18,10 @@
 # include "RenderingStatus.hh"
 # include "StatusBar.hh"
 
-// TODO: Allow customization of Palette (probably through the menu bar). See in the link
-// https://codereview.stackexchange.com/questions/124358/mandelbrot-image-generator-and-viewer/124379
-// for more details on smoothing.
+// TODO: Allow customization of Palette (probably through the menu bar).
 // TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
 // Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
+// TODO: Check high zoom level to see whether we reach float precision limit.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.
