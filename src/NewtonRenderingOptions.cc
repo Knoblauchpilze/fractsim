@@ -105,7 +105,6 @@ namespace fractsim {
       // `null` but the polynom itself is not null: in such cases the method
       // is stuck at this point forever).
       if (std::norm(p) < getNullThreshold()) {
-        log("Found root " + std::to_string(m_roots.size()) + ": " + std::to_string(cur.real()) + "+" + std::to_string(cur.imag()) + "i");
         m_roots.push_back(cur);
       }
     }
@@ -156,7 +155,7 @@ namespace fractsim {
 
     // Create a palette based on the expected number of roots.
     unsigned maxDeg = std::round(m_maxDegree);
-    ColorPalette pal(maxDeg, ColorPalette::Mode::GoldenAngle);
+    ColorPalette pal(maxDeg, ColorPalette::Mode::Random);
 
     const std::vector<sdl::core::engine::Color>& colors = pal.getColors();
 

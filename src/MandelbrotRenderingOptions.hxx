@@ -24,23 +24,33 @@ namespace fractsim {
   MandelbrotRenderingOptions::compute(const utils::Vector2f& p) const noexcept {
     // Compute terms of the series until it diverges.
     unsigned acc = getAccuracy();
+    unsigned over = getSmoothingOvershoot();
     float n = getExponent();
     float thresh = getDivergenceThreshold();
     float len = 0.0f;
     unsigned terms = 0u;
+    unsigned conv = 0u;
     std::complex<float> cur(0.0f, 0.0f);
     std::complex<float> c(p.x(), p.y());
 
-    while (len < thresh && terms < acc) {
+    while ((len < thresh && terms < acc) || terms - conv < over) {
       cur = std::pow(cur, n) + c;
 
       len = norm(cur);
-      if (len < thresh) {
-        ++terms;
+      if (len >= thresh && conv == 0u) {
+        conv = terms;
       }
+      ++terms;
     }
 
-    return 1.0f * terms / acc;
+    // Smooth the iterations count with some mathematical magic.
+    float sTerms = 1.0f * terms;
+
+    if (terms < acc) {
+      sTerms = terms + 1.0f - std::log(std::log(std::sqrt(len))) / std::log(n);
+    }
+
+    return sTerms / acc;
   }
 
   inline
@@ -59,6 +69,12 @@ namespace fractsim {
   float
   MandelbrotRenderingOptions::getDivergenceThreshold() noexcept {
     return 4.0f;
+  }
+
+  inline
+  unsigned
+  MandelbrotRenderingOptions::getSmoothingOvershoot() noexcept {
+    return 3u;
   }
 
 }
