@@ -31,6 +31,7 @@ namespace fractsim {
     float thresh = getDivergenceThreshold();
     float len = 0.0f;
     unsigned terms = 0u, conv = 0u;
+
     std::complex<float> cur(0.0f, 0.0f);
     std::complex<float> c(p.x(), p.y());
 

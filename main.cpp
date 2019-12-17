@@ -4,6 +4,7 @@
  *          training and a tool to visualize fractals of various
  *          types. This is a good first test scenario for the new
  *          engine framework as it is quite a complete application.
+ *          Implemented from 25/11/2019 - 17/12/2019.
  */
 
 # include <core_utils/StdLogger.hh>
@@ -18,10 +19,21 @@
 # include "RenderingStatus.hh"
 # include "StatusBar.hh"
 
-// TODO: Allow customization of Palette (probably through the menu bar).
-// TODO: Introduce CUDA ? (like here: https://cmake.org/cmake/help/v3.12/module/FindCUDA.html)
-// Or here (https://devblogs.nvidia.com/building-cuda-applications-cmake/)
-// TODO: Check high zoom level to see whether we reach float precision limit.
+// TODO: At high zoom level the precision of the float is not enough. We could go
+// with `double` but it would just temporarily hide the problem and not solve it.
+// What would be cool is to introduce an arbitrary precision library like GMP.
+// See here: https://gmplib.org/manual/Initializing-Floats.html#Initializing-Floats
+// The `CMake` is already updated, and there's some sample code in the `GMPBox` and
+// `GMPVector2` class.
+// What is left to do is to use these types of values for most of the places where
+// the `utils::Vector2f` and `utils::Boxf` classes are used. This will require some
+// effort are there are a lot of manipulations that are done with these objects.
+// Also we have to find a way to pass around the `mpf_t` elements (for method like
+// the `x` in `GMPVector2` or `w` in `GMPBox`): should we pass them by pointer or
+// reference or whatever ? Probably not pass them at all would be cool but it might
+// require a lot of efforts.
+// This would truly solve the problems of precision though, even if it might be at
+// the cost of performance.
 
 int main(int /*argc*/, char** /*argv*/) {
   // Create the logger.

@@ -13,10 +13,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
-project(fractsim CXX CUDA)
+project(fractsim)
 
 find_package (SDL2 REQUIRED)
 find_package (SDL2_ttf REQUIRED)
+find_package (GMP REQUIRED)
 
 add_subdirectory(src)
 
@@ -40,4 +41,5 @@ target_link_libraries(fractsim
   fractsim_lib
   ${SDL2_LIBRARIES}
   ${SDL2_TTF_LIBRARIES}
+  ${GMP_LIBRARY}
   )
