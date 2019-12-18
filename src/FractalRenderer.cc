@@ -188,7 +188,7 @@ namespace fractsim {
     // compute operation is running and that some more tiles have been
     // received.
     if (tilesChanged()) {
-      // Load the text.
+      // Load the tiles.
       loadTiles();
 
       // The tiles have been updated.

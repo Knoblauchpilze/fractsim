@@ -216,7 +216,7 @@ namespace fractsim {
        * @brief - Used to determine whether the tiles have changed since the creation
        *          of the texture representing them. If this is the case it means that
        *          the `m_tex` should be recreated.
-       *          Assumes that the locker is alreadu acquired.
+       *          Assumes that the locker is already acquired.
        */
       bool
       tilesChanged() const noexcept;
@@ -224,7 +224,7 @@ namespace fractsim {
       /**
        * @brief - Used to specify that the tiles have changed and thus that the `m_tex`
        *          texture should be recreated on the next call to `drawContentPrivate`.
-       *          Assumes that the locker is alreadu acquired.
+       *          Assumes that the locker is already acquired.
        */
       void
       setTilesChanged() noexcept;

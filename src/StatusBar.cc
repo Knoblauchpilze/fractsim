@@ -63,7 +63,7 @@ namespace fractsim {
     );
     if (zoom == nullptr) {
       error(
-        std::string("Could not create rendering status"),
+        std::string("Could not create status bar"),
         std::string("Zoom label not allocated")
       );
     }
