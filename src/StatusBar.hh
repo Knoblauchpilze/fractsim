@@ -77,7 +77,7 @@ namespace fractsim {
       getInfoLabelFont() noexcept;
 
       /**
-       * @brief - Used to defnie the margins of the layout applied around the whole
+       * @brief - Used to define the margins of the layout applied around the whole
        *          widget.
        * @return - a value representing the global margins for this widget.
        */
