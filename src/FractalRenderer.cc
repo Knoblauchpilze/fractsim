@@ -265,7 +265,7 @@ namespace fractsim {
 
     m_scheduler->enqueueJobs(tilesAsJobs, invalidate);
 
-    // Notify listeners that the progression is no `0`.
+    // Notify listeners that the progression is now `0`.
     m_taskProgress = 0u;
     m_taskTotal = tiles.size();
 
