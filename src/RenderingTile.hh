@@ -5,11 +5,12 @@
 # include <maths_utils/Box.hh>
 # include <maths_utils/Vector2.hh>
 # include <core_utils/CoreObject.hh>
+# include <core_utils/ThreadPool.hh>
 # include "FractalOptions.hh"
 
 namespace fractsim {
 
-  class RenderingTile: public utils::CoreObject {
+  class RenderingTile: public utils::CoreObject, public utils::AsynchronousJob {
     public:
 
       /**
@@ -31,11 +32,11 @@ namespace fractsim {
       ~RenderingTile() = default;
 
       /**
-       * @brief - Performs the computation needed to render this tile using the provided
-       *          data.
+       * @brief - Reimplementation of the `AsynchronousJob` method allowing to perform
+       *          the rendering for this tile.
        */
       void
-      render();
+      compute() override;
 
       /**
        * @brief - Returns the area associated to this tile in the fractal's coordinate frame.

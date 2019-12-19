@@ -5,9 +5,9 @@
 # include <maths_utils/Size.hh>
 # include <sdl_core/SdlWidget.hh>
 # include <sdl_graphic/ScrollableWidget.hh>
+# include <core_utils/ThreadPool.hh>
 # include "FractalOptions.hh"
 # include "RenderingOptions.hh"
-# include "RenderingScheduler.hh"
 # include "Fractal.hh"
 
 namespace fractsim {
@@ -164,6 +164,15 @@ namespace fractsim {
       getExpansionThreshold() noexcept;
 
       /**
+       * @brief - Used to return the number of threads to create to process the jobs
+       *          related to rendering the fractal.
+       * @return - a value used to create the thread pool associated to this renderer.
+       */
+      static
+      unsigned
+      getWorkerThreadCount() noexcept;
+
+      /**
        * @brief - Connect signals and build the renderer in a more general way.
        */
       void
@@ -192,7 +201,7 @@ namespace fractsim {
        * @param tiles - a list of tiles that just finished rendering.
        */
       void
-      handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles);
+      handleTilesComputed(const std::vector<utils::AsynchronousJobShPtr>& tiles);
 
       /**
        * @brief - Used to convert the input area expressed in the fractal's coordinate
@@ -291,7 +300,7 @@ namespace fractsim {
       /**
        * @brief - Convenience object allowing to schedule the rendering.
        */
-      RenderingSchedulerShPtr m_scheduler;
+      utils::ThreadPoolShPtr m_scheduler;
 
       /**
        * @brief - Used to keep track of the tiles already rendered so far in the current

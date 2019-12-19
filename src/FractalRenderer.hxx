@@ -148,6 +148,12 @@ namespace fractsim {
   }
 
   inline
+  unsigned
+  FractalRenderer::getWorkerThreadCount() noexcept {
+    return 4u;
+  }
+
+  inline
   utils::Boxf
   FractalRenderer::convertFractalAreaToLocal(const utils::Boxf& area) const {
     // The `area` represents a real world coordinate of the area. We need to

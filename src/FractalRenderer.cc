@@ -16,7 +16,7 @@ namespace fractsim {
     m_fractalOptions(nullptr),
     m_fractalData(nullptr),
 
-    m_scheduler(std::make_shared<RenderingScheduler>()),
+    m_scheduler(std::make_shared<utils::ThreadPool>(getWorkerThreadCount())),
     m_taskProgress(0u),
     m_taskTotal(1u),
 
@@ -218,7 +218,7 @@ namespace fractsim {
   void
   FractalRenderer::build() {
     // Connect the results provider signal of the thread pool to the local slot.
-    m_scheduler->onTilesRendered.connect_member<FractalRenderer>(
+    m_scheduler->onJobsCompleted.connect_member<FractalRenderer>(
       this,
       &FractalRenderer::handleTilesComputed
     );
@@ -252,6 +252,9 @@ namespace fractsim {
     // Generate the launch schedule.
     std::vector<RenderingTileShPtr> tiles = m_fractalData->generateRenderingTiles(m_fractalOptions);
 
+    // Convert to required pointer type.
+    std::vector<utils::AsynchronousJobShPtr> tilesAsJobs(tiles.begin(), tiles.end());
+
     // Return early if nothing needs to be scheduled. We still want to trigger a repaint
     // though so we need to mark the tiles as dirty.
     if (tiles.empty()) {
@@ -260,7 +263,7 @@ namespace fractsim {
       return;
     }
 
-    m_scheduler->enqueueJobs(tiles, invalidate);
+    m_scheduler->enqueueJobs(tilesAsJobs, invalidate);
 
     // Notify listeners that the progression is no `0`.
     m_taskProgress = 0u;
@@ -272,11 +275,11 @@ namespace fractsim {
     );
 
     // Start the computing.
-    m_scheduler->notifyRenderingJobs();
+    m_scheduler->notifyJobs();
   }
 
   void
-  FractalRenderer::handleTilesComputed(const std::vector<RenderingTileShPtr>& tiles) {
+  FractalRenderer::handleTilesComputed(const std::vector<utils::AsynchronousJobShPtr>& tiles) {
     // Protect from concurrent accesses.
     Guard guard(m_propsLocker);
 
@@ -284,7 +287,18 @@ namespace fractsim {
     sdl::core::engine::PaintEventShPtr e = std::make_shared<sdl::core::engine::PaintEvent>();
 
     for (unsigned id = 0u ; id < tiles.size() ; ++id) {
-      utils::Boxf local = convertFractalAreaToLocal(tiles[id]->getArea());
+      // Convert the job to a known type.
+      RenderingTileShPtr tile = std::dynamic_pointer_cast<RenderingTile>(tiles[id]);
+      if (tile == nullptr) {
+        log(
+          std::string("Could not convert task to rendering tile, skipping it"),
+          utils::Level::Warning
+        );
+
+        continue;
+      }
+
+      utils::Boxf local = convertFractalAreaToLocal(tile->getArea());
 
       // Expand the bounding box in order to prevent weird artifacts when the area is not
       // exactly matching the previous one.
@@ -295,7 +309,7 @@ namespace fractsim {
       }
 
       // Also register this tile to the local fractal proxy.
-      m_fractalData->registerDataTile(m_renderingOpt->getMeanZoom(), tiles[id]);
+      m_fractalData->registerDataTile(m_renderingOpt->getMeanZoom(), tile);
     }
 
     postEvent(e);

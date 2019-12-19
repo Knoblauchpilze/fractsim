@@ -37,7 +37,7 @@ namespace fractsim {
   }
 
   void
-  RenderingTile::render() {
+  RenderingTile::compute() {
     // Compute the value needed to fill in each cell.
     float xMin = m_area.getLeftBound();
     float yMin = m_area.getBottomBound();

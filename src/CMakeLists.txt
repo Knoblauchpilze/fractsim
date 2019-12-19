@@ -12,7 +12,6 @@ set (SOURCES
   NewtonOptions.cc
   RenderingStatus.cc
   RenderingOptions.cc
-  RenderingScheduler.cc
   RenderingTile.cc
   Fractal.cc
   StatusBar.cc
