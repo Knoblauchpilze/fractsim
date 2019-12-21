@@ -253,7 +253,7 @@ namespace fractsim {
        * @return - the corresponding position in real world coordinate frame.
        */
       utils::Vector2f
-      convertLocalToRealWorld(const utils::Vector2f& global);
+      convertGlobalToRealWorld(const utils::Vector2f& global);
 
       /**
        * @brief - Used to expand the input area in all the dimensions as long as the area

@@ -154,7 +154,7 @@ namespace fractsim {
 
     float factor = motion.y() > 0 ? getDefaultZoomInFactor() : getDefaultZoomOutFactor();
 
-    utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
+    utils::Vector2f conv = convertGlobalToRealWorld(e.getMousePosition());
 
     utils::Boxf newArea = m_renderingOpt->zoom(conv, factor);
     m_fractalData->realWorldResize(newArea, true);

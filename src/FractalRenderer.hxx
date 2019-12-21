@@ -104,7 +104,7 @@ namespace fractsim {
     Guard guard(m_propsLocker);
 
     // Convert the position to internal coordinates.
-    utils::Vector2f conv = convertLocalToRealWorld(e.getMousePosition());
+    utils::Vector2f conv = convertGlobalToRealWorld(e.getMousePosition());
 
     // Notify external listeners.
     onCoordChanged.safeEmit(
@@ -239,7 +239,7 @@ namespace fractsim {
 
   inline
   utils::Vector2f
-  FractalRenderer::convertLocalToRealWorld(const utils::Vector2f& global) {
+  FractalRenderer::convertGlobalToRealWorld(const utils::Vector2f& global) {
     // Check if a rendering window is assigned.
     if (m_renderingOpt == nullptr) {
       // Return default coordinates.
