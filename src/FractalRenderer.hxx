@@ -8,7 +8,7 @@ namespace fractsim {
   inline
   FractalRenderer::~FractalRenderer() {
     // Protect from concurrent accesses
-    Guard guard (m_propsLocker);
+    Guard guard(m_propsLocker);
 
     clearTiles();
   }
