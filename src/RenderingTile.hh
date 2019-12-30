@@ -5,7 +5,6 @@
 # include <maths_utils/Box.hh>
 # include <maths_utils/Vector2.hh>
 # include <core_utils/AsynchronousJob.hh>
-# include <core_utils/ThreadPool.hh>
 # include "FractalOptions.hh"
 
 namespace fractsim {
