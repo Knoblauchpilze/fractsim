@@ -4,13 +4,13 @@
 # include <memory>
 # include <maths_utils/Box.hh>
 # include <maths_utils/Vector2.hh>
-# include <core_utils/CoreObject.hh>
+# include <core_utils/AsynchronousJob.hh>
 # include <core_utils/ThreadPool.hh>
 # include "FractalOptions.hh"
 
 namespace fractsim {
 
-  class RenderingTile: public utils::CoreObject, public utils::AsynchronousJob {
+  class RenderingTile: public utils::AsynchronousJob {
     public:
 
       /**

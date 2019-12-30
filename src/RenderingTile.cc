@@ -6,7 +6,7 @@ namespace fractsim {
   RenderingTile::RenderingTile(const utils::Boxf& area,
                                const utils::Sizef& step,
                                FractalOptionsShPtr options):
-    utils::CoreObject(std::string("tile_") + area.toString()),
+    utils::AsynchronousJob(std::string("tile_") + area.toString()),
 
     m_area(area),
     m_discretization(step),
