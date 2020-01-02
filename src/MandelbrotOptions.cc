@@ -68,11 +68,11 @@ namespace fractsim {
 
     // We need to register the possible options: each one is composed of a
     // label and of a textbox used to enter the value.
-    sdl::graphic::LabelWidget* powerLabel = createLabel("power_label", "Power:", this);
-    sdl::graphic::TextBox* powerValue = createTextBox(getPowerValueName(), this);
-
     sdl::graphic::LabelWidget* accuracyLabel = createLabel("accuracy_label", "Accuracy:", this);
     sdl::graphic::TextBox* accuracyValue = createTextBox(getAccuracyValueName(), this);
+
+    sdl::graphic::LabelWidget* powerLabel = createLabel("power_label", "Power:", this);
+    sdl::graphic::TextBox* powerValue = createTextBox(getPowerValueName(), this);
 
     // Add each item to the layout.
     layout->addItem(accuracyLabel, 0, 0, 1, 1);
