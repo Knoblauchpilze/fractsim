@@ -68,6 +68,15 @@ namespace fractsim {
       getStatusMaxHeight() noexcept;
 
       /**
+       * @brief - A suited value to use for the border size of the buttons used in
+       *          this status.
+       * @return - a suited value for the size of the borders for buttons.
+       */
+      static
+      float
+      getButtonBorderSize() noexcept;
+
+      /**
        * @brief - Retrieves the maximum size for the render button. As we only want
        *          the button to be large enough so that the text is fully visible it
        *          is not needed to grow indefinitely.

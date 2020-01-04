@@ -43,6 +43,7 @@ namespace fractsim {
       sdl::graphic::button::Type::Regular,
       15u,
       this,
+      getButtonBorderSize(),
       utils::Sizef(),
       sdl::core::engine::Color::fromRGB(0.7031f, 0.7031f, 0.7031f)
     );
@@ -61,6 +62,7 @@ namespace fractsim {
       sdl::graphic::button::Type::Regular,
       15u,
       this,
+      getButtonBorderSize(),
       utils::Sizef(),
       sdl::core::engine::Color::NamedColor::White
     );
