@@ -40,8 +40,8 @@ namespace fractsim {
     std::string powerText = powerTB->getValue();
     bool converted = false;
 
-    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
-    float power = convertToFloat(powerText, getDefaultPower(), converted);
+    unsigned accuracy = utils::convert(accuracyText, getDefaultAccuracy(), converted);
+    float power = utils::convert(powerText, getDefaultPower(), converted);
 
     MandelbrotRenderingOptionsShPtr opt = std::make_shared<MandelbrotRenderingOptions>();
     opt->setAccuracy(accuracy);

@@ -43,9 +43,9 @@ namespace fractsim {
     std::string imgText = imgTB->getValue();
     bool converted = false;
 
-    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
-    float realC = convertToFloat(realText, getDefaultRealPartConstant(), converted);
-    float imgC = convertToFloat(imgText, getDefaultImgPartConstant(), converted);
+    unsigned accuracy = utils::convert(accuracyText, getDefaultAccuracy(), converted);
+    float realC = utils::convert(realText, getDefaultRealPartConstant(), converted);
+    float imgC = utils::convert(imgText, getDefaultImgPartConstant(), converted);
     utils::Vector2f c(realC, imgC);
 
     JuliaRenderingOptionsShPtr opt = std::make_shared<JuliaRenderingOptions>();

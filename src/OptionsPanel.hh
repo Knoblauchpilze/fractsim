@@ -150,33 +150,6 @@ namespace fractsim {
       createTextBox(const std::string& name,
                     sdl::core::SdlWidget* parent) noexcept;
 
-      /**
-       * @brief - Used to convert the input text to an unsigned value. In case it
-       *          cannot be converted, the provided default value is used.
-       *          The user can be notified whether the conversion was successful.
-       * @param text - the text to convert.
-       * @param def - the default value to use in case the conversion fails.
-       * @param converted - output value indicating whether the conversion could
-       *                    be performed.
-       * @return - the converted value or the default one.
-       */
-      unsigned
-      convertToUnsigned(const std::string& text,
-                        unsigned def,
-                        bool& converted) const noexcept;
-
-      /**
-       * @brief - Similar method to `convertToFloat` but for floating point values.
-       * @param def - the default value to use in case the conversion fails.
-       * @param converted - output value indicating whether the conversion could
-       *                    be performed.
-       * @return - the converted value or the default one.
-       */
-      float
-      convertToFloat(const std::string& text,
-                     float def,
-                     bool& converted) const noexcept;
-
     private:
 
       /**

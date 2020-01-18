@@ -53,13 +53,13 @@ namespace fractsim {
       std::string realText = realTB->getValue();
       std::string imgText = imgTB->getValue();
 
-      float realC = convertToFloat(realText, getDefaultRealPartCoefficient(deg), converted);
-      float imgC = convertToFloat(imgText, getDefaultImgPartCoefficient(deg), converted);
+      float realC = utils::convert(realText, getDefaultRealPartCoefficient(deg), converted);
+      float imgC = utils::convert(imgText, getDefaultImgPartCoefficient(deg), converted);
 
       coeffs.push_back(NewtonRenderingOptions::Coefficient{1.0f * deg, utils::Vector2f(realC, imgC)});
     }
 
-    unsigned accuracy = convertToUnsigned(accuracyText, getDefaultAccuracy(), converted);
+    unsigned accuracy = utils::convert(accuracyText, getDefaultAccuracy(), converted);
 
     NewtonRenderingOptionsShPtr opt = std::make_shared<NewtonRenderingOptions>(coeffs);
     opt->setAccuracy(accuracy);

@@ -119,46 +119,6 @@ namespace fractsim {
     return textBox;
   }
 
-  inline
-  unsigned
-  OptionsPanel::convertToUnsigned(const std::string& text,
-                                  unsigned def,
-                                  bool& converted) const noexcept
-  {
-    // Use the dedicated handler to handle the conversion.
-    bool valid = false;
-
-    int conv = sdl::graphic::convertToInt(text, &valid);
-
-    if (!valid || conv < 0) {
-      converted = false;
-      return def;
-    }
-
-    converted = true;
-    return static_cast<unsigned>(conv);
-  }
-
-  inline
-  float
-  OptionsPanel::convertToFloat(const std::string& text,
-                               float def,
-                               bool& converted) const noexcept
-  {
-    // Use the dedicated handler to handle the conversion.
-    bool valid = false;
-
-    float conv = sdl::graphic::convertToFloat(text, &valid);
-
-    if (!valid) {
-      converted = false;
-      return def;
-    }
-
-    converted = true;
-    return conv;
-  }
-
 }
 
 #endif    /* OPTIONS_PANEL_HXX */
