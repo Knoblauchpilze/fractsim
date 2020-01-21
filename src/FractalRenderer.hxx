@@ -218,7 +218,7 @@ namespace fractsim {
       m_fractalOptions->getPalette()
     );
 
-    // check consistency.
+    // Check consistency.
     if (brush == nullptr) {
       error(
         std::string("Could not create texture to represent fractal"),
