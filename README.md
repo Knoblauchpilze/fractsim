@@ -27,6 +27,7 @@ The application is based on a `SDL` engine allowing to render fractal on the CPU
  * Mandelbrot set
  * Julia set
  * Newton polynomial fractal
+
 Each type of fractal is accessible through a dedicated configuration panel and is displayed in the main rendering window. Each fractal type has its own customization possibilities.
 The user can pan in the rendering window which will trigger a rendering of the missing tiles while the already computed ones are kept in memory. This allows to fully explore a given zoom level. Each time the user zooms in or out with the mouse wheel a zoom operation is performed where the viewing window's dimensions are divided/multiplied by `2`. An automatic recomputation of the fractal is triggered at these occasions. The user can reset to the initial viewing distance for this fractal type at any time.
 
