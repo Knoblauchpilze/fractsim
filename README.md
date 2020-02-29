@@ -46,7 +46,7 @@ The canonical mandelbrot set can be represented using this fractal type. The exp
 
 ![Julia view](julia_view.png)
 
-A while family of Julia set can be rendered using this fractal type. The value of the `c` constant in the series can be specified through the controls, along with the accuracy. Similar behavior is provided to the Mandelbrot set.
+A large family of Julia sets can be rendered using this fractal type. The value of the `c` constant in the series can be specified through the controls, along with the accuracy. Similar behavior is provided to the Mandelbrot set.
 
 ## Newton polynomial fractal
 
