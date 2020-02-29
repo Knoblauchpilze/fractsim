@@ -53,4 +53,4 @@ A large family of Julia sets can be rendered using this fractal type. The value 
 ![Newton view](newton_view.png)
 
 A family of fractal rising from the zeroes of a polynomial. Each area will be applied a series as described in the article here (https://en.wikipedia.org/wiki/Newton_fractal) where some zeroes define regions where the series will converge to a certain value.
-This fractal type taks slightly more time to compute given all the derivatives and evaluation to perform and also has a slightly less appealing palette but it's still interesting to play with.
+This fractal type takes slightly more time to compute given all the derivatives and evaluation to perform and also has a slightly less appealing palette but it's still interesting to play with.
