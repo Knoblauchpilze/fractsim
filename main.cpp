@@ -64,7 +64,7 @@ int main(int /*argc*/, char** /*argv*/) {
     );
 
     // Create the layout of the window: the main tab is a scrollable widget
-    // allowing the display of the fractal. The rigth dock widget allows to
+    // allowing the display of the fractal. The right dock widget allows to
     // control the computation parameters of the fractal.
     fractsim::FractalRenderer* renderer = new fractsim::FractalRenderer();
     app->setCentralWidget(renderer);
