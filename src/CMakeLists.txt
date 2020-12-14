@@ -23,7 +23,7 @@ add_library (fractsim_lib SHARED
   ${SOURCES}
   )
 
-set(FRACTSIM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
+set (FRACTSIM_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" PARENT_SCOPE)
 
 target_link_libraries(fractsim_lib
   sdl_core
