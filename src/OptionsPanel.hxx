@@ -57,7 +57,7 @@ namespace fractsim {
   inline
   sdl::core::engine::Color
   OptionsPanel::getLabelsBGColor() const noexcept {
-    Guard guard(m_locker);
+    const std::lock_guard guard(m_locker);
 
     return m_labelsBgColor;
   }

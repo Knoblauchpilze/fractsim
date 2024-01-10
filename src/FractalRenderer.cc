@@ -37,16 +37,12 @@ namespace fractsim {
   FractalRenderer::requestRendering(FractalOptionsShPtr options) {
     // Check consistency.
     if (options == nullptr) {
-      log(
-        "Trying to perform rendering with invalid null options, discarding request",
-        utils::Level::Warning
-      );
-
+      warn("Trying to perform rendering with invalid null options, discarding request");
       return;
     }
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Create rendering options if needed.
     if (m_renderingOpt == nullptr) {
@@ -89,7 +85,7 @@ namespace fractsim {
     // We want to apply a motion of `motion` in local coordinate frame to the
     // underlying support area. In order to do that we need to convert the
     // motion into a real world coordinate frame.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Note: we need to invert the motion's direction for some reasons.
     utils::Sizef pixSize = m_fractalData->getPixelSize();
@@ -106,7 +102,7 @@ namespace fractsim {
       area.toSize()
     );
 
-    log("Moving from " + area.toString() + " to " + newArea.toString() + " (motion: " + motion.toString() + ", real: " + realWorldMotion.toString() + ")", utils::Level::Verbose);
+    verbose("Moving from " + area.toString() + " to " + newArea.toString() + " (motion: " + motion.toString() + ", real: " + realWorldMotion.toString() + ")");
 
     // Update the rendering area.
     m_renderingOpt->setRenderingArea(newArea, false);
@@ -140,13 +136,12 @@ namespace fractsim {
     utils::Vector2i motion = e.getScroll();
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Perform the zoom in operation if needed.
     if (m_renderingOpt == nullptr) {
-      log(
-        std::string("Discarding zoom ") + (motion.y() > 0 ? "in" : "out") + " event, no rendering window defined",
-        utils::Level::Warning
+      warn(
+        std::string("Discarding zoom ") + (motion.y() > 0 ? "in" : "out") + " event, no rendering window defined"
       );
 
       return toReturn;
@@ -180,7 +175,7 @@ namespace fractsim {
                                       const utils::Boxf& area)
   {
     // Acquire the lock on the attributes of this widget.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Load the tiles: this should happen only if some tiles have been
     // rendered since the last draw operation. This status is kept by
@@ -228,19 +223,11 @@ namespace fractsim {
   FractalRenderer::scheduleRendering(bool invalidate) {
     // Check consistency.
     if (m_fractalOptions == nullptr) {
-      log(
-        std::string("Could not schedule rendering for fractal (cause: \"Invalid null fractal options\")"),
-        utils::Level::Error
-      );
-
+      warn("Could not schedule rendering for fractal (cause: \"Invalid null fractal options\")");
       return;
     }
     if (m_renderingOpt == nullptr) {
-      log(
-        std::string("Could not schedule rendering for fractal (cause: \"Invalid null rendering options\")"),
-        utils::Level::Error
-      );
-
+      warn("Could not schedule rendering for fractal (cause: \"Invalid null rendering options\")");
       return;
     }
 
@@ -281,7 +268,7 @@ namespace fractsim {
   void
   FractalRenderer::handleTilesComputed(const std::vector<utils::AsynchronousJobShPtr>& tiles) {
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Post a repaint event for each area that has been rendered.
     sdl::core::engine::PaintEventShPtr e = std::make_shared<sdl::core::engine::PaintEvent>();
@@ -290,11 +277,7 @@ namespace fractsim {
       // Convert the job to a known type.
       RenderingTileShPtr tile = std::dynamic_pointer_cast<RenderingTile>(tiles[id]);
       if (tile == nullptr) {
-        log(
-          std::string("Could not convert task to rendering tile, skipping it"),
-          utils::Level::Warning
-        );
-
+        warn("Could not convert task to rendering tile, skipping it");
         continue;
       }
 

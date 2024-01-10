@@ -21,7 +21,7 @@ namespace fractsim {
               << p.y();
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Retrieve the rendering area label.
     sdl::graphic::LabelWidget* txt = getMouseCoordsLabel();
@@ -40,7 +40,7 @@ namespace fractsim {
     zoomTxtWrapper << avgZoom;
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Try to retrieve the label widget and set the text corresponding
     // to the new zoom level.
@@ -67,7 +67,7 @@ namespace fractsim {
               << "]";
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Retrieve the rendering area label.
     sdl::graphic::LabelWidget* txt = getRenderingAreaLabel();

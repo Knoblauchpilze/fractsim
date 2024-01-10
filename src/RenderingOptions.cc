@@ -49,7 +49,7 @@ namespace fractsim {
       maxY - minY
     );
 
-    log("Changed area from " + m_area.toString() + " to " + newArea.toString() + " (center: " + center.toString() + ", f: " + std::to_string(factor) + ")");
+    debug("Changed area from " + m_area.toString() + " to " + newArea.toString() + " (center: " + center.toString() + ", f: " + std::to_string(factor) + ")");
 
     // Assign it to the internal area.
     m_area = newArea;

@@ -8,7 +8,7 @@ namespace fractsim {
   inline
   FractalRenderer::~FractalRenderer() {
     // Protect from concurrent accesses
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     clearTiles();
   }
@@ -17,7 +17,7 @@ namespace fractsim {
   void
   FractalRenderer::updatePrivate(const utils::Boxf& window) {
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Use the base handler.
     sdl::core::SdlWidget::updatePrivate(window);
@@ -37,7 +37,7 @@ namespace fractsim {
     // Check whether the key corresponds to the reset key.
     if (e.getRawKey() == getDefaultResetKey()) {
       // Protect from concurrent accesses.
-      Guard guard(m_propsLocker);
+      const std::lock_guard guard(m_propsLocker);
 
       // Reset the options to the initial viewing window.
       if (m_renderingOpt != nullptr) {
@@ -82,7 +82,7 @@ namespace fractsim {
       utils::Vector2f center, newCenter;
 
       {
-        Guard guard(m_propsLocker);
+        const std::lock_guard guard(m_propsLocker);
 
         center = m_renderingOpt->getRenderingArea().getCenter();
         newCenter = center + motion;
@@ -101,7 +101,7 @@ namespace fractsim {
   bool
   FractalRenderer::mouseMoveEvent(const sdl::core::engine::MouseEvent& e) {
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Convert the position to internal coordinates.
     utils::Vector2f conv = convertGlobalToRealWorld(e.getMousePosition());

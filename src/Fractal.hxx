@@ -8,7 +8,7 @@ namespace fractsim {
   inline
   utils::Sizef
   Fractal::getPixelSize() const noexcept {
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     return getPixelSizePrivate();
   }
@@ -25,7 +25,7 @@ namespace fractsim {
     }
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     m_canvas = canvas;
     m_tiles.clear();
@@ -45,7 +45,7 @@ namespace fractsim {
     }
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     m_area = area;
     // We want to perform a clean of the cache in case the zoom
@@ -69,7 +69,7 @@ namespace fractsim {
     }
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Check whether the zoom level is still consistent with what we
     // are keeping internally. If this is the case the tile can be

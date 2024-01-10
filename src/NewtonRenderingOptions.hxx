@@ -50,7 +50,7 @@ namespace fractsim {
   inline
   void
   NewtonRenderingOptions::setCoefficients(const std::vector<Coefficient>& coeffs) noexcept {
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // Update coefficients and derivative.
     for (unsigned id = 0u ; id < coeffs.size() ; ++id) {

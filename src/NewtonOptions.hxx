@@ -15,7 +15,7 @@ namespace fractsim {
 
     // Reset elements.
     {
-      Guard guard(m_propsLocker);
+      const std::lock_guard guard(m_propsLocker);
       initElements();
     }
 

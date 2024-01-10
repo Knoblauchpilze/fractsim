@@ -78,7 +78,7 @@ namespace fractsim {
     int tilesToTheBottom = toBottom < 0.0f ? 0u : static_cast<int>(std::ceil(toBottom / tileDims.h()));
     int tilesToTheTop = toTop < 0.0f ? 0u : static_cast<int>(std::ceil(toTop / tileDims.h()));
 
-    log("Expanding rendered area by [" + std::to_string(tilesToTheLeft) + ", " + std::to_string(tilesToTheRight) + ", " + std::to_string(tilesToTheBottom) + ", " + std::to_string(tilesToTheTop) + "] (cache: " + std::to_string(m_tiles.size()) + ")", utils::Level::Verbose);
+    verbose("Expanding rendered area by [" + std::to_string(tilesToTheLeft) + ", " + std::to_string(tilesToTheRight) + ", " + std::to_string(tilesToTheBottom) + ", " + std::to_string(tilesToTheTop) + "] (cache: " + std::to_string(m_tiles.size()) + ")");
 
     // Create all the tiles. We will skip the one from the central area as they have
     // already been rendered and saved into the cache.
@@ -144,7 +144,7 @@ namespace fractsim {
     }
 
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     // We want to create an output brush with a size that is as close
     // as `m_canvas` as possible. To do so we will need to retrieve

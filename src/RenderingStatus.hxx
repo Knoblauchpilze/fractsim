@@ -21,7 +21,7 @@ namespace fractsim {
   void
   RenderingStatus::onCompletionChanged(float perc) {
     // Protect from concurrent accesses.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     sdl::graphic::ProgressBar* bar = getProgressBar();
     bar->setCompletion(perc);

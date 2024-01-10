@@ -45,7 +45,7 @@ namespace fractsim {
     for (unsigned id = 0u ; id < m_size ; ++id) {
       // Generate the color using the current hue.
       sdl::core::engine::Color c = sdl::core::engine::Color::fromHSV(h, m_s, m_v);
-      log("Generated color " + std::to_string(id) + ", c: " + c.toString() + " (from h: " + std::to_string(h) + ", s: " + std::to_string(m_s) + ", v: " + std::to_string(m_v) + ")");
+      debug("Generated color " + std::to_string(id) + ", c: " + c.toString() + " (from h: " + std::to_string(h) + ", s: " + std::to_string(m_s) + ", v: " + std::to_string(m_v) + ")");
       m_colors.push_back(c);
 
       // Move on to the next color by using the generation pattern.
@@ -96,7 +96,7 @@ namespace fractsim {
       }
 
       sdl::core::engine::Color c = sdl::core::engine::Color::fromRGB(r, g, b);
-      log("Generated color " + std::to_string(id) + ", c: " + c.toString());
+      debug("Generated color " + std::to_string(id) + ", c: " + c.toString());
       m_colors.push_back(c);
     }
   }

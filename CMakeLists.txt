@@ -1,45 +1,43 @@
 cmake_minimum_required (VERSION 3.7)
 
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
-set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
-set (CMAKE_CXX_STANDARD 14)
+set (CMAKE_CXX_STANDARD 20)
 set (CMAKE_CXX_STANDARD_REQUIRED ON)
 set (CMAKE_CXX_EXTENSIONS OFF)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Werror")
-
-#set (CMAKE_VERBOSE_MAKEFILE ON)
+add_compile_options (-Wall -Wextra -Werror -pedantic)
 
 set (CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMakeModules")
 
-project(fractsim)
+project (fractsim)
 
 find_package (SDL2 REQUIRED)
 find_package (SDL2_ttf REQUIRED)
 find_package (GMP REQUIRED)
 
-add_subdirectory(src)
+add_executable (fractsim)
 
-set (SOURCES
-  main.cpp
-  )
+add_subdirectory(
+	${CMAKE_CURRENT_SOURCE_DIR}/src
+	)
 
-add_executable(fractsim
-  ${SOURCES}
-  )
+target_sources (fractsim PRIVATE
+	${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+	)
 
 target_include_directories (fractsim PRIVATE
-  )
+	)
 
 target_link_libraries(fractsim
-  core_utils
-  sdl_engine
-  sdl_core
-  sdl_graphic
-  sdl_app_core
-  fractsim_lib
-  ${SDL2_LIBRARIES}
-  ${SDL2_TTF_LIBRARIES}
-  ${GMP_LIBRARY}
-  )
+	core_utils
+	sdl_engine
+	sdl_core
+	sdl_graphic
+	sdl_app_core
+	fractsim_lib
+	${SDL2_LIBRARIES}
+	${SDL2_TTF_LIBRARIES}
+	${GMP_LIBRARY}
+	)

@@ -69,7 +69,7 @@ namespace fractsim {
     // for this series.
     // To make sure that people can call the computing method in parallel
     // we will protect this critical section behind a locker.
-    Guard guard(m_propsLocker);
+    const std::lock_guard guard(m_propsLocker);
 
     unsigned idRoot = 0u;
     bool found = false;
@@ -179,7 +179,7 @@ namespace fractsim {
         gradient->setColorAt(cur + delta, sdl::core::engine::Color::NamedColor::White);
       }
 
-      log("Setting gradient from " + std::to_string(cur) + " to " + std::to_string(cur + delta));
+      debug("Setting gradient from " + std::to_string(cur) + " to " + std::to_string(cur + delta));
 
       cur += (delta + getRootGradientSeparation());
     }
